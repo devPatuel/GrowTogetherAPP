@@ -378,4 +378,10 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get frecuenciaPersonalizada => 'Personalitzat';
+
+  @override
+  String get consejoDia => 'Consell del dia';
+
+  @override
+  String get entendido => 'Entés';
 }

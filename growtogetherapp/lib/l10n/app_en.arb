@@ -136,5 +136,8 @@
   "noCompletado": "Not completed",
   "pendiente": "Pending",
   "frecuenciaDiaria": "Daily",
-  "frecuenciaPersonalizada": "Custom"
+  "frecuenciaPersonalizada": "Custom",
+
+  "consejoDia": "Tip of the day",
+  "entendido": "Got it"
 }

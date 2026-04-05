@@ -370,5 +370,11 @@
   "@frecuenciaDiaria": { "description": "Chip frecuencia diaria" },
 
   "frecuenciaPersonalizada": "Personalizado",
-  "@frecuenciaPersonalizada": { "description": "Chip frecuencia personalizada" }
+  "@frecuenciaPersonalizada": { "description": "Chip frecuencia personalizada" },
+
+  "consejoDia": "Consejo del día",
+  "@consejoDia": { "description": "Titulo del dialog de consejo diario" },
+
+  "entendido": "Entendido",
+  "@entendido": { "description": "Boton para cerrar el dialog de consejo diario" }
 }

@@ -136,5 +136,8 @@
   "noCompletado": "No completat",
   "pendiente": "Pendent",
   "frecuenciaDiaria": "Diari",
-  "frecuenciaPersonalizada": "Personalitzat"
+  "frecuenciaPersonalizada": "Personalitzat",
+
+  "consejoDia": "Consell del dia",
+  "entendido": "Entés"
 }

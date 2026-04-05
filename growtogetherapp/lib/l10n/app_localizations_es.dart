@@ -376,4 +376,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get frecuenciaPersonalizada => 'Personalizado';
+
+  @override
+  String get consejoDia => 'Consejo del día';
+
+  @override
+  String get entendido => 'Entendido';
 }

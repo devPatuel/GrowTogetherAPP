@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../core/utils/daily_tip_service.dart';
 import '../data/api/dio_client.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/models/habito.dart';
@@ -22,11 +23,86 @@ class DashboardScreenState extends State<DashboardScreen> {
   String _nombreUsuario = '';
   bool _cargando = true;
   String? _error;
+  bool _tipChecked = false;
 
   @override
   void initState() {
     super.initState();
     cargarDatos();
+  }
+
+  /// Muestra el consejo del día si es un nuevo día.
+  /// Se llama después del primer build para tener acceso al context.
+  Future<void> _mostrarConsejoDiario() async {
+    if (_tipChecked) return;
+    _tipChecked = true;
+
+    final lang = Localizations.localeOf(context).languageCode;
+    final tip = await DailyTipService.getTipIfNewDay(lang);
+    if (tip == null || !mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.lightbulb_outline_rounded,
+                  size: 32,
+                  color: colorScheme.onPrimaryContainer,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.consejoDia,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                tip,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  height: 1.5,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(l10n.entendido),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> cargarDatos() async {
@@ -98,6 +174,13 @@ class DashboardScreenState extends State<DashboardScreen> {
 
     if (_cargando) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    // Mostrar consejo del día tras la primera carga exitosa
+    if (!_tipChecked && _error == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _mostrarConsejoDiario();
+      });
     }
 
     if (_error != null) {

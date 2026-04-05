@@ -819,6 +819,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Personalizado'**
   String get frecuenciaPersonalizada;
+
+  /// Titulo del dialog de consejo diario
+  ///
+  /// In es, this message translates to:
+  /// **'Consejo del día'**
+  String get consejoDia;
+
+  /// Boton para cerrar el dialog de consejo diario
+  ///
+  /// In es, this message translates to:
+  /// **'Entendido'**
+  String get entendido;
 }
 
 class _AppLocalizationsDelegate
