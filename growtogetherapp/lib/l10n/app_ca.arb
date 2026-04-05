@@ -139,5 +139,15 @@
   "frecuenciaPersonalizada": "Personalitzat",
 
   "consejoDia": "Consell del dia",
-  "entendido": "Entés"
+  "entendido": "Ent\u00e9s",
+
+  "tipoHabito": "Tipus d'h\u00e0bit",
+  "tipoPositivo": "Positiu",
+  "tipoNegativo": "Negatiu",
+  "tipoPositivoDesc": "Un h\u00e0bit que vols construir i mantenir",
+  "tipoNegativoDesc": "Un h\u00e0bit que vols deixar o reduir",
+  "iconoHabito": "Icona",
+  "habitosDelDia": "H\u00e0bits del dia",
+  "diasSinHabito": "{dias} {dias, plural, =1{dia} other{dies}} sense {nombre}",
+  "diasSinLabel": "Dies sense recaure"
 }

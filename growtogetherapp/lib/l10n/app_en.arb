@@ -139,5 +139,15 @@
   "frecuenciaPersonalizada": "Custom",
 
   "consejoDia": "Tip of the day",
-  "entendido": "Got it"
+  "entendido": "Got it",
+
+  "tipoHabito": "Habit type",
+  "tipoPositivo": "Positive",
+  "tipoNegativo": "Negative",
+  "tipoPositivoDesc": "A habit you want to build and maintain",
+  "tipoNegativoDesc": "A habit you want to quit or reduce",
+  "iconoHabito": "Icon",
+  "habitosDelDia": "Habits for this day",
+  "diasSinHabito": "{dias} {dias, plural, =1{day} other{days}} without {nombre}",
+  "diasSinLabel": "Days without relapse"
 }

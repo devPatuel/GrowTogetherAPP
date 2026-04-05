@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/utils/habit_icons.dart';
 import '../data/api/dio_client.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/models/habito.dart';
@@ -114,6 +115,8 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
     final descCtrl = TextEditingController(text: _habito.descripcion);
     String frecuencia = _habito.frecuencia;
     Set<String> diasSeleccionados = Set.from(_habito.diasSemana);
+    String tipo = _habito.tipo;
+    String? iconoSeleccionado = _habito.icono;
     final formKey = GlobalKey<FormState>();
 
     final resultado = await showDialog<bool>(
@@ -121,6 +124,7 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setDialogState) {
+            final colorScheme = Theme.of(context).colorScheme;
             return AlertDialog(
               title: Text(l10n.editarHabito),
               content: SingleChildScrollView(
@@ -130,6 +134,58 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Tipo
+                      Text(l10n.tipoHabito, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      SegmentedButton<String>(
+                        segments: [
+                          ButtonSegment(value: 'POSITIVO', label: Text(l10n.tipoPositivo)),
+                          ButtonSegment(value: 'NEGATIVO', label: Text(l10n.tipoNegativo)),
+                        ],
+                        selected: {tipo},
+                        onSelectionChanged: (sel) {
+                          setDialogState(() => tipo = sel.first);
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Icono
+                      Text(l10n.iconoHabito, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: HabitIcons.allKeys.map((key) {
+                          final sel = iconoSeleccionado == key;
+                          return GestureDetector(
+                            onTap: () {
+                              setDialogState(() {
+                                iconoSeleccionado = sel ? null : key;
+                              });
+                            },
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: sel
+                                    ? colorScheme.primary.withValues(alpha: 0.2)
+                                    : colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(10),
+                                border: sel
+                                    ? Border.all(color: colorScheme.primary, width: 2)
+                                    : null,
+                              ),
+                              child: Icon(
+                                HabitIcons.getIcon(key),
+                                size: 22,
+                                color: sel ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 16),
+
                       TextFormField(
                         controller: nombreCtrl,
                         decoration: InputDecoration(labelText: l10n.nombreHabito),
@@ -198,6 +254,8 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
           descripcion: descCtrl.text.trim(),
           frecuencia: frecuencia,
           diasSemana: frecuencia == 'PERSONALIZADO' ? diasSeleccionados : null,
+          tipo: tipo,
+          icono: iconoSeleccionado,
         );
         if (!mounted) return;
         setState(() {
@@ -331,22 +389,70 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
   }
 
   Widget _buildCabecera(AppLocalizations l10n, ColorScheme colorScheme) {
-    return Column(
+    final esNegativo = _habito.esNegativo;
+    final iconColor = esNegativo ? colorScheme.error : colorScheme.primary;
+    final iconBgColor = iconColor.withValues(alpha: 0.12);
+
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          _habito.nombre,
-          style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-        ),
-        if (_habito.descripcion.isNotEmpty) ...[
-          const SizedBox(height: 6),
-          Text(
-            _habito.descripcion,
-            style: TextStyle(fontSize: 15, color: colorScheme.onSurfaceVariant),
+        // Icono grande
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: iconBgColor,
+            borderRadius: BorderRadius.circular(18),
           ),
-        ],
-        const SizedBox(height: 12),
-        _buildFrecuenciaChip(l10n, colorScheme),
+          child: Icon(
+            HabitIcons.getIcon(_habito.icono),
+            size: 34,
+            color: iconColor,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _habito.nombre,
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  if (esNegativo)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: colorScheme.error.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        l10n.tipoNegativo,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.error,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              if (_habito.descripcion.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Text(
+                  _habito.descripcion,
+                  style: TextStyle(fontSize: 15, color: colorScheme.onSurfaceVariant),
+                ),
+              ],
+              const SizedBox(height: 12),
+              _buildFrecuenciaChip(l10n, colorScheme),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -382,9 +488,13 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
   }
 
   Widget _buildRachaCard(AppLocalizations l10n, ColorScheme colorScheme) {
+    final esNegativo = _habito.esNegativo;
+    final accentColor = esNegativo ? colorScheme.error : colorScheme.primary;
+
     return Card(
       elevation: 0,
-      color: colorScheme.primaryContainer.withValues(alpha: 0.5),
+      color: (esNegativo ? colorScheme.errorContainer : colorScheme.primaryContainer)
+          .withValues(alpha: 0.5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -395,12 +505,12 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.15),
+                    color: accentColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    Icons.local_fire_department,
-                    color: Colors.orange.shade700,
+                    esNegativo ? Icons.shield_outlined : Icons.local_fire_department,
+                    color: esNegativo ? colorScheme.error : Colors.orange.shade700,
                     size: 32,
                   ),
                 ),
@@ -410,14 +520,16 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n.rachaActual,
+                        esNegativo ? l10n.diasSinLabel : l10n.rachaActual,
                         style: TextStyle(
                           fontSize: 14,
                           color: colorScheme.onSurfaceVariant,
                         ),
                       ),
                       Text(
-                        '${_habito.rachaActual} ${l10n.dias}',
+                        esNegativo
+                            ? l10n.diasSinHabito(_habito.rachaActual, _habito.nombre)
+                            : '${_habito.rachaActual} ${l10n.dias}',
                         style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -455,7 +567,7 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                       style: FilledButton.styleFrom(
                         backgroundColor: _habito.completadoHoy
                             ? colorScheme.error
-                            : colorScheme.primary,
+                            : accentColor,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
@@ -520,10 +632,8 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
   Widget _buildCalendario(AppLocalizations l10n, ColorScheme colorScheme) {
     final diasDelMes = DateTime(_mesActual.year, _mesActual.month + 1, 0).day;
     final primerDia = DateTime(_mesActual.year, _mesActual.month, 1);
-    // weekday: 1=lunes ... 7=domingo
     final offsetInicio = primerDia.weekday - 1;
 
-    // Mapa fecha -> estado
     final Map<String, String> estadoPorDia = {};
     for (final r in _historial) {
       final key = '${r.fecha.year}-${r.fecha.month}-${r.fecha.day}';
@@ -540,7 +650,6 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            // Cabecera dias de la semana
             Row(
               children: cabeceraDias.map((d) => Expanded(
                 child: Center(
@@ -556,7 +665,6 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
               )).toList(),
             ),
             const SizedBox(height: 8),
-            // Grid de dias
             ..._buildFilasCalendario(
               diasDelMes,
               offsetInicio,

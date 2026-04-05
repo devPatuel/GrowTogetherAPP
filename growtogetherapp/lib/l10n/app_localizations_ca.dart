@@ -384,4 +384,39 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get entendido => 'Entés';
+
+  @override
+  String get tipoHabito => 'Tipus d\'hàbit';
+
+  @override
+  String get tipoPositivo => 'Positiu';
+
+  @override
+  String get tipoNegativo => 'Negatiu';
+
+  @override
+  String get tipoPositivoDesc => 'Un hàbit que vols construir i mantenir';
+
+  @override
+  String get tipoNegativoDesc => 'Un hàbit que vols deixar o reduir';
+
+  @override
+  String get iconoHabito => 'Icona';
+
+  @override
+  String get habitosDelDia => 'Hàbits del dia';
+
+  @override
+  String diasSinHabito(int dias, String nombre) {
+    String _temp0 = intl.Intl.pluralLogic(
+      dias,
+      locale: localeName,
+      other: 'dies',
+      one: 'dia',
+    );
+    return '$dias $_temp0 sense $nombre';
+  }
+
+  @override
+  String get diasSinLabel => 'Dies sense recaure';
 }

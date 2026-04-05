@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/utils/habit_icons.dart';
 import '../data/api/dio_client.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/repositories/habito_repository.dart';
@@ -18,6 +19,8 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
 
   String _frecuencia = 'DIARIO';
   final List<bool> _diasSeleccionados = [false, false, false, false, false, false, false];
+  String _tipo = 'POSITIVO';
+  String? _iconoSeleccionado;
 
   static const _diasEnumValues = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'];
 
@@ -67,6 +70,8 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
         descripcion: _descCtrl.text.trim(),
         frecuencia: _frecuencia,
         diasSemana: _getDiasSemana(),
+        tipo: _tipo,
+        icono: _iconoSeleccionado,
       );
 
       if (!mounted) return;
@@ -104,6 +109,21 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Tipo de habito: Positivo / Negativo
+              Text(
+                l10n.tipoHabito,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              _buildTipoSelector(l10n, colorScheme),
+              const SizedBox(height: 6),
+              Text(
+                _tipo == 'POSITIVO' ? l10n.tipoPositivoDesc : l10n.tipoNegativoDesc,
+                style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: 20),
+
+              // Nombre
               TextFormField(
                 controller: _nombreCtrl,
                 decoration: InputDecoration(
@@ -115,6 +135,8 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
                 textCapitalization: TextCapitalization.sentences,
               ),
               const SizedBox(height: 16),
+
+              // Descripcion
               TextFormField(
                 controller: _descCtrl,
                 decoration: InputDecoration(
@@ -126,6 +148,15 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
                 maxLines: 3,
                 textCapitalization: TextCapitalization.sentences,
               ),
+              const SizedBox(height: 24),
+
+              // Icono
+              Text(
+                l10n.iconoHabito,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              _buildIconGrid(colorScheme),
               const SizedBox(height: 24),
 
               // Frecuencia
@@ -196,6 +227,71 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTipoSelector(AppLocalizations l10n, ColorScheme colorScheme) {
+    return SegmentedButton<String>(
+      segments: [
+        ButtonSegment(
+          value: 'POSITIVO',
+          label: Text(l10n.tipoPositivo),
+          icon: const Icon(Icons.add_circle_outline),
+        ),
+        ButtonSegment(
+          value: 'NEGATIVO',
+          label: Text(l10n.tipoNegativo),
+          icon: const Icon(Icons.remove_circle_outline),
+        ),
+      ],
+      selected: {_tipo},
+      onSelectionChanged: (sel) => setState(() => _tipo = sel.first),
+      style: SegmentedButton.styleFrom(
+        selectedBackgroundColor: _tipo == 'POSITIVO'
+            ? colorScheme.primary.withValues(alpha: 0.2)
+            : colorScheme.error.withValues(alpha: 0.2),
+        selectedForegroundColor: _tipo == 'POSITIVO'
+            ? colorScheme.primary
+            : colorScheme.error,
+      ),
+    );
+  }
+
+  Widget _buildIconGrid(ColorScheme colorScheme) {
+    final allKeys = HabitIcons.allKeys;
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: allKeys.map((key) {
+        final seleccionado = _iconoSeleccionado == key;
+        final icon = HabitIcons.getIcon(key);
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _iconoSeleccionado = seleccionado ? null : key;
+            });
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: seleccionado
+                  ? colorScheme.primary.withValues(alpha: 0.2)
+                  : colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+              border: seleccionado
+                  ? Border.all(color: colorScheme.primary, width: 2.5)
+                  : null,
+            ),
+            child: Icon(
+              icon,
+              size: 26,
+              color: seleccionado ? colorScheme.primary : colorScheme.onSurfaceVariant,
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

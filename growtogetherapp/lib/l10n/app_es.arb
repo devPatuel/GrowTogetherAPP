@@ -372,9 +372,42 @@
   "frecuenciaPersonalizada": "Personalizado",
   "@frecuenciaPersonalizada": { "description": "Chip frecuencia personalizada" },
 
-  "consejoDia": "Consejo del día",
+  "consejoDia": "Consejo del d\u00eda",
   "@consejoDia": { "description": "Titulo del dialog de consejo diario" },
 
   "entendido": "Entendido",
-  "@entendido": { "description": "Boton para cerrar el dialog de consejo diario" }
+  "@entendido": { "description": "Boton para cerrar el dialog de consejo diario" },
+
+  "tipoHabito": "Tipo de h\u00e1bito",
+  "@tipoHabito": { "description": "Titulo selector tipo habito" },
+
+  "tipoPositivo": "Positivo",
+  "@tipoPositivo": { "description": "Opcion tipo positivo" },
+
+  "tipoNegativo": "Negativo",
+  "@tipoNegativo": { "description": "Opcion tipo negativo" },
+
+  "tipoPositivoDesc": "Un h\u00e1bito que quieres construir y mantener",
+  "@tipoPositivoDesc": { "description": "Descripcion tipo positivo" },
+
+  "tipoNegativoDesc": "Un h\u00e1bito que quieres dejar o reducir",
+  "@tipoNegativoDesc": { "description": "Descripcion tipo negativo" },
+
+  "iconoHabito": "Icono",
+  "@iconoHabito": { "description": "Titulo selector icono habito" },
+
+  "habitosDelDia": "H\u00e1bitos del d\u00eda",
+  "@habitosDelDia": { "description": "Titulo habitos cuando no es hoy" },
+
+  "diasSinHabito": "{dias} {dias, plural, =1{d\u00eda} other{d\u00edas}} sin {nombre}",
+  "@diasSinHabito": {
+    "description": "Dias sin un habito negativo",
+    "placeholders": {
+      "dias": { "type": "int" },
+      "nombre": { "type": "String" }
+    }
+  },
+
+  "diasSinLabel": "D\u00edas sin recaer",
+  "@diasSinLabel": { "description": "Etiqueta dias sin recaer para habito negativo" }
 }

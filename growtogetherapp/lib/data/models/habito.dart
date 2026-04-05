@@ -8,6 +8,8 @@ class Habito {
   final bool completadoHoy;
   final String frecuencia;
   final Set<String> diasSemana;
+  final String tipo;
+  final String? icono;
 
   Habito({
     required this.id,
@@ -19,7 +21,11 @@ class Habito {
     this.completadoHoy = false,
     this.frecuencia = 'DIARIO',
     this.diasSemana = const {},
+    this.tipo = 'POSITIVO',
+    this.icono,
   });
+
+  bool get esNegativo => tipo == 'NEGATIVO';
 
   factory Habito.fromJson(Map<String, dynamic> json) {
     final dias = json['diasSemana'];
@@ -33,6 +39,8 @@ class Habito {
       completadoHoy: json['completadoHoy'] ?? false,
       frecuencia: json['frecuencia'] ?? 'DIARIO',
       diasSemana: dias is List ? dias.map((e) => e.toString()).toSet() : const {},
+      tipo: json['tipo'] ?? 'POSITIVO',
+      icono: json['icono'],
     );
   }
 }

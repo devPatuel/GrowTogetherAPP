@@ -24,13 +24,17 @@ class HabitoRepository {
     required String descripcion,
     String frecuencia = 'DIARIO',
     Set<String>? diasSemana,
+    String tipo = 'POSITIVO',
+    String? icono,
   }) async {
     try {
       final data = <String, dynamic>{
         'nombre': nombre,
         'descripcion': descripcion,
         'frecuencia': frecuencia,
+        'tipo': tipo,
       };
+      if (icono != null) data['icono'] = icono;
       if (diasSemana != null && diasSemana.isNotEmpty) {
         data['diasSemana'] = diasSemana.toList();
       }
@@ -54,6 +58,8 @@ class HabitoRepository {
     required String descripcion,
     String? frecuencia,
     Set<String>? diasSemana,
+    String? tipo,
+    String? icono,
   }) async {
     try {
       final data = <String, dynamic>{
@@ -62,6 +68,8 @@ class HabitoRepository {
       };
       if (frecuencia != null) data['frecuencia'] = frecuencia;
       if (diasSemana != null) data['diasSemana'] = diasSemana.toList();
+      if (tipo != null) data['tipo'] = tipo;
+      if (icono != null) data['icono'] = icono;
 
       final response = await _client.dio.put('/habitos/$id', data: data);
       return Habito.fromJson(response.data);

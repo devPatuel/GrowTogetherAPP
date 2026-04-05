@@ -831,6 +831,60 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Entendido'**
   String get entendido;
+
+  /// Titulo selector tipo habito
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de hábito'**
+  String get tipoHabito;
+
+  /// Opcion tipo positivo
+  ///
+  /// In es, this message translates to:
+  /// **'Positivo'**
+  String get tipoPositivo;
+
+  /// Opcion tipo negativo
+  ///
+  /// In es, this message translates to:
+  /// **'Negativo'**
+  String get tipoNegativo;
+
+  /// Descripcion tipo positivo
+  ///
+  /// In es, this message translates to:
+  /// **'Un hábito que quieres construir y mantener'**
+  String get tipoPositivoDesc;
+
+  /// Descripcion tipo negativo
+  ///
+  /// In es, this message translates to:
+  /// **'Un hábito que quieres dejar o reducir'**
+  String get tipoNegativoDesc;
+
+  /// Titulo selector icono habito
+  ///
+  /// In es, this message translates to:
+  /// **'Icono'**
+  String get iconoHabito;
+
+  /// Titulo habitos cuando no es hoy
+  ///
+  /// In es, this message translates to:
+  /// **'Hábitos del día'**
+  String get habitosDelDia;
+
+  /// Dias sin un habito negativo
+  ///
+  /// In es, this message translates to:
+  /// **'{dias} {dias, plural, =1{día} other{días}} sin {nombre}'**
+  String diasSinHabito(int dias, String nombre);
+
+  /// Etiqueta dias sin recaer para habito negativo
+  ///
+  /// In es, this message translates to:
+  /// **'Días sin recaer'**
+  String get diasSinLabel;
 }
 
 class _AppLocalizationsDelegate
