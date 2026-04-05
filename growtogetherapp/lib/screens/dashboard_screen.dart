@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../core/constants/app_strings.dart';
 import '../data/api/dio_client.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/models/habito.dart';
 import '../data/repositories/habito_repository.dart';
+import '../l10n/app_localizations.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -57,14 +57,15 @@ class DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _toggleHabito(Habito habito) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       if (habito.completadoHoy) {
         await _repo.descompletarHabito(habito.id);
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.habitoDesmarcado),
-            duration: Duration(seconds: 1),
+          SnackBar(
+            content: Text(l10n.habitoDesmarcado),
+            duration: const Duration(seconds: 1),
           ),
         );
       } else {
@@ -72,8 +73,8 @@ class DashboardScreenState extends State<DashboardScreen> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppStrings.habitoCompletado),
-            backgroundColor: const Color(0xFF6B9F75),
+            content: Text(l10n.habitoCompletado),
+            backgroundColor: Theme.of(context).colorScheme.primary,
             duration: const Duration(seconds: 1),
           ),
         );
@@ -92,6 +93,8 @@ class DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_cargando) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -105,7 +108,7 @@ class DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: cargarDatos,
-              child: const Text(AppStrings.reintentar),
+              child: Text(l10n.reintentar),
             ),
           ],
         ),
@@ -117,26 +120,28 @@ class DashboardScreenState extends State<DashboardScreen> {
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _buildSaludo(),
+          _buildSaludo(l10n),
           const SizedBox(height: 24),
-          _buildProgresoAnillo(),
+          _buildProgresoAnillo(l10n),
           const SizedBox(height: 24),
-          _buildTituloHabitos(),
+          _buildTituloHabitos(l10n),
           const SizedBox(height: 12),
-          if (_habitos.isEmpty) _buildSinHabitos() else ..._habitos.map(_buildHabitoCard),
+          if (_habitos.isEmpty) _buildSinHabitos(l10n) else ..._habitos.map(_buildHabitoCard),
         ],
       ),
     );
   }
 
-  Widget _buildSaludo() {
-    final hoy = DateFormat('EEEE, d MMMM', 'es_ES').format(DateTime.now());
+  Widget _buildSaludo(AppLocalizations l10n) {
+    final locale = Localizations.localeOf(context).languageCode;
+    final localeIntl = locale == 'ca' ? 'ca_ES' : locale == 'en' ? 'en_US' : 'es_ES';
+    final hoy = DateFormat('EEEE, d MMMM', localeIntl).format(DateTime.now());
     final horaActual = DateTime.now().hour;
     final saludo = horaActual < 12
-        ? 'Buenos días'
+        ? l10n.buenosDias
         : horaActual < 20
-            ? 'Buenas tardes'
-            : 'Buenas noches';
+            ? l10n.buenasTardes
+            : l10n.buenasNoches;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,11 +159,12 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildProgresoAnillo() {
+  Widget _buildProgresoAnillo(AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF6B9F75).withOpacity(0.1),
+        color: colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -173,15 +179,15 @@ class DashboardScreenState extends State<DashboardScreen> {
                   value: _progreso,
                   strokeWidth: 8,
                   backgroundColor: Colors.grey[300],
-                  valueColor: const AlwaysStoppedAnimation(Color(0xFF6B9F75)),
+                  valueColor: AlwaysStoppedAnimation(colorScheme.primary),
                 ),
                 Center(
                   child: Text(
                     '${(_progreso * 100).toInt()}%',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF6B9F75),
+                      color: colorScheme.primary,
                     ),
                   ),
                 ),
@@ -193,13 +199,13 @@ class DashboardScreenState extends State<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  AppStrings.progresoDelDia,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                Text(
+                  l10n.progresoDelDia,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '$_completados / ${_habitos.length} hábitos',
+                  l10n.habitosContador(_completados, _habitos.length),
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
@@ -210,27 +216,27 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildTituloHabitos() {
-    return const Text(
-      AppStrings.tusHabitosDeHoy,
-      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+  Widget _buildTituloHabitos(AppLocalizations l10n) {
+    return Text(
+      l10n.tusHabitosDeHoy,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
     );
   }
 
-  Widget _buildSinHabitos() {
+  Widget _buildSinHabitos(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       child: Column(
         children: [
           Icon(Icons.eco_outlined, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
-          const Text(
-            AppStrings.sinHabitos,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          Text(
+            l10n.sinHabitos,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
           Text(
-            AppStrings.sinHabitosMotivacion,
+            l10n.sinHabitosMotivacion,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
@@ -240,6 +246,7 @@ class DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildHabitoCard(Habito habito) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -249,7 +256,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         leading: IconButton(
           icon: Icon(
             habito.completadoHoy ? Icons.check_circle : Icons.radio_button_unchecked,
-            color: habito.completadoHoy ? const Color(0xFF6B9F75) : Colors.grey,
+            color: habito.completadoHoy ? colorScheme.primary : Colors.grey,
             size: 32,
           ),
           onPressed: () => _toggleHabito(habito),
@@ -283,22 +290,26 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  static const _diasCortos = {
-    'LUNES': 'Lun',
-    'MARTES': 'Mar',
-    'MIERCOLES': 'Mié',
-    'JUEVES': 'Jue',
-    'VIERNES': 'Vie',
-    'SABADO': 'Sáb',
-    'DOMINGO': 'Dom',
-  };
+  Map<String, String> _getDiasCortos() {
+    final l10n = AppLocalizations.of(context)!;
+    return {
+      'LUNES': l10n.diasCortoLun,
+      'MARTES': l10n.diasCortoMar,
+      'MIERCOLES': l10n.diasCortoMie,
+      'JUEVES': l10n.diasCortoJue,
+      'VIERNES': l10n.diasCortoVie,
+      'SABADO': l10n.diasCortoSab,
+      'DOMINGO': l10n.diasCortoDom,
+    };
+  }
 
   Widget? _buildSubtitle(Habito habito) {
     final parts = <String>[];
     if (habito.descripcion.isNotEmpty) parts.add(habito.descripcion);
     if (habito.frecuencia == 'PERSONALIZADO' && habito.diasSemana.isNotEmpty) {
+      final diasCortos = _getDiasCortos();
       final diasLegibles = habito.diasSemana
-          .map((d) => _diasCortos[d] ?? d)
+          .map((d) => diasCortos[d] ?? d)
           .join(', ');
       parts.add(diasLegibles);
     }

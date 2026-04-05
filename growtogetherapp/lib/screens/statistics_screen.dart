@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import '../core/constants/app_strings.dart';
+import '../l10n/app_localizations.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final l10n = AppLocalizations.of(context)!;
+    return Center(
       child: Text(
-        AppStrings.holaPantallaAnalisis,
-        style: TextStyle(fontSize: 18),
+        l10n.holaPantallaAnalisis,
+        style: const TextStyle(fontSize: 18),
       ),
     );
   }

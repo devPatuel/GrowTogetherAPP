@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/constants/app_strings.dart';
+import '../l10n/app_localizations.dart';
 import 'crear_habito_screen.dart';
 import 'dashboard_screen.dart';
 import 'statistics_screen.dart';
@@ -25,13 +25,6 @@ class _MainLayoutState extends State<MainLayout> {
     const ProfileScreen(),
   ];
 
-  static const _titulos = [
-    AppStrings.inicio,
-    AppStrings.analisis,
-    AppStrings.desafios,
-    AppStrings.perfil,
-  ];
-
   Future<void> _abrirCrearHabito() async {
     final resultado = await Navigator.push<bool>(
       context,
@@ -46,9 +39,19 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final titulos = [
+      l10n.inicio,
+      l10n.analisis,
+      l10n.desafios,
+      l10n.perfil,
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titulos[_indiceActual]),
+        title: Text(titulos[_indiceActual]),
         centerTitle: true,
       ),
       body: IndexedStack(
@@ -57,8 +60,8 @@ class _MainLayoutState extends State<MainLayout> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _abrirCrearHabito,
-        backgroundColor: const Color(0xFF6B9F75),
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 28),
       ),
@@ -70,11 +73,11 @@ class _MainLayoutState extends State<MainLayout> {
         padding: EdgeInsets.zero,
         child: Row(
           children: [
-            _buildNavItem(0, Icons.home_outlined, Icons.home, AppStrings.inicio),
-            _buildNavItem(1, Icons.bar_chart_outlined, Icons.bar_chart, AppStrings.analisis),
+            _buildNavItem(0, Icons.home_outlined, Icons.home, l10n.inicio),
+            _buildNavItem(1, Icons.bar_chart_outlined, Icons.bar_chart, l10n.analisis),
             const Expanded(child: SizedBox()),
-            _buildNavItem(2, Icons.emoji_events_outlined, Icons.emoji_events, AppStrings.desafios),
-            _buildNavItem(3, Icons.person_outline, Icons.person, AppStrings.perfil),
+            _buildNavItem(2, Icons.emoji_events_outlined, Icons.emoji_events, l10n.desafios),
+            _buildNavItem(3, Icons.person_outline, Icons.person, l10n.perfil),
           ],
         ),
       ),
@@ -83,6 +86,7 @@ class _MainLayoutState extends State<MainLayout> {
 
   Widget _buildNavItem(int indice, IconData iconoInactivo, IconData iconoActivo, String etiqueta) {
     final seleccionado = _indiceActual == indice;
+    final colorScheme = Theme.of(context).colorScheme;
     return Expanded(
       child: InkWell(
         onTap: () => setState(() => _indiceActual = indice),
@@ -93,14 +97,14 @@ class _MainLayoutState extends State<MainLayout> {
             children: [
               Icon(
                 seleccionado ? iconoActivo : iconoInactivo,
-                color: seleccionado ? const Color(0xFF6B9F75) : Colors.grey,
+                color: seleccionado ? colorScheme.primary : Colors.grey,
                 size: 24,
               ),
               const SizedBox(height: 2),
               Text(
                 etiqueta,
                 style: TextStyle(
-                  color: seleccionado ? const Color(0xFF6B9F75) : Colors.grey,
+                  color: seleccionado ? colorScheme.primary : Colors.grey,
                   fontSize: 11,
                   fontWeight: seleccionado ? FontWeight.w600 : FontWeight.normal,
                 ),

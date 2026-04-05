@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../core/constants/app_strings.dart';
 import '../data/api/dio_client.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/repositories/habito_repository.dart';
+import '../l10n/app_localizations.dart';
 
 class CrearHabitoScreen extends StatefulWidget {
   const CrearHabitoScreen({super.key});
@@ -19,7 +19,6 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
   String _frecuencia = 'DIARIO';
   final List<bool> _diasSeleccionados = [false, false, false, false, false, false, false];
 
-  static const _diasLabels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   static const _diasEnumValues = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'];
 
   bool _guardando = false;
@@ -29,6 +28,10 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
     _nombreCtrl.dispose();
     _descCtrl.dispose();
     super.dispose();
+  }
+
+  List<String> _getDiasLabels(AppLocalizations l10n) {
+    return [l10n.lun, l10n.mar, l10n.mie, l10n.jue, l10n.vie, l10n.sab, l10n.dom];
   }
 
   Set<String>? _getDiasSemana() {
@@ -41,12 +44,13 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
   }
 
   Future<void> _guardar() async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
     if (_frecuencia == 'PERSONALIZADO' && !_diasSeleccionados.contains(true)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AppStrings.seleccionaAlMenosUnDia),
+        SnackBar(
+          content: Text(l10n.seleccionaAlMenosUnDia),
           backgroundColor: Colors.orange,
         ),
       );
@@ -67,9 +71,9 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AppStrings.habitoCreado),
-          backgroundColor: Color(0xFF6B9F75),
+        SnackBar(
+          content: Text(l10n.habitoCreado),
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
       Navigator.pop(context, true);
@@ -84,9 +88,13 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final diasLabels = _getDiasLabels(l10n);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.nuevoHabito),
+        title: Text(l10n.nuevoHabito),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -98,53 +106,53 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
             children: [
               TextFormField(
                 controller: _nombreCtrl,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.nombreHabito,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.edit_outlined),
+                decoration: InputDecoration(
+                  labelText: l10n.nombreHabito,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.edit_outlined),
                 ),
-                validator: (v) => (v == null || v.trim().isEmpty) ? AppStrings.nombreObligatorio : null,
+                validator: (v) => (v == null || v.trim().isEmpty) ? l10n.nombreObligatorio : null,
                 textCapitalization: TextCapitalization.sentences,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descCtrl,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.descripcionHabito,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.description_outlined),
+                decoration: InputDecoration(
+                  labelText: l10n.descripcionHabito,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.description_outlined),
                 ),
-                validator: (v) => (v == null || v.trim().isEmpty) ? AppStrings.descripcionObligatoria : null,
+                validator: (v) => (v == null || v.trim().isEmpty) ? l10n.descripcionObligatoria : null,
                 maxLines: 3,
                 textCapitalization: TextCapitalization.sentences,
               ),
               const SizedBox(height: 24),
 
               // Frecuencia
-              const Text(
-                AppStrings.frecuencia,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              Text(
+                l10n.frecuencia,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 8),
               SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'DIARIO', label: Text(AppStrings.diario), icon: Icon(Icons.calendar_today)),
-                  ButtonSegment(value: 'PERSONALIZADO', label: Text(AppStrings.personalizado), icon: Icon(Icons.tune)),
+                segments: [
+                  ButtonSegment(value: 'DIARIO', label: Text(l10n.diario), icon: const Icon(Icons.calendar_today)),
+                  ButtonSegment(value: 'PERSONALIZADO', label: Text(l10n.personalizado), icon: const Icon(Icons.tune)),
                 ],
                 selected: {_frecuencia},
                 onSelectionChanged: (sel) => setState(() => _frecuencia = sel.first),
                 style: SegmentedButton.styleFrom(
-                  selectedBackgroundColor: const Color(0xFF6B9F75).withOpacity(0.2),
-                  selectedForegroundColor: const Color(0xFF6B9F75),
+                  selectedBackgroundColor: colorScheme.primary.withValues(alpha: 0.2),
+                  selectedForegroundColor: colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 16),
 
               // Dias de la semana (solo si personalizado)
               if (_frecuencia == 'PERSONALIZADO') ...[
-                const Text(
-                  AppStrings.diasDeLaSemana,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                Text(
+                  l10n.diasDeLaSemana,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -155,12 +163,12 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
                       child: CircleAvatar(
                         radius: 22,
                         backgroundColor: _diasSeleccionados[i]
-                            ? const Color(0xFF6B9F75)
+                            ? colorScheme.primary
                             : Colors.grey[200],
                         child: Text(
-                          _diasLabels[i],
+                          diasLabels[i],
                           style: TextStyle(
-                            color: _diasSeleccionados[i] ? Colors.white : Colors.grey[700],
+                            color: _diasSeleccionados[i] ? colorScheme.onPrimary : Colors.grey[700],
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -180,8 +188,8 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
                   icon: _guardando
                       ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : const Icon(Icons.add),
-                  label: Text(_guardando ? '' : AppStrings.crear),
-                  style: FilledButton.styleFrom(backgroundColor: const Color(0xFF6B9F75)),
+                  label: Text(_guardando ? '' : l10n.crear),
+                  style: FilledButton.styleFrom(backgroundColor: colorScheme.primary),
                 ),
               ),
             ],

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../core/constants/app_strings.dart';
 import '../data/api/api_exceptions.dart';
 import '../data/api/dio_client.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/repositories/auth_repository.dart';
+import '../l10n/app_localizations.dart';
 import 'register_screen.dart';
 import 'main_layout.dart';
 
@@ -41,11 +41,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _iniciarSesion() async {
+    final l10n = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      setState(() => _error = AppStrings.rellenaTodosLosCampos);
+      setState(() => _error = l10n.rellenaTodosLosCampos);
       return;
     }
 
@@ -78,6 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -86,11 +89,11 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Logo
-              const Icon(Icons.eco_rounded, size: 64, color: Color(0xFF6B9F75)),
+              Icon(Icons.eco_rounded, size: 64, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 8),
-              const Text(
-                AppStrings.appNombre,
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              Text(
+                l10n.appNombre,
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 40),
 
@@ -112,10 +115,10 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.email,
-                  prefixIcon: Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.email,
+                  prefixIcon: const Icon(Icons.email_outlined),
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -125,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _passwordController,
                 obscureText: _ocultarPassword,
                 decoration: InputDecoration(
-                  labelText: AppStrings.contrasena,
+                  labelText: l10n.contrasena,
                   prefixIcon: const Icon(Icons.lock_outline),
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
@@ -143,8 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: _cargando ? null : _iniciarSesion,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B9F75),
-                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   child: _cargando
                       ? const SizedBox(
@@ -152,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                         )
-                      : const Text(AppStrings.iniciarSesion, style: TextStyle(fontSize: 16)),
+                      : Text(l10n.iniciarSesion, style: const TextStyle(fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -165,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     MaterialPageRoute(builder: (_) => const RegisterScreen()),
                   );
                 },
-                child: const Text(AppStrings.noTienesCuenta),
+                child: Text(l10n.noTienesCuenta),
               ),
             ],
           ),

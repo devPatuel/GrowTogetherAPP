@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../core/constants/app_strings.dart';
 import '../core/utils/validators.dart';
 import '../data/api/api_exceptions.dart';
 import '../data/api/dio_client.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/repositories/auth_repository.dart';
+import '../l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -27,31 +27,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late final _repo = AuthRepository(DioClient(_storage), _storage);
 
   Future<void> _registrar() async {
+    final l10n = AppLocalizations.of(context)!;
     final nombre = _nombreController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmar = _confirmarController.text;
 
     // Validaciones
-    final errorNombre = Validators.notEmpty(nombre, 'El nombre');
+    final errorNombre = Validators.notEmpty(
+      nombre,
+      l10n.validatorCampoObligatorio(l10n.nombre),
+    );
     if (errorNombre != null) {
       setState(() => _error = errorNombre);
       return;
     }
 
-    final errorEmail = Validators.email(email);
+    final errorEmail = Validators.email(
+      email,
+      obligatorio: l10n.validatorEmailObligatorio,
+      invalido: l10n.validatorEmailInvalido,
+    );
     if (errorEmail != null) {
       setState(() => _error = errorEmail);
       return;
     }
 
-    final errorPassword = Validators.password(password);
+    final errorPassword = Validators.password(
+      password,
+      obligatoria: l10n.validatorContrasenaObligatoria,
+      minimo: l10n.validatorContrasenaMinimo,
+      mayuscula: l10n.validatorContrasenaMayuscula,
+      minuscula: l10n.validatorContrasenaMinuscula,
+      numero: l10n.validatorContrasenaNumero,
+    );
     if (errorPassword != null) {
       setState(() => _error = errorPassword);
       return;
     }
 
-    final errorConfirmar = Validators.confirmPassword(confirmar, password);
+    final errorConfirmar = Validators.confirmPassword(
+      confirmar,
+      password,
+      confirmar: l10n.validatorConfirmarContrasena,
+      noCoinciden: l10n.validatorContrasenasNoCoinciden,
+    );
     if (errorConfirmar != null) {
       setState(() => _error = errorConfirmar);
       return;
@@ -66,7 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       await _repo.register(nombre, email, password);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(AppStrings.cuentaCreada)),
+          SnackBar(content: Text(l10n.cuentaCreada)),
         );
         Navigator.pop(context);
       }
@@ -88,8 +108,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.crearCuenta)),
+      appBar: AppBar(title: Text(l10n.crearCuenta)),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -115,10 +137,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Nombre
               TextField(
                 controller: _nombreController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.nombre,
-                  prefixIcon: Icon(Icons.person_outline),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.nombre,
+                  prefixIcon: const Icon(Icons.person_outline),
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -127,10 +149,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.email,
-                  prefixIcon: Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.email,
+                  prefixIcon: const Icon(Icons.email_outlined),
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -140,7 +162,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 controller: _passwordController,
                 obscureText: _ocultarPassword,
                 decoration: InputDecoration(
-                  labelText: AppStrings.contrasena,
+                  labelText: l10n.contrasena,
                   prefixIcon: const Icon(Icons.lock_outline),
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
@@ -156,7 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 controller: _confirmarController,
                 obscureText: _ocultarConfirmar,
                 decoration: InputDecoration(
-                  labelText: AppStrings.confirmarContrasena,
+                  labelText: l10n.confirmarContrasena,
                   prefixIcon: const Icon(Icons.lock_outline),
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
@@ -174,8 +196,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: ElevatedButton(
                   onPressed: _cargando ? null : _registrar,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B9F75),
-                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   child: _cargando
                       ? const SizedBox(
@@ -183,7 +205,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                         )
-                      : const Text(AppStrings.crearCuenta, style: TextStyle(fontSize: 16)),
+                      : Text(l10n.crearCuenta, style: const TextStyle(fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -191,7 +213,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Volver a login
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text(AppStrings.yaTienesCuenta),
+                child: Text(l10n.yaTienesCuenta),
               ),
               const SizedBox(height: 16),
             ],

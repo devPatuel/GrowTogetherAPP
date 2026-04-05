@@ -7,6 +7,7 @@ class SecureStorageService {
   static const _userIdKey = 'user_id';
   static const _userNameKey = 'user_name';
   static const _userEmailKey = 'user_email';
+  static const _profilePhotoPathKey = 'profile_photo_path';
 
   Future<void> saveToken(String token) => _storage.write(key: _tokenKey, value: token);
   Future<String?> getToken() => _storage.read(key: _tokenKey);
@@ -22,6 +23,13 @@ class SecureStorageService {
 
   Future<void> saveUserEmail(String email) => _storage.write(key: _userEmailKey, value: email);
   Future<String?> getUserEmail() => _storage.read(key: _userEmailKey);
+
+  Future<void> saveProfilePhotoPath(String path) =>
+      _storage.write(key: _profilePhotoPathKey, value: path);
+  Future<String?> getProfilePhotoPath() =>
+      _storage.read(key: _profilePhotoPathKey);
+  Future<void> deleteProfilePhotoPath() =>
+      _storage.delete(key: _profilePhotoPathKey);
 
   Future<void> deleteAll() => _storage.deleteAll();
 

@@ -1,0 +1,329 @@
+{
+  "@@locale": "es",
+
+  "appNombre": "GrowTogether",
+  "@appNombre": { "description": "Nombre de la aplicacion" },
+
+  "bienvenido": "Bienvenido",
+  "@bienvenido": { "description": "Saludo generico" },
+
+  "proximamente": "Pr\u00f3ximamente",
+  "@proximamente": { "description": "Texto de proximamente" },
+
+  "iniciarSesion": "Iniciar Sesi\u00f3n",
+  "@iniciarSesion": { "description": "Boton de login" },
+
+  "email": "Email",
+  "@email": { "description": "Label del campo email" },
+
+  "contrasena": "Contrase\u00f1a",
+  "@contrasena": { "description": "Label del campo contrasena" },
+
+  "noTienesCuenta": "\u00bfNo tienes cuenta? Reg\u00edstrate",
+  "@noTienesCuenta": { "description": "Enlace a registro desde login" },
+
+  "rellenaTodosLosCampos": "Rellena todos los campos",
+  "@rellenaTodosLosCampos": { "description": "Error de campos vacios" },
+
+  "crearCuenta": "Crear Cuenta",
+  "@crearCuenta": { "description": "Titulo y boton de registro" },
+
+  "nombre": "Nombre",
+  "@nombre": { "description": "Label del campo nombre" },
+
+  "confirmarContrasena": "Confirmar contrase\u00f1a",
+  "@confirmarContrasena": { "description": "Label del campo confirmar contrasena" },
+
+  "yaTienesCuenta": "\u00bfYa tienes cuenta? Inicia sesi\u00f3n",
+  "@yaTienesCuenta": { "description": "Enlace a login desde registro" },
+
+  "cuentaCreada": "Cuenta creada. Inicia sesi\u00f3n.",
+  "@cuentaCreada": { "description": "Mensaje tras registro exitoso" },
+
+  "inicio": "Inicio",
+  "@inicio": { "description": "Tab de inicio" },
+
+  "analisis": "An\u00e1lisis",
+  "@analisis": { "description": "Tab de analisis" },
+
+  "desafios": "Desaf\u00edos",
+  "@desafios": { "description": "Tab de desafios" },
+
+  "perfil": "Perfil",
+  "@perfil": { "description": "Tab de perfil" },
+
+  "holaPantallaInicio": "Hola, est\u00e1s en la pantalla de Inicio",
+  "@holaPantallaInicio": { "description": "Placeholder pantalla inicio" },
+
+  "holaPantallaAnalisis": "Hola, est\u00e1s en la pantalla de An\u00e1lisis",
+  "@holaPantallaAnalisis": { "description": "Placeholder pantalla analisis" },
+
+  "holaPantallaDesafios": "Hola, est\u00e1s en la pantalla de Desaf\u00edos",
+  "@holaPantallaDesafios": { "description": "Placeholder pantalla desafios" },
+
+  "informacionCuenta": "Informaci\u00f3n de cuenta",
+  "@informacionCuenta": { "description": "Seccion de info de cuenta en perfil" },
+
+  "editarNombre": "Editar nombre",
+  "@editarNombre": { "description": "Titulo dialogo editar nombre" },
+
+  "editarEmail": "Editar email",
+  "@editarEmail": { "description": "Titulo dialogo editar email" },
+
+  "cambiarContrasena": "Cambiar contrase\u00f1a",
+  "@cambiarContrasena": { "description": "Titulo dialogo cambiar contrasena" },
+
+  "contrasenaActual": "Contrase\u00f1a actual",
+  "@contrasenaActual": { "description": "Label campo contrasena actual" },
+
+  "nuevaContrasena": "Nueva contrase\u00f1a",
+  "@nuevaContrasena": { "description": "Label campo nueva contrasena" },
+
+  "guardar": "Guardar",
+  "@guardar": { "description": "Boton guardar" },
+
+  "cancelar": "Cancelar",
+  "@cancelar": { "description": "Boton cancelar" },
+
+  "puntos": "puntos",
+  "@puntos": { "description": "Etiqueta de puntos del usuario" },
+
+  "cerrarSesion": "Cerrar Sesi\u00f3n",
+  "@cerrarSesion": { "description": "Boton cerrar sesion" },
+
+  "confirmarCerrarSesion": "\u00bfSeguro que quieres cerrar sesi\u00f3n?",
+  "@confirmarCerrarSesion": { "description": "Confirmacion de cierre de sesion" },
+
+  "contrasenaActualizada": "Contrase\u00f1a actualizada",
+  "@contrasenaActualizada": { "description": "Snackbar tras cambiar contrasena" },
+
+  "perfilActualizado": "Perfil actualizado",
+  "@perfilActualizado": { "description": "Snackbar tras actualizar perfil" },
+
+  "errorCargarPerfil": "Error al cargar el perfil",
+  "@errorCargarPerfil": { "description": "Error cargando perfil" },
+
+  "reintentar": "Reintentar",
+  "@reintentar": { "description": "Boton reintentar" },
+
+  "cambiarFoto": "Cambiar foto de perfil",
+  "@cambiarFoto": { "description": "Titulo bottom sheet foto" },
+
+  "urlFoto": "URL de la imagen",
+  "@urlFoto": { "description": "Label campo URL foto" },
+
+  "confirmarCambioEmail": "Cambiar el email cerrar\u00e1 tu sesi\u00f3n. \u00bfContinuar?",
+  "@confirmarCambioEmail": { "description": "Aviso al cambiar email" },
+
+  "confirmarCambioContrasena": "Cambiar la contrase\u00f1a cerrar\u00e1 tu sesi\u00f3n. Tendr\u00e1s que iniciar sesi\u00f3n de nuevo. \u00bfContinuar?",
+  "@confirmarCambioContrasena": { "description": "Aviso al cambiar contrasena" },
+
+  "continuar": "Continuar",
+  "@continuar": { "description": "Boton continuar" },
+
+  "sesionCerradaPorCambio": "Sesi\u00f3n cerrada. Inicia sesi\u00f3n con tus nuevos datos.",
+  "@sesionCerradaPorCambio": { "description": "Mensaje tras cierre de sesion por cambio de credenciales" },
+
+  "quitarFoto": "Quitar foto",
+  "@quitarFoto": { "description": "Opcion quitar foto de perfil" },
+
+  "tomarFoto": "Hacer foto",
+  "@tomarFoto": { "description": "Opcion hacer foto con camara" },
+
+  "elegirDeGaleria": "Elegir de galer\u00eda",
+  "@elegirDeGaleria": { "description": "Opcion elegir de galeria" },
+
+  "fotoActualizada": "Foto de perfil actualizada",
+  "@fotoActualizada": { "description": "Snackbar tras actualizar foto" },
+
+  "fotoEliminada": "Foto de perfil eliminada",
+  "@fotoEliminada": { "description": "Snackbar tras eliminar foto" },
+
+  "confirmarNuevaContrasena": "Confirmar nueva contrase\u00f1a",
+  "@confirmarNuevaContrasena": { "description": "Label campo confirmar nueva contrasena" },
+
+  "contrasenasNoCoinciden": "Las contrase\u00f1as no coinciden",
+  "@contrasenasNoCoinciden": { "description": "Error contrasenas no coinciden" },
+
+  "hola": "Hola",
+  "@hola": { "description": "Saludo simple" },
+
+  "tusHabitosDeHoy": "Tus h\u00e1bitos de hoy",
+  "@tusHabitosDeHoy": { "description": "Titulo seccion habitos del dia" },
+
+  "progresoDelDia": "Progreso del d\u00eda",
+  "@progresoDelDia": { "description": "Titulo anillo de progreso" },
+
+  "sinHabitos": "A\u00fan no tienes h\u00e1bitos",
+  "@sinHabitos": { "description": "Mensaje cuando no hay habitos" },
+
+  "sinHabitosMotivacion": "Pulsa + para crear tu primer h\u00e1bito y empezar a crecer",
+  "@sinHabitosMotivacion": { "description": "Texto motivacional sin habitos" },
+
+  "habitoCompletado": "H\u00e1bito completado",
+  "@habitoCompletado": { "description": "Snackbar al completar habito" },
+
+  "errorCargarHabitos": "Error al cargar h\u00e1bitos",
+  "@errorCargarHabitos": { "description": "Error cargando habitos" },
+
+  "racha": "racha",
+  "@racha": { "description": "Etiqueta de racha" },
+
+  "nuevoHabito": "Nuevo h\u00e1bito",
+  "@nuevoHabito": { "description": "Titulo pantalla crear habito" },
+
+  "nombreHabito": "Nombre del h\u00e1bito",
+  "@nombreHabito": { "description": "Label campo nombre habito" },
+
+  "descripcionHabito": "Descripci\u00f3n",
+  "@descripcionHabito": { "description": "Label campo descripcion habito" },
+
+  "crear": "Crear",
+  "@crear": { "description": "Boton crear" },
+
+  "habitoCreado": "H\u00e1bito creado",
+  "@habitoCreado": { "description": "Snackbar tras crear habito" },
+
+  "nombreObligatorio": "El nombre es obligatorio",
+  "@nombreObligatorio": { "description": "Error nombre vacio" },
+
+  "descripcionObligatoria": "La descripci\u00f3n es obligatoria",
+  "@descripcionObligatoria": { "description": "Error descripcion vacia" },
+
+  "frecuencia": "Frecuencia",
+  "@frecuencia": { "description": "Titulo seccion frecuencia" },
+
+  "diario": "Diario",
+  "@diario": { "description": "Opcion frecuencia diaria" },
+
+  "personalizado": "Personalizado",
+  "@personalizado": { "description": "Opcion frecuencia personalizada" },
+
+  "diasDeLaSemana": "D\u00edas de la semana",
+  "@diasDeLaSemana": { "description": "Titulo selector dias" },
+
+  "seleccionaAlMenosUnDia": "Selecciona al menos un d\u00eda",
+  "@seleccionaAlMenosUnDia": { "description": "Error sin dias seleccionados" },
+
+  "habitoDesmarcado": "H\u00e1bito desmarcado",
+  "@habitoDesmarcado": { "description": "Snackbar al desmarcar habito" },
+
+  "lun": "L",
+  "@lun": { "description": "Lunes abreviado" },
+
+  "mar": "M",
+  "@mar": { "description": "Martes abreviado" },
+
+  "mie": "X",
+  "@mie": { "description": "Miercoles abreviado" },
+
+  "jue": "J",
+  "@jue": { "description": "Jueves abreviado" },
+
+  "vie": "V",
+  "@vie": { "description": "Viernes abreviado" },
+
+  "sab": "S",
+  "@sab": { "description": "Sabado abreviado" },
+
+  "dom": "D",
+  "@dom": { "description": "Domingo abreviado" },
+
+  "ajustes": "Ajustes",
+  "@ajustes": { "description": "Titulo seccion ajustes" },
+
+  "tema": "Tema",
+  "@tema": { "description": "Label selector de tema" },
+
+  "elegirTema": "Elegir tema",
+  "@elegirTema": { "description": "Titulo bottom sheet temas" },
+
+  "idioma": "Idioma",
+  "@idioma": { "description": "Label selector de idioma" },
+
+  "elegirIdioma": "Elegir idioma",
+  "@elegirIdioma": { "description": "Titulo bottom sheet idioma" },
+
+  "castellano": "Castellano",
+  "@castellano": { "description": "Nombre del idioma castellano" },
+
+  "ingles": "English",
+  "@ingles": { "description": "Nombre del idioma ingles" },
+
+  "valenciano": "Valenci\u00e0",
+  "@valenciano": { "description": "Nombre del idioma valenciano" },
+
+  "buenosDias": "Buenos d\u00edas",
+  "@buenosDias": { "description": "Saludo por la manana" },
+
+  "buenasTardes": "Buenas tardes",
+  "@buenasTardes": { "description": "Saludo por la tarde" },
+
+  "buenasNoches": "Buenas noches",
+  "@buenasNoches": { "description": "Saludo por la noche" },
+
+  "habitosContador": "{completados} / {total} h\u00e1bitos",
+  "@habitosContador": {
+    "description": "Contador de habitos completados",
+    "placeholders": {
+      "completados": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "validatorEmailObligatorio": "El email es obligatorio",
+  "@validatorEmailObligatorio": { "description": "Error de validacion: email vacio" },
+
+  "validatorEmailInvalido": "Formato de email no v\u00e1lido",
+  "@validatorEmailInvalido": { "description": "Error de validacion: email mal formado" },
+
+  "validatorContrasenaObligatoria": "La contrase\u00f1a es obligatoria",
+  "@validatorContrasenaObligatoria": { "description": "Error de validacion: contrasena vacia" },
+
+  "validatorContrasenaMinimo": "M\u00ednimo 8 caracteres",
+  "@validatorContrasenaMinimo": { "description": "Error de validacion: contrasena corta" },
+
+  "validatorContrasenaMayuscula": "Debe contener una may\u00fascula",
+  "@validatorContrasenaMayuscula": { "description": "Error de validacion: falta mayuscula" },
+
+  "validatorContrasenaMinuscula": "Debe contener una min\u00fascula",
+  "@validatorContrasenaMinuscula": { "description": "Error de validacion: falta minuscula" },
+
+  "validatorContrasenaNumero": "Debe contener un n\u00famero",
+  "@validatorContrasenaNumero": { "description": "Error de validacion: falta numero" },
+
+  "validatorCampoObligatorio": "{campo} es obligatorio",
+  "@validatorCampoObligatorio": {
+    "description": "Error de validacion: campo obligatorio generico",
+    "placeholders": {
+      "campo": { "type": "String" }
+    }
+  },
+
+  "validatorConfirmarContrasena": "Confirma la contrase\u00f1a",
+  "@validatorConfirmarContrasena": { "description": "Error de validacion: confirmar contrasena vacia" },
+
+  "validatorContrasenasNoCoinciden": "Las contrase\u00f1as no coinciden",
+  "@validatorContrasenasNoCoinciden": { "description": "Error de validacion: contrasenas diferentes" },
+
+  "diasCortoLun": "Lun",
+  "@diasCortoLun": { "description": "Lunes corto para subtitle habito" },
+
+  "diasCortoMar": "Mar",
+  "@diasCortoMar": { "description": "Martes corto para subtitle habito" },
+
+  "diasCortoMie": "Mi\u00e9",
+  "@diasCortoMie": { "description": "Miercoles corto para subtitle habito" },
+
+  "diasCortoJue": "Jue",
+  "@diasCortoJue": { "description": "Jueves corto para subtitle habito" },
+
+  "diasCortoVie": "Vie",
+  "@diasCortoVie": { "description": "Viernes corto para subtitle habito" },
+
+  "diasCortoSab": "S\u00e1b",
+  "@diasCortoSab": { "description": "Sabado corto para subtitle habito" },
+
+  "diasCortoDom": "Dom",
+  "@diasCortoDom": { "description": "Domingo corto para subtitle habito" }
+}

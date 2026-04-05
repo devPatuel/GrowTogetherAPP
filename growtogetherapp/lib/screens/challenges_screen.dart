@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import '../core/constants/app_strings.dart';
+import '../l10n/app_localizations.dart';
 
 class ChallengesScreen extends StatelessWidget {
   const ChallengesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final l10n = AppLocalizations.of(context)!;
+    return Center(
       child: Text(
-        AppStrings.holaPantallaDesafios,
-        style: TextStyle(fontSize: 18),
+        l10n.holaPantallaDesafios,
+        style: const TextStyle(fontSize: 18),
       ),
     );
   }
