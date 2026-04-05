@@ -82,6 +82,38 @@ class AppThemes {
     }
   }
 
+  /// Mapea un string de la API (CLARO, OSCURO, MORADO, NATURALEZA) a AppThemeType.
+  /// Devuelve null si el valor no es reconocido.
+  static AppThemeType? fromApiString(String? apiValue) {
+    if (apiValue == null) return null;
+    switch (apiValue.toUpperCase()) {
+      case 'CLARO':
+        return AppThemeType.claro;
+      case 'OSCURO':
+        return AppThemeType.oscuro;
+      case 'MORADO':
+        return AppThemeType.morado;
+      case 'NATURALEZA':
+        return AppThemeType.naturaleza;
+      default:
+        return null;
+    }
+  }
+
+  /// Mapea AppThemeType al string que espera la API.
+  static String toApiString(AppThemeType type) {
+    switch (type) {
+      case AppThemeType.claro:
+        return 'CLARO';
+      case AppThemeType.oscuro:
+        return 'OSCURO';
+      case AppThemeType.morado:
+        return 'MORADO';
+      case AppThemeType.naturaleza:
+        return 'NATURALEZA';
+    }
+  }
+
   /// Color preview para el selector.
   static Color previewColor(AppThemeType type) {
     switch (type) {

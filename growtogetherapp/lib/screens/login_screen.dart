@@ -3,6 +3,7 @@ import '../data/api/api_exceptions.dart';
 import '../data/api/dio_client.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/repositories/auth_repository.dart';
+import '../data/repositories/user_repository.dart';
 import '../l10n/app_localizations.dart';
 import 'register_screen.dart';
 import 'main_layout.dart';
@@ -33,6 +34,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _verificarSesion() async {
     final usuario = await _repo.getCurrentUser();
     if (usuario != null && mounted) {
+      // Cargar preferencias del servidor en auto-login
+      try {
+        final userRepo = UserRepository(DioClient(_storage));
+        final perfil = await userRepo.obtenerPerfil(usuario.id);
+        _repo.aplicarPreferenciasDesdeUsuario(perfil);
+      } catch (_) {
+        // Si falla, se usan las preferencias locales como fallback
+      }
+
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MainLayout()),

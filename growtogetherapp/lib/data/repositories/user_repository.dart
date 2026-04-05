@@ -50,6 +50,21 @@ class UserRepository {
     }
   }
 
+  Future<void> actualizarPreferencias(int id, {String? tema, String? idioma}) async {
+    try {
+      final data = <String, dynamic>{};
+      if (tema != null) data['tema'] = tema;
+      if (idioma != null) data['idioma'] = idioma;
+      await _client.dio.put('/api/v1/usuarios/perfil/$id/preferencias', data: data);
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.connectionError) {
+        throw NetworkException();
+      }
+      throw ApiException('Error al actualizar las preferencias');
+    }
+  }
+
   Future<void> cambiarContrasena(int id, String actual, String nueva) async {
     try {
       await _client.dio.put('/usuarios/perfil/$id/contrasena', data: {

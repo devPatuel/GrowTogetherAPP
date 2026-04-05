@@ -1,4 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import '../../core/l10n/locale_controller.dart';
+import '../../core/theme/app_themes.dart';
+import '../../core/theme/theme_controller.dart';
 import '../api/dio_client.dart';
 import '../api/api_exceptions.dart';
 import '../local/secure_storage_service.dart';
@@ -27,6 +31,9 @@ class AuthRepository {
       await _storage.saveUserId(userId);
       await _storage.saveUserName(nombre);
       await _storage.saveUserEmail(userEmail);
+
+      // Aplicar preferencias de tema e idioma del servidor
+      _aplicarPreferencias(data['tema'] as String?, data['idioma'] as String?);
 
       return Usuario(id: userId, nombre: nombre, email: userEmail);
     } on DioException catch (e) {
@@ -71,6 +78,24 @@ class AuthRepository {
 
   Future<void> logout() async {
     await _storage.deleteAll();
+  }
+
+  /// Aplica tema e idioma recibidos del servidor a los controladores locales.
+  /// Si alguno es null o no reconocido, se deja el valor actual (fallback local).
+  void _aplicarPreferencias(String? tema, String? idioma) {
+    final themeType = AppThemes.fromApiString(tema);
+    if (themeType != null) {
+      ThemeController.instance.cambiar(themeType);
+    }
+
+    if (idioma != null && ['es', 'en', 'ca'].contains(idioma)) {
+      LocaleController.instance.cambiar(Locale(idioma));
+    }
+  }
+
+  /// Aplica preferencias desde un objeto Usuario (para auto-login).
+  void aplicarPreferenciasDesdeUsuario(Usuario usuario) {
+    _aplicarPreferencias(usuario.tema, usuario.idioma);
   }
 
   Future<bool> isLoggedIn() async {

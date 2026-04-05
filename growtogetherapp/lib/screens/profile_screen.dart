@@ -394,6 +394,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  /// Sincroniza preferencias (tema y/o idioma) con la API.
+  /// Si falla, se ignora silenciosamente — el valor local ya esta guardado.
+  Future<void> _sincronizarPreferenciasConApi({String? tema, String? idioma}) async {
+    try {
+      final id = await _storage.getUserId();
+      if (id == null) return;
+      await _repo.actualizarPreferencias(id, tema: tema, idioma: idioma);
+    } catch (_) {
+      // Fallo silencioso: la preferencia local ya se aplico
+    }
+  }
+
   // --- Selector de tema ---
   void _mostrarSelectorTema() {
     final l10n = AppLocalizations.of(context)!;
@@ -425,6 +437,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () {
                     ThemeController.instance.cambiar(tipo);
                     Navigator.pop(ctx);
+                    _sincronizarPreferenciasConApi(
+                      tema: AppThemes.toApiString(tipo),
+                    );
                   },
                 );
               }),
@@ -472,6 +487,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () {
                     LocaleController.instance.cambiar(opcion.locale);
                     Navigator.pop(ctx);
+                    _sincronizarPreferenciasConApi(
+                      idioma: opcion.locale.languageCode,
+                    );
                   },
                 );
               }),

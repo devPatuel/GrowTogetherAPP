@@ -5,6 +5,8 @@ class Usuario {
   final String? foto;
   final String? rol;
   final int puntosTotales;
+  final String? tema;
+  final String? idioma;
 
   Usuario({
     required this.id,
@@ -13,6 +15,8 @@ class Usuario {
     this.foto,
     this.rol,
     this.puntosTotales = 0,
+    this.tema,
+    this.idioma,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,8 @@ class Usuario {
       foto: json['foto'],
       rol: json['rol'],
       puntosTotales: json['puntosTotales'] ?? 0,
+      tema: json['tema'],
+      idioma: json['idioma'],
     );
   }
 }
