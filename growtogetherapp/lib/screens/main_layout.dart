@@ -60,6 +60,7 @@ class _MainLayoutState extends State<MainLayout> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _abrirCrearHabito,
+        tooltip: '',
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
         shape: const CircleBorder(),
