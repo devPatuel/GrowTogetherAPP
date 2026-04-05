@@ -332,4 +332,50 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get diasCortoDom => 'Dg';
+
+  @override
+  String get detalleHabito => 'Detall de l\'hàbit';
+
+  @override
+  String get rachaActual => 'Ratxa actual';
+
+  @override
+  String get mejorRacha => 'Millor ratxa';
+
+  @override
+  String get dias => 'dies';
+
+  @override
+  String get historial => 'Historial';
+
+  @override
+  String get editarHabito => 'Editar hàbit';
+
+  @override
+  String get eliminarHabito => 'Eliminar hàbit';
+
+  @override
+  String get confirmarEliminarHabito =>
+      'Segur que vols eliminar aquest hàbit? Aquesta acció no es pot desfer.';
+
+  @override
+  String get habitoEliminado => 'Hàbit eliminat';
+
+  @override
+  String get habitoActualizado => 'Hàbit actualitzat';
+
+  @override
+  String get completado => 'Completat';
+
+  @override
+  String get noCompletado => 'No completat';
+
+  @override
+  String get pendiente => 'Pendent';
+
+  @override
+  String get frecuenciaDiaria => 'Diari';
+
+  @override
+  String get frecuenciaPersonalizada => 'Personalitzat';
 }

@@ -120,5 +120,21 @@
   "diasCortoJue": "Dj",
   "diasCortoVie": "Dv",
   "diasCortoSab": "Ds",
-  "diasCortoDom": "Dg"
+  "diasCortoDom": "Dg",
+
+  "detalleHabito": "Detall de l'h\u00e0bit",
+  "rachaActual": "Ratxa actual",
+  "mejorRacha": "Millor ratxa",
+  "dias": "dies",
+  "historial": "Historial",
+  "editarHabito": "Editar h\u00e0bit",
+  "eliminarHabito": "Eliminar h\u00e0bit",
+  "confirmarEliminarHabito": "Segur que vols eliminar aquest h\u00e0bit? Aquesta acci\u00f3 no es pot desfer.",
+  "habitoEliminado": "H\u00e0bit eliminat",
+  "habitoActualizado": "H\u00e0bit actualitzat",
+  "completado": "Completat",
+  "noCompletado": "No completat",
+  "pendiente": "Pendent",
+  "frecuenciaDiaria": "Diari",
+  "frecuenciaPersonalizada": "Personalitzat"
 }

@@ -729,6 +729,96 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Dom'**
   String get diasCortoDom;
+
+  /// Titulo pantalla detalle habito
+  ///
+  /// In es, this message translates to:
+  /// **'Detalle del hábito'**
+  String get detalleHabito;
+
+  /// Etiqueta racha actual
+  ///
+  /// In es, this message translates to:
+  /// **'Racha actual'**
+  String get rachaActual;
+
+  /// Etiqueta mejor racha
+  ///
+  /// In es, this message translates to:
+  /// **'Mejor racha'**
+  String get mejorRacha;
+
+  /// Palabra dias
+  ///
+  /// In es, this message translates to:
+  /// **'días'**
+  String get dias;
+
+  /// Titulo seccion historial
+  ///
+  /// In es, this message translates to:
+  /// **'Historial'**
+  String get historial;
+
+  /// Boton editar habito
+  ///
+  /// In es, this message translates to:
+  /// **'Editar hábito'**
+  String get editarHabito;
+
+  /// Boton eliminar habito
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar hábito'**
+  String get eliminarHabito;
+
+  /// Confirmacion eliminar habito
+  ///
+  /// In es, this message translates to:
+  /// **'¿Seguro que quieres eliminar este hábito? Esta acción no se puede deshacer.'**
+  String get confirmarEliminarHabito;
+
+  /// Snackbar tras eliminar habito
+  ///
+  /// In es, this message translates to:
+  /// **'Hábito eliminado'**
+  String get habitoEliminado;
+
+  /// Snackbar tras actualizar habito
+  ///
+  /// In es, this message translates to:
+  /// **'Hábito actualizado'**
+  String get habitoActualizado;
+
+  /// Estado completado en leyenda
+  ///
+  /// In es, this message translates to:
+  /// **'Completado'**
+  String get completado;
+
+  /// Estado no completado en leyenda
+  ///
+  /// In es, this message translates to:
+  /// **'No completado'**
+  String get noCompletado;
+
+  /// Estado pendiente en leyenda
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get pendiente;
+
+  /// Chip frecuencia diaria
+  ///
+  /// In es, this message translates to:
+  /// **'Diario'**
+  String get frecuenciaDiaria;
+
+  /// Chip frecuencia personalizada
+  ///
+  /// In es, this message translates to:
+  /// **'Personalizado'**
+  String get frecuenciaPersonalizada;
 }
 
 class _AppLocalizationsDelegate

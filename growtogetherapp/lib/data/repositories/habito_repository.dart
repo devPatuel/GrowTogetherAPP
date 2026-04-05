@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../api/dio_client.dart';
 import '../api/api_exceptions.dart';
 import '../models/habito.dart';
+import '../models/registro_historial.dart';
 
 class HabitoRepository {
   final DioClient _client;
@@ -101,6 +102,33 @@ class HabitoRepository {
       return Habito.fromJson(response.data);
     } on DioException catch (e) {
       _handleError(e, 'Error al cargar progreso');
+    }
+  }
+
+  Future<List<RegistroHistorial>> obtenerHistorial(
+    int habitoId, {
+    DateTime? fechaInicio,
+    DateTime? fechaFin,
+  }) async {
+    try {
+      final queryParams = <String, dynamic>{};
+      if (fechaInicio != null) {
+        queryParams['fechaInicio'] =
+            '${fechaInicio.year}-${fechaInicio.month.toString().padLeft(2, '0')}-${fechaInicio.day.toString().padLeft(2, '0')}';
+      }
+      if (fechaFin != null) {
+        queryParams['fechaFin'] =
+            '${fechaFin.year}-${fechaFin.month.toString().padLeft(2, '0')}-${fechaFin.day.toString().padLeft(2, '0')}';
+      }
+
+      final response = await _client.dio.get(
+        '/habitos/$habitoId/historial',
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      );
+      final list = response.data as List;
+      return list.map((json) => RegistroHistorial.fromJson(json)).toList();
+    } on DioException catch (e) {
+      _handleError(e, 'Error al cargar historial');
     }
   }
 

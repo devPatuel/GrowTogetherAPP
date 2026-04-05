@@ -325,5 +325,50 @@
   "@diasCortoSab": { "description": "Sabado corto para subtitle habito" },
 
   "diasCortoDom": "Dom",
-  "@diasCortoDom": { "description": "Domingo corto para subtitle habito" }
+  "@diasCortoDom": { "description": "Domingo corto para subtitle habito" },
+
+  "detalleHabito": "Detalle del h\u00e1bito",
+  "@detalleHabito": { "description": "Titulo pantalla detalle habito" },
+
+  "rachaActual": "Racha actual",
+  "@rachaActual": { "description": "Etiqueta racha actual" },
+
+  "mejorRacha": "Mejor racha",
+  "@mejorRacha": { "description": "Etiqueta mejor racha" },
+
+  "dias": "d\u00edas",
+  "@dias": { "description": "Palabra dias" },
+
+  "historial": "Historial",
+  "@historial": { "description": "Titulo seccion historial" },
+
+  "editarHabito": "Editar h\u00e1bito",
+  "@editarHabito": { "description": "Boton editar habito" },
+
+  "eliminarHabito": "Eliminar h\u00e1bito",
+  "@eliminarHabito": { "description": "Boton eliminar habito" },
+
+  "confirmarEliminarHabito": "\u00bfSeguro que quieres eliminar este h\u00e1bito? Esta acci\u00f3n no se puede deshacer.",
+  "@confirmarEliminarHabito": { "description": "Confirmacion eliminar habito" },
+
+  "habitoEliminado": "H\u00e1bito eliminado",
+  "@habitoEliminado": { "description": "Snackbar tras eliminar habito" },
+
+  "habitoActualizado": "H\u00e1bito actualizado",
+  "@habitoActualizado": { "description": "Snackbar tras actualizar habito" },
+
+  "completado": "Completado",
+  "@completado": { "description": "Estado completado en leyenda" },
+
+  "noCompletado": "No completado",
+  "@noCompletado": { "description": "Estado no completado en leyenda" },
+
+  "pendiente": "Pendiente",
+  "@pendiente": { "description": "Estado pendiente en leyenda" },
+
+  "frecuenciaDiaria": "Diario",
+  "@frecuenciaDiaria": { "description": "Chip frecuencia diaria" },
+
+  "frecuenciaPersonalizada": "Personalizado",
+  "@frecuenciaPersonalizada": { "description": "Chip frecuencia personalizada" }
 }

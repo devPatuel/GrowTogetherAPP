@@ -120,5 +120,21 @@
   "diasCortoJue": "Thu",
   "diasCortoVie": "Fri",
   "diasCortoSab": "Sat",
-  "diasCortoDom": "Sun"
+  "diasCortoDom": "Sun",
+
+  "detalleHabito": "Habit details",
+  "rachaActual": "Current streak",
+  "mejorRacha": "Best streak",
+  "dias": "days",
+  "historial": "History",
+  "editarHabito": "Edit habit",
+  "eliminarHabito": "Delete habit",
+  "confirmarEliminarHabito": "Are you sure you want to delete this habit? This action cannot be undone.",
+  "habitoEliminado": "Habit deleted",
+  "habitoActualizado": "Habit updated",
+  "completado": "Completed",
+  "noCompletado": "Not completed",
+  "pendiente": "Pending",
+  "frecuenciaDiaria": "Daily",
+  "frecuenciaPersonalizada": "Custom"
 }

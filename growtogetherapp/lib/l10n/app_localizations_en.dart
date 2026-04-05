@@ -330,4 +330,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get diasCortoDom => 'Sun';
+
+  @override
+  String get detalleHabito => 'Habit details';
+
+  @override
+  String get rachaActual => 'Current streak';
+
+  @override
+  String get mejorRacha => 'Best streak';
+
+  @override
+  String get dias => 'days';
+
+  @override
+  String get historial => 'History';
+
+  @override
+  String get editarHabito => 'Edit habit';
+
+  @override
+  String get eliminarHabito => 'Delete habit';
+
+  @override
+  String get confirmarEliminarHabito =>
+      'Are you sure you want to delete this habit? This action cannot be undone.';
+
+  @override
+  String get habitoEliminado => 'Habit deleted';
+
+  @override
+  String get habitoActualizado => 'Habit updated';
+
+  @override
+  String get completado => 'Completed';
+
+  @override
+  String get noCompletado => 'Not completed';
+
+  @override
+  String get pendiente => 'Pending';
+
+  @override
+  String get frecuenciaDiaria => 'Daily';
+
+  @override
+  String get frecuenciaPersonalizada => 'Custom';
 }

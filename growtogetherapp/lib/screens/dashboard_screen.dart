@@ -5,6 +5,7 @@ import '../data/local/secure_storage_service.dart';
 import '../data/models/habito.dart';
 import '../data/repositories/habito_repository.dart';
 import '../l10n/app_localizations.dart';
+import 'detalle_habito_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -245,13 +246,28 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Future<void> _abrirDetalle(Habito habito) async {
+    final resultado = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DetalleHabitoScreen(habito: habito),
+      ),
+    );
+    if (resultado == true || resultado == null) {
+      cargarDatos();
+    }
+  }
+
   Widget _buildHabitoCard(Habito habito) {
     final colorScheme = Theme.of(context).colorScheme;
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 1,
-      child: ListTile(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => _abrirDetalle(habito),
+        child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: IconButton(
           icon: Icon(
@@ -286,6 +302,7 @@ class DashboardScreenState extends State<DashboardScreen> {
             ],
           ],
         ),
+      ),
       ),
     );
   }
