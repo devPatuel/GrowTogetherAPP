@@ -1,0 +1,119 @@
+import 'package:flutter/foundation.dart';
+import '../data/api/api_exceptions.dart';
+import '../data/local/secure_storage_service.dart';
+import '../data/models/usuario.dart';
+import '../data/repositories/user_repository.dart';
+
+class PerfilProvider extends ChangeNotifier {
+  final UserRepository _repo;
+  final SecureStorageService _storage;
+
+  Usuario? _usuario;
+  bool _cargando = true;
+  String? _error;
+
+  PerfilProvider(this._repo, this._storage);
+
+  Usuario? get usuario => _usuario;
+  bool get cargando => _cargando;
+  String? get error => _error;
+
+  Future<void> cargar() async {
+    _cargando = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final id = await _storage.getUserId();
+      if (id == null) return;
+      _usuario = await _repo.obtenerPerfil(id);
+      _cargando = false;
+      notifyListeners();
+    } on ApiException catch (e) {
+      _error = e.message;
+      _cargando = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> editarNombre(String nombre) async {
+    try {
+      final id = await _storage.getUserId();
+      if (id == null) return false;
+      await _repo.editarPerfil(id, nombre: nombre);
+      await _storage.saveUserName(nombre);
+      await cargar();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> editarEmail(String email) async {
+    try {
+      final id = await _storage.getUserId();
+      if (id == null) return false;
+      await _repo.editarPerfil(id, email: email);
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> editarFoto(String fotoBase64) async {
+    try {
+      final id = await _storage.getUserId();
+      if (id == null) return false;
+      await _repo.editarPerfil(id, foto: fotoBase64);
+      await cargar();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> quitarFoto() async {
+    try {
+      final id = await _storage.getUserId();
+      if (id == null) return false;
+      await _repo.editarPerfil(id, foto: '');
+      await cargar();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> cambiarContrasena(String actual, String nueva) async {
+    try {
+      final id = await _storage.getUserId();
+      if (id == null) return false;
+      await _repo.cambiarContrasena(id, actual, nueva);
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<void> sincronizarPreferencias({String? tema, String? idioma}) async {
+    try {
+      final id = await _storage.getUserId();
+      if (id == null) return;
+      await _repo.actualizarPreferencias(id, tema: tema, idioma: idioma);
+    } catch (_) {}
+  }
+
+  Future<void> cerrarSesion() async {
+    await _storage.deleteAll();
+  }
+}

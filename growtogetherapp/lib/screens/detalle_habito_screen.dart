@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../core/utils/habit_icons.dart';
-import '../data/api/dio_client.dart';
-import '../data/local/secure_storage_service.dart';
 import '../data/models/habito.dart';
 import '../data/models/registro_historial.dart';
 import '../data/repositories/habito_repository.dart';
 import '../l10n/app_localizations.dart';
+import 'widgets/habit_type_selector.dart';
+import 'widgets/icon_selector.dart';
 
 class DetalleHabitoScreen extends StatefulWidget {
   final Habito habito;
@@ -17,8 +18,7 @@ class DetalleHabitoScreen extends StatefulWidget {
 }
 
 class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
-  final _storage = SecureStorageService();
-  late final _repo = HabitoRepository(DioClient(_storage));
+  HabitoRepository get _repo => context.read<HabitoRepository>();
 
   late Habito _habito;
   List<RegistroHistorial> _historial = [];
@@ -124,7 +124,6 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setDialogState) {
-            final colorScheme = Theme.of(context).colorScheme;
             return AlertDialog(
               title: Text(l10n.editarHabito),
               content: SingleChildScrollView(
@@ -137,52 +136,18 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                       // Tipo
                       Text(l10n.tipoHabito, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
-                      SegmentedButton<String>(
-                        segments: [
-                          ButtonSegment(value: 'POSITIVO', label: Text(l10n.tipoPositivo)),
-                          ButtonSegment(value: 'NEGATIVO', label: Text(l10n.tipoNegativo)),
-                        ],
-                        selected: {tipo},
-                        onSelectionChanged: (sel) {
-                          setDialogState(() => tipo = sel.first);
-                        },
+                      HabitTypeSelector(
+                        tipo: tipo,
+                        onChanged: (val) => setDialogState(() => tipo = val),
                       ),
                       const SizedBox(height: 16),
 
                       // Icono
                       Text(l10n.iconoHabito, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: HabitIcons.allKeys.map((key) {
-                          final sel = iconoSeleccionado == key;
-                          return GestureDetector(
-                            onTap: () {
-                              setDialogState(() {
-                                iconoSeleccionado = sel ? null : key;
-                              });
-                            },
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: sel
-                                    ? colorScheme.primary.withValues(alpha: 0.2)
-                                    : colorScheme.surfaceContainerHighest,
-                                borderRadius: BorderRadius.circular(10),
-                                border: sel
-                                    ? Border.all(color: colorScheme.primary, width: 2)
-                                    : null,
-                              ),
-                              child: Icon(
-                                HabitIcons.getIcon(key),
-                                size: 22,
-                                color: sel ? colorScheme.primary : colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                      IconSelector(
+                        selectedIcon: iconoSeleccionado,
+                        onChanged: (val) => setDialogState(() => iconoSeleccionado = val),
                       ),
                       const SizedBox(height: 16),
 

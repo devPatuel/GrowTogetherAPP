@@ -1,20 +1,18 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../core/l10n/locale_controller.dart';
 import '../core/theme/app_themes.dart';
 import '../core/theme/theme_controller.dart';
 import '../core/utils/validators.dart';
-import '../data/api/api_exceptions.dart';
-import '../data/api/dio_client.dart';
-import '../data/local/secure_storage_service.dart';
 import '../data/models/usuario.dart';
-import '../data/repositories/user_repository.dart';
 import '../l10n/app_localizations.dart';
+import '../providers/perfil_provider.dart';
 import 'login_screen.dart';
+import 'widgets/dialogo_cambiar_contrasena.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -24,50 +22,14 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final _storage = SecureStorageService();
-  late final _repo = UserRepository(DioClient(_storage));
-
-  Usuario? _usuario;
-  bool _cargando = true;
-  String? _error;
-  String? _fotoLocalPath;
-
   @override
   void initState() {
     super.initState();
-    _cargarFotoLocal();
-    _cargarPerfil();
-  }
-
-  Future<void> _cargarFotoLocal() async {
-    final path = await _storage.getProfilePhotoPath();
-    if (path != null && File(path).existsSync()) {
-      if (mounted) setState(() => _fotoLocalPath = path);
-    } else if (path != null) {
-      await _storage.deleteProfilePhotoPath();
-    }
-  }
-
-  Future<void> _cargarPerfil() async {
-    setState(() {
-      _cargando = true;
-      _error = null;
-    });
-
-    try {
-      final id = await _storage.getUserId();
-      if (id == null) return;
-      final usuario = await _repo.obtenerPerfil(id);
-      if (mounted) setState(() => _usuario = usuario);
-    } on ApiException catch (e) {
-      if (mounted) setState(() => _error = e.message);
-    } finally {
-      if (mounted) setState(() => _cargando = false);
-    }
+    context.read<PerfilProvider>().cargar();
   }
 
   void _irALogin({String? mensaje}) {
-    _storage.deleteAll();
+    context.read<PerfilProvider>().cerrarSesion();
     if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
@@ -85,8 +47,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _editarFoto() async {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-    final tienePhoto = _fotoLocalPath != null ||
-        (_usuario?.foto != null && _usuario!.foto!.isNotEmpty);
+    final perfil = context.read<PerfilProvider>();
+    final tienePhoto = perfil.usuario?.foto != null && perfil.usuario!.foto!.isNotEmpty;
 
     final accion = await showModalBottomSheet<_FotoAccion>(
       context: context,
@@ -138,31 +100,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         : ImageSource.gallery;
 
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, maxWidth: 800, imageQuality: 85);
+    final picked = await picker.pickImage(source: source, maxWidth: 400, imageQuality: 70);
     if (picked == null) return;
 
     try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final destino = '${appDir.path}/profile_photo.jpg';
-      await File(picked.path).copy(destino);
-
-      await _storage.saveProfilePhotoPath(destino);
-      if (mounted) setState(() => _fotoLocalPath = destino);
-
-      final id = await _storage.getUserId();
-      if (id != null) {
-        await _repo.editarPerfil(id, foto: 'local_photo');
+      final bytes = await picked.readAsBytes();
+      final base64Str = base64Encode(bytes);
+      await perfil.editarFoto(base64Str);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.fotoActualizada)));
       }
-
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.fotoActualizada)),
-        );
-      }
-    } on ApiException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message)),
+          SnackBar(content: Text(e.toString())),
         );
       }
     }
@@ -170,38 +121,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _quitarFoto() async {
     final l10n = AppLocalizations.of(context)!;
-    if (_fotoLocalPath != null) {
-      final file = File(_fotoLocalPath!);
-      if (file.existsSync()) await file.delete();
-      await _storage.deleteProfilePhotoPath();
-    }
-
-    setState(() => _fotoLocalPath = null);
-
-    try {
-      final id = await _storage.getUserId();
-      if (id != null) {
-        await _repo.editarPerfil(id, foto: '');
-      }
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.fotoEliminada)),
-        );
-      }
-      _cargarPerfil();
-    } on ApiException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message)),
-        );
-      }
+    final ok = await context.read<PerfilProvider>().quitarFoto();
+    if (mounted && ok) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.fotoEliminada)));
     }
   }
 
   // --- Editar nombre ---
   Future<void> _editarNombre() async {
     final l10n = AppLocalizations.of(context)!;
-    final controller = TextEditingController(text: _usuario?.nombre ?? '');
+    final perfil = context.read<PerfilProvider>();
+    final controller = TextEditingController(text: perfil.usuario?.nombre ?? '');
     final resultado = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -227,30 +157,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
-    if (resultado == null || resultado.isEmpty || resultado == _usuario?.nombre) return;
+    if (resultado == null || resultado.isEmpty || resultado == perfil.usuario?.nombre) return;
 
-    try {
-      final id = await _storage.getUserId();
-      if (id == null) return;
-      await _repo.editarPerfil(id, nombre: resultado);
-      await _storage.saveUserName(resultado);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.perfilActualizado)),
-        );
-      }
-      _cargarPerfil();
-    } on ApiException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
-      }
+    final ok = await perfil.editarNombre(resultado);
+    if (mounted && ok) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.perfilActualizado)));
     }
   }
 
   // --- Editar email (cierra sesion porque invalida el JWT) ---
   Future<void> _editarEmail() async {
     final l10n = AppLocalizations.of(context)!;
-    final controller = TextEditingController(text: _usuario?.email ?? '');
+    final perfil = context.read<PerfilProvider>();
+    final controller = TextEditingController(text: perfil.usuario?.email ?? '');
     final nuevoEmail = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -277,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
-    if (nuevoEmail == null || nuevoEmail.isEmpty || nuevoEmail == _usuario?.email) return;
+    if (nuevoEmail == null || nuevoEmail.isEmpty || nuevoEmail == perfil.usuario?.email) return;
 
     final errorEmail = Validators.email(
       nuevoEmail,
@@ -312,15 +231,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (confirmar != true) return;
 
-    try {
-      final id = await _storage.getUserId();
-      if (id == null) return;
-      await _repo.editarPerfil(id, email: nuevoEmail);
+    final ok = await perfil.editarEmail(nuevoEmail);
+    if (ok && mounted) {
       _irALogin(mensaje: l10n.sesionCerradaPorCambio);
-    } on ApiException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
-      }
     }
   }
 
@@ -329,7 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
     final resultado = await showDialog<Map<String, String>>(
       context: context,
-      builder: (ctx) => const _DialogoCambiarContrasena(),
+      builder: (ctx) => const DialogoCambiarContrasena(),
     );
 
     if (resultado == null) return;
@@ -355,15 +268,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (confirmar != true) return;
 
-    try {
-      final id = await _storage.getUserId();
-      if (id == null) return;
-      await _repo.cambiarContrasena(id, resultado['actual']!, resultado['nueva']!);
+    final ok = await context.read<PerfilProvider>().cambiarContrasena(resultado['actual']!, resultado['nueva']!);
+    if (ok && mounted) {
       _irALogin(mensaje: l10n.sesionCerradaPorCambio);
-    } on ApiException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
-      }
     }
   }
 
@@ -396,14 +303,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   /// Sincroniza preferencias (tema y/o idioma) con la API.
   /// Si falla, se ignora silenciosamente — el valor local ya esta guardado.
-  Future<void> _sincronizarPreferenciasConApi({String? tema, String? idioma}) async {
-    try {
-      final id = await _storage.getUserId();
-      if (id == null) return;
-      await _repo.actualizarPreferencias(id, tema: tema, idioma: idioma);
-    } catch (_) {
-      // Fallo silencioso: la preferencia local ya se aplico
-    }
+  void _sincronizarPreferenciasConApi({String? tema, String? idioma}) {
+    context.read<PerfilProvider>().sincronizarPreferencias(tema: tema, idioma: idioma);
   }
 
   // --- Selector de tema ---
@@ -518,19 +419,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
-    if (_cargando) {
+    final perfil = context.watch<PerfilProvider>();
+
+    if (perfil.cargando && perfil.usuario == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_error != null) {
+    if (perfil.error != null && perfil.usuario == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(_error!, style: const TextStyle(color: Colors.red)),
+            Text(perfil.error!, style: const TextStyle(color: Colors.red)),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _cargarPerfil,
+              onPressed: () => perfil.cargar(),
               child: Text(l10n.reintentar),
             ),
           ],
@@ -538,7 +441,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    final usuario = _usuario;
+    final usuario = perfil.usuario;
     if (usuario == null) return const SizedBox.shrink();
 
     return SingleChildScrollView(
@@ -715,13 +618,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   ImageProvider? _resolverImagenAvatar(Usuario usuario) {
-    if (_fotoLocalPath != null && File(_fotoLocalPath!).existsSync()) {
-      return FileImage(File(_fotoLocalPath!));
-    }
-    if (usuario.foto != null &&
-        usuario.foto!.isNotEmpty &&
-        usuario.foto != 'local_photo') {
-      return NetworkImage(usuario.foto!);
+    if (usuario.foto != null && usuario.foto!.isNotEmpty) {
+      try {
+        final bytes = base64Decode(usuario.foto!);
+        return MemoryImage(bytes);
+      } catch (_) {
+        return null;
+      }
     }
     return null;
   }
@@ -747,125 +650,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 enum _FotoAccion { camara, galeria, quitar }
-
-/// Dialogo para cambiar contrasena con 3 campos y toggles de visibilidad.
-class _DialogoCambiarContrasena extends StatefulWidget {
-  const _DialogoCambiarContrasena();
-
-  @override
-  State<_DialogoCambiarContrasena> createState() => _DialogoCambiarContrasenaState();
-}
-
-class _DialogoCambiarContrasenaState extends State<_DialogoCambiarContrasena> {
-  final _actualController = TextEditingController();
-  final _nuevaController = TextEditingController();
-  final _confirmarController = TextEditingController();
-  bool _ocultarActual = true;
-  bool _ocultarNueva = true;
-  bool _ocultarConfirmar = true;
-  String? _error;
-
-  @override
-  void dispose() {
-    _actualController.dispose();
-    _nuevaController.dispose();
-    _confirmarController.dispose();
-    super.dispose();
-  }
-
-  void _validarYGuardar() {
-    final l10n = AppLocalizations.of(context)!;
-    final errorPassword = Validators.password(
-      _nuevaController.text,
-      obligatoria: l10n.validatorContrasenaObligatoria,
-      minimo: l10n.validatorContrasenaMinimo,
-      mayuscula: l10n.validatorContrasenaMayuscula,
-      minuscula: l10n.validatorContrasenaMinuscula,
-      numero: l10n.validatorContrasenaNumero,
-    );
-    if (errorPassword != null) {
-      setState(() => _error = errorPassword);
-      return;
-    }
-    if (_nuevaController.text != _confirmarController.text) {
-      setState(() => _error = l10n.contrasenasNoCoinciden);
-      return;
-    }
-    if (_actualController.text.isEmpty) {
-      setState(() => _error = l10n.rellenaTodosLosCampos);
-      return;
-    }
-    Navigator.pop(context, {
-      'actual': _actualController.text,
-      'nueva': _nuevaController.text,
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return AlertDialog(
-      title: Text(l10n.cambiarContrasena),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(_error!, style: TextStyle(color: Colors.red.shade700, fontSize: 13)),
-              ),
-            TextField(
-              controller: _actualController,
-              obscureText: _ocultarActual,
-              decoration: InputDecoration(
-                labelText: l10n.contrasenaActual,
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(_ocultarActual ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () => setState(() => _ocultarActual = !_ocultarActual),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _nuevaController,
-              obscureText: _ocultarNueva,
-              decoration: InputDecoration(
-                labelText: l10n.nuevaContrasena,
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(_ocultarNueva ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () => setState(() => _ocultarNueva = !_ocultarNueva),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _confirmarController,
-              obscureText: _ocultarConfirmar,
-              decoration: InputDecoration(
-                labelText: l10n.confirmarNuevaContrasena,
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(_ocultarConfirmar ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () => setState(() => _ocultarConfirmar = !_ocultarConfirmar),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.cancelar),
-        ),
-        ElevatedButton(
-          onPressed: _validarYGuardar,
-          child: Text(l10n.guardar),
-        ),
-      ],
-    );
-  }
-}

@@ -55,7 +55,7 @@ class UserRepository {
       final data = <String, dynamic>{};
       if (tema != null) data['tema'] = tema;
       if (idioma != null) data['idioma'] = idioma;
-      await _client.dio.put('/api/v1/usuarios/perfil/$id/preferencias', data: data);
+      await _client.dio.put('/usuarios/perfil/$id/preferencias', data: data);
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.connectionError) {

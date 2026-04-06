@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import '../data/api/api_exceptions.dart';
-import '../data/api/dio_client.dart';
-import '../data/local/secure_storage_service.dart';
-import '../data/repositories/auth_repository.dart';
-import '../data/repositories/user_repository.dart';
+import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
+import '../providers/auth_provider.dart';
 import 'register_screen.dart';
 import 'main_layout.dart';
+import 'widgets/error_banner.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,12 +16,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _cargando = false;
   bool _ocultarPassword = true;
-  String? _error;
-
-  final _storage = SecureStorageService();
-  late final _repo = AuthRepository(DioClient(_storage), _storage);
 
   @override
   void initState() {
@@ -32,18 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _verificarSesion() async {
-    final usuario = await _repo.getCurrentUser();
+    final auth = context.read<AuthProvider>();
+    final usuario = await auth.verificarSesion();
     if (usuario != null && mounted) {
-      // Cargar preferencias del servidor en auto-login
-      try {
-        final userRepo = UserRepository(DioClient(_storage));
-        final perfil = await userRepo.obtenerPerfil(usuario.id);
-        _repo.aplicarPreferenciasDesdeUsuario(perfil);
-      } catch (_) {
-        // Si falla, se usan las preferencias locales como fallback
-      }
-
-      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MainLayout()),
@@ -53,31 +37,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _iniciarSesion() async {
     final l10n = AppLocalizations.of(context)!;
+    final auth = context.read<AuthProvider>();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      setState(() => _error = l10n.rellenaTodosLosCampos);
+      auth.limpiarError();
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.rellenaTodosLosCampos)),
+      );
       return;
     }
 
-    setState(() {
-      _cargando = true;
-      _error = null;
-    });
-
-    try {
-      await _repo.login(email, password);
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const MainLayout()),
-        );
-      }
-    } on ApiException catch (e) {
-      setState(() => _error = e.message);
-    } finally {
-      if (mounted) setState(() => _cargando = false);
+    final ok = await auth.login(email, password);
+    if (ok && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainLayout()),
+      );
     }
   }
 
@@ -91,6 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final auth = context.watch<AuthProvider>();
 
     return Scaffold(
       body: Center(
@@ -99,30 +78,13 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo
               Icon(Icons.eco_rounded, size: 64, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 8),
-              Text(
-                l10n.appNombre,
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
+              Text(l10n.appNombre, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
               const SizedBox(height: 40),
 
-              // Error
-              if (_error != null)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.red.shade200),
-                  ),
-                  child: Text(_error!, style: TextStyle(color: Colors.red.shade700)),
-                ),
+              if (auth.error != null) ErrorBanner(mensaje: auth.error!),
 
-              // Email
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -134,7 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Password
               TextField(
                 controller: _passwordController,
                 obscureText: _ocultarPassword,
@@ -150,35 +111,24 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Boton login
               SizedBox(
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _cargando ? null : _iniciarSesion,
+                  onPressed: auth.cargando ? null : _iniciarSesion,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
-                  child: _cargando
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                        )
+                  child: auth.cargando
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : Text(l10n.iniciarSesion, style: const TextStyle(fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Ir a registro
               TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                  );
-                },
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterScreen())),
                 child: Text(l10n.noTienesCuenta),
               ),
             ],

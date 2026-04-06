@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../core/utils/habit_icons.dart';
-import '../data/api/dio_client.dart';
-import '../data/local/secure_storage_service.dart';
+import 'package:provider/provider.dart';
 import '../data/repositories/habito_repository.dart';
 import '../l10n/app_localizations.dart';
+import 'widgets/day_of_week_selector.dart';
+import 'widgets/habit_type_selector.dart';
+import 'widgets/icon_selector.dart';
 
 class CrearHabitoScreen extends StatefulWidget {
   const CrearHabitoScreen({super.key});
@@ -22,7 +23,6 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
   String _tipo = 'POSITIVO';
   String? _iconoSeleccionado;
 
-  static const _diasEnumValues = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'];
 
   bool _guardando = false;
 
@@ -33,17 +33,10 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
     super.dispose();
   }
 
-  List<String> _getDiasLabels(AppLocalizations l10n) {
-    return [l10n.lun, l10n.mar, l10n.mie, l10n.jue, l10n.vie, l10n.sab, l10n.dom];
-  }
 
   Set<String>? _getDiasSemana() {
     if (_frecuencia == 'DIARIO') return null;
-    final dias = <String>{};
-    for (int i = 0; i < 7; i++) {
-      if (_diasSeleccionados[i]) dias.add(_diasEnumValues[i]);
-    }
-    return dias;
+    return DayOfWeekSelector.toEnumSet(_diasSeleccionados);
   }
 
   Future<void> _guardar() async {
@@ -63,8 +56,7 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
     setState(() => _guardando = true);
 
     try {
-      final storage = SecureStorageService();
-      final repo = HabitoRepository(DioClient(storage));
+      final repo = context.read<HabitoRepository>();
       await repo.crearHabito(
         nombre: _nombreCtrl.text.trim(),
         descripcion: _descCtrl.text.trim(),
@@ -95,8 +87,6 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-    final diasLabels = _getDiasLabels(l10n);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.nuevoHabito),
@@ -115,7 +105,7 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 8),
-              _buildTipoSelector(l10n, colorScheme),
+              HabitTypeSelector(tipo: _tipo, onChanged: (val) => setState(() => _tipo = val)),
               const SizedBox(height: 6),
               Text(
                 _tipo == 'POSITIVO' ? l10n.tipoPositivoDesc : l10n.tipoNegativoDesc,
@@ -156,7 +146,7 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
-              _buildIconGrid(colorScheme),
+              IconSelector(selectedIcon: _iconoSeleccionado, onChanged: (val) => setState(() => _iconoSeleccionado = val)),
               const SizedBox(height: 24),
 
               // Frecuencia
@@ -186,26 +176,9 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(7, (i) {
-                    return GestureDetector(
-                      onTap: () => setState(() => _diasSeleccionados[i] = !_diasSeleccionados[i]),
-                      child: CircleAvatar(
-                        radius: 22,
-                        backgroundColor: _diasSeleccionados[i]
-                            ? colorScheme.primary
-                            : Colors.grey[200],
-                        child: Text(
-                          diasLabels[i],
-                          style: TextStyle(
-                            color: _diasSeleccionados[i] ? colorScheme.onPrimary : Colors.grey[700],
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
+                DayOfWeekSelector(
+                  diasSeleccionados: _diasSeleccionados,
+                  onToggle: (i) => setState(() => _diasSeleccionados[i] = !_diasSeleccionados[i]),
                 ),
                 const SizedBox(height: 24),
               ],
@@ -230,68 +203,4 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
     );
   }
 
-  Widget _buildTipoSelector(AppLocalizations l10n, ColorScheme colorScheme) {
-    return SegmentedButton<String>(
-      segments: [
-        ButtonSegment(
-          value: 'POSITIVO',
-          label: Text(l10n.tipoPositivo),
-          icon: const Icon(Icons.add_circle_outline),
-        ),
-        ButtonSegment(
-          value: 'NEGATIVO',
-          label: Text(l10n.tipoNegativo),
-          icon: const Icon(Icons.remove_circle_outline),
-        ),
-      ],
-      selected: {_tipo},
-      onSelectionChanged: (sel) => setState(() => _tipo = sel.first),
-      style: SegmentedButton.styleFrom(
-        selectedBackgroundColor: _tipo == 'POSITIVO'
-            ? colorScheme.primary.withValues(alpha: 0.2)
-            : colorScheme.error.withValues(alpha: 0.2),
-        selectedForegroundColor: _tipo == 'POSITIVO'
-            ? colorScheme.primary
-            : colorScheme.error,
-      ),
-    );
-  }
-
-  Widget _buildIconGrid(ColorScheme colorScheme) {
-    final allKeys = HabitIcons.allKeys;
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: allKeys.map((key) {
-        final seleccionado = _iconoSeleccionado == key;
-        final icon = HabitIcons.getIcon(key);
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              _iconoSeleccionado = seleccionado ? null : key;
-            });
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: seleccionado
-                  ? colorScheme.primary.withValues(alpha: 0.2)
-                  : colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
-              border: seleccionado
-                  ? Border.all(color: colorScheme.primary, width: 2.5)
-                  : null,
-            ),
-            child: Icon(
-              icon,
-              size: 26,
-              color: seleccionado ? colorScheme.primary : colorScheme.onSurfaceVariant,
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
 }

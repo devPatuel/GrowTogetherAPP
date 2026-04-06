@@ -9,9 +9,20 @@ class HabitoRepository {
 
   HabitoRepository(this._client);
 
-  Future<List<Habito>> getHabitos(int usuarioId) async {
+  static String _formatDate(DateTime fecha) =>
+      '${fecha.year}-${fecha.month.toString().padLeft(2, '0')}-${fecha.day.toString().padLeft(2, '0')}';
+
+  Future<List<Habito>> getHabitos(int usuarioId, {DateTime? fecha}) async {
     try {
-      final response = await _client.dio.get('/habitos/usuario/$usuarioId');
+      final queryParams = <String, dynamic>{};
+      if (fecha != null) {
+        queryParams['fecha'] =
+            _formatDate(fecha);
+      }
+      final response = await _client.dio.get(
+        '/habitos/usuario/$usuarioId',
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      );
       final list = response.data as List;
       return list.map((json) => Habito.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -86,18 +97,34 @@ class HabitoRepository {
     }
   }
 
-  Future<Habito> completarHabito(int id) async {
+  Future<Habito> completarHabito(int id, {DateTime? fecha}) async {
     try {
-      final response = await _client.dio.post('/habitos/$id/completar');
+      final queryParams = <String, dynamic>{};
+      if (fecha != null) {
+        queryParams['fecha'] =
+            _formatDate(fecha);
+      }
+      final response = await _client.dio.post(
+        '/habitos/$id/completar',
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      );
       return Habito.fromJson(response.data);
     } on DioException catch (e) {
       _handleError(e, 'Error al completar hábito');
     }
   }
 
-  Future<Habito> descompletarHabito(int id) async {
+  Future<Habito> descompletarHabito(int id, {DateTime? fecha}) async {
     try {
-      final response = await _client.dio.post('/habitos/$id/descompletar');
+      final queryParams = <String, dynamic>{};
+      if (fecha != null) {
+        queryParams['fecha'] =
+            _formatDate(fecha);
+      }
+      final response = await _client.dio.post(
+        '/habitos/$id/descompletar',
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      );
       return Habito.fromJson(response.data);
     } on DioException catch (e) {
       _handleError(e, 'Error al desmarcar hábito');
@@ -121,12 +148,10 @@ class HabitoRepository {
     try {
       final queryParams = <String, dynamic>{};
       if (fechaInicio != null) {
-        queryParams['fechaInicio'] =
-            '${fechaInicio.year}-${fechaInicio.month.toString().padLeft(2, '0')}-${fechaInicio.day.toString().padLeft(2, '0')}';
+        queryParams['fechaInicio'] = _formatDate(fechaInicio);
       }
       if (fechaFin != null) {
-        queryParams['fechaFin'] =
-            '${fechaFin.year}-${fechaFin.month.toString().padLeft(2, '0')}-${fechaFin.day.toString().padLeft(2, '0')}';
+        queryParams['fechaFin'] = _formatDate(fechaFin);
       }
 
       final response = await _client.dio.get(

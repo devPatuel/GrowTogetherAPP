@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
+import '../providers/habitos_provider.dart';
 import 'crear_habito_screen.dart';
 import 'dashboard_screen.dart';
 import 'statistics_screen.dart';
@@ -16,24 +18,23 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _indiceActual = 0;
 
-  final _dashboardKey = GlobalKey<DashboardScreenState>();
-
-  late final List<Widget> _pantallas = [
-    DashboardScreen(key: _dashboardKey),
-    const StatisticsScreen(),
-    const ChallengesScreen(),
-    const ProfileScreen(),
+  final List<Widget> _pantallas = const [
+    DashboardScreen(),
+    StatisticsScreen(),
+    ChallengesScreen(),
+    ProfileScreen(),
   ];
 
   Future<void> _abrirCrearHabito() async {
+    final provider = context.read<HabitosProvider>();
     final resultado = await Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (_) => const CrearHabitoScreen()),
     );
 
     if (resultado == true) {
-      _dashboardKey.currentState?.cargarDatos();
-      setState(() => _indiceActual = 0);
+      provider.cargar();
+      if (mounted) setState(() => _indiceActual = 0);
     }
   }
 

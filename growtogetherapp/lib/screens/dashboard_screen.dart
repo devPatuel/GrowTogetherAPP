@@ -1,14 +1,16 @@
-import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../core/utils/daily_tip_service.dart';
 import '../core/utils/habit_icons.dart';
-import '../data/api/dio_client.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/models/habito.dart';
-import '../data/repositories/habito_repository.dart';
 import '../l10n/app_localizations.dart';
+import '../providers/habitos_provider.dart';
 import 'detalle_habito_screen.dart';
+import 'widgets/progress_painters.dart';
+import 'widgets/scale_on_tap.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -17,81 +19,77 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => DashboardScreenState();
 }
 
-class DashboardScreenState extends State<DashboardScreen> {
-  final _storage = SecureStorageService();
-  late final _repo = HabitoRepository(DioClient(_storage));
-
-  List<Habito> _habitos = [];
+class DashboardScreenState extends State<DashboardScreen>
+    with TickerProviderStateMixin {
   String _nombreUsuario = '';
-  bool _cargando = true;
-  String? _error;
   bool _tipChecked = false;
+  static const int _maxDiasAtras = 365;
 
-  /// Dia seleccionado en el carrusel (por defecto hoy)
-  late DateTime _diaSeleccionado;
-
-  static const int _diasCarrusel = 14;
+  late AnimationController _staggerController;
 
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _diaSeleccionado = DateTime(now.year, now.month, now.day);
-    cargarDatos();
+    _staggerController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _cargarInicial();
   }
 
-  /// Muestra el consejo del dia si es un nuevo dia.
+  Future<void> _cargarInicial() async {
+    final storage = context.read<SecureStorageService>();
+    final provider = context.read<HabitosProvider>();
+    _nombreUsuario = await storage.getUserName() ?? '';
+    await provider.cargar();
+    if (mounted) {
+      setState(() {});
+      _staggerController.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _staggerController.dispose();
+    super.dispose();
+  }
+
+  Future<void> cargarDatos() async {
+    final provider = context.read<HabitosProvider>();
+    await provider.cargar();
+    if (mounted) _staggerController.forward(from: 0);
+  }
+
   Future<void> _mostrarConsejoDiario() async {
     if (_tipChecked) return;
     _tipChecked = true;
-
     final lang = Localizations.localeOf(context).languageCode;
     final tip = await DailyTipService.getTipIfNewDay(lang);
     if (tip == null || !mounted) return;
-
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        backgroundColor: colorScheme.surface,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
+                  gradient: LinearGradient(colors: [colorScheme.primary, colorScheme.tertiary]),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.lightbulb_outline_rounded,
-                  size: 32,
-                  color: colorScheme.onPrimaryContainer,
-                ),
+                child: const Icon(Icons.lightbulb_outline_rounded, size: 32, color: Colors.white),
               ),
               const SizedBox(height: 16),
-              Text(
-                l10n.consejoDia,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
-                ),
-              ),
+              Text(l10n.consejoDia, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
               const SizedBox(height: 16),
-              Text(
-                tip,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  height: 1.5,
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
+              Text(tip, textAlign: TextAlign.center, style: TextStyle(fontSize: 15, height: 1.5, color: colorScheme.onSurfaceVariant)),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -99,9 +97,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                   onPressed: () => Navigator.of(ctx).pop(),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
                   child: Text(l10n.entendido),
                 ),
@@ -113,124 +109,57 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Future<void> cargarDatos() async {
-    setState(() {
-      _cargando = true;
-      _error = null;
-    });
-
-    try {
-      final nombre = await _storage.getUserName() ?? '';
-      final userId = await _storage.getUserId();
-      if (userId == null) return;
-
-      final habitos = await _repo.getHabitos(userId);
-
-      if (!mounted) return;
-      setState(() {
-        _nombreUsuario = nombre;
-        _habitos = habitos;
-        _cargando = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.toString();
-        _cargando = false;
-      });
-    }
-  }
-
   Future<void> _toggleHabito(Habito habito) async {
     final l10n = AppLocalizations.of(context)!;
-    try {
-      if (habito.completadoHoy) {
-        await _repo.descompletarHabito(habito.id);
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.habitoDesmarcado),
-            duration: const Duration(seconds: 1),
-          ),
-        );
-      } else {
-        await _repo.completarHabito(habito.id);
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.habitoCompletado),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            duration: const Duration(seconds: 1),
-          ),
-        );
-      }
-      await cargarDatos();
-    } catch (e) {
-      if (!mounted) return;
+    final ok = await context.read<HabitosProvider>().toggleHabito(habito);
+    if (!mounted) return;
+    if (ok) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(habito.completadoHoy ? l10n.habitoDesmarcado : l10n.habitoCompletado),
+        backgroundColor: habito.completadoHoy ? null : Theme.of(context).colorScheme.primary,
+        duration: const Duration(seconds: 1),
+      ));
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        const SnackBar(content: Text('Error al actualizar'), backgroundColor: Colors.red),
       );
     }
-  }
-
-  int get _completados => _habitos.where((h) => h.completadoHoy).length;
-  double get _progreso => _habitos.isEmpty ? 0 : _completados / _habitos.length;
-
-  bool get _esHoy {
-    final now = DateTime.now();
-    return _diaSeleccionado.year == now.year &&
-        _diaSeleccionado.month == now.month &&
-        _diaSeleccionado.day == now.day;
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final estado = context.watch<HabitosProvider>();
 
-    if (_cargando) {
+    if (estado.cargando && estado.habitos.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
-
-    // Mostrar consejo del dia tras la primera carga exitosa
-    if (!_tipChecked && _error == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mostrarConsejoDiario();
-      });
+    if (!_tipChecked && estado.error == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _mostrarConsejoDiario());
     }
-
-    if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(_error!, style: const TextStyle(color: Colors.red)),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: cargarDatos,
-              child: Text(l10n.reintentar),
-            ),
-          ],
-        ),
-      );
+    if (estado.error != null && estado.habitos.isEmpty) {
+      return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(estado.error!, style: const TextStyle(color: Colors.red)),
+        const SizedBox(height: 16),
+        ElevatedButton(onPressed: cargarDatos, child: Text(l10n.reintentar)),
+      ]));
     }
 
     return RefreshIndicator(
       onRefresh: cargarDatos,
       child: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
           _buildSaludo(l10n),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           _buildCarruselDias(l10n),
-          const SizedBox(height: 20),
-          _buildProgresoAnillo(l10n),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
+          _buildProgresoCard(l10n),
+          const SizedBox(height: 24),
           _buildTituloHabitos(l10n),
           const SizedBox(height: 12),
-          if (_habitos.isEmpty)
-            _buildSinHabitos(l10n)
-          else
-            ..._habitos.map((h) => _buildHabitoCard(h, l10n)),
+          if (estado.habitos.isEmpty) _buildSinHabitos(l10n)
+          else ...List.generate(estado.habitos.length, (i) => _buildAnimatedCard(estado.habitos[i], l10n, i)),
         ],
       ),
     );
@@ -239,112 +168,76 @@ class DashboardScreenState extends State<DashboardScreen> {
   // ─────────────────── SALUDO ───────────────────
 
   Widget _buildSaludo(AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     final locale = Localizations.localeOf(context).languageCode;
     final localeIntl = locale == 'ca' ? 'ca_ES' : locale == 'en' ? 'en_US' : 'es_ES';
     final hoy = DateFormat('EEEE, d MMMM', localeIntl).format(DateTime.now());
     final horaActual = DateTime.now().hour;
-    final saludo = horaActual < 12
-        ? l10n.buenosDias
-        : horaActual < 20
-            ? l10n.buenasTardes
-            : l10n.buenasNoches;
+    final saludo = horaActual < 12 ? l10n.buenosDias : horaActual < 20 ? l10n.buenasTardes : l10n.buenasNoches;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$saludo, $_nombreUsuario',
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          '$saludo,',
+          style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
         ),
-        const SizedBox(height: 4),
+        Text(
+          _nombreUsuario,
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -0.5),
+        ),
+        const SizedBox(height: 2),
         Text(
           hoy.isNotEmpty ? '${hoy[0].toUpperCase()}${hoy.substring(1)}' : '',
-          style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
         ),
       ],
     );
   }
 
-  // ─────────────────── CARRUSEL DE DIAS ───────────────────
+  // ─────────────────── CARRUSEL ───────────────────
 
   Widget _buildCarruselDias(AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
+    final estado = context.watch<HabitosProvider>();
     final now = DateTime.now();
     final hoy = DateTime(now.year, now.month, now.day);
-
-    // Ultimos _diasCarrusel dias (incluyendo hoy)
-    final dias = List.generate(
-      _diasCarrusel,
-      (i) => hoy.subtract(Duration(days: _diasCarrusel - 1 - i)),
-    );
-
     final diasLetras = _getDiasLetras(l10n);
 
     return SizedBox(
-      height: 72,
+      height: 68,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: dias.length,
-        // Que empiece scrolleado al final (hoy visible)
-        controller: ScrollController(
-          initialScrollOffset: (_diasCarrusel - 5) * 56.0,
-        ),
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        reverse: true,
+        itemCount: _maxDiasAtras,
+        separatorBuilder: (_, __) => const SizedBox(width: 6),
         itemBuilder: (context, index) {
-          final dia = dias[index];
-          final esSeleccionado = dia.year == _diaSeleccionado.year &&
-              dia.month == _diaSeleccionado.month &&
-              dia.day == _diaSeleccionado.day;
-          final esHoy = dia.year == hoy.year &&
-              dia.month == hoy.month &&
-              dia.day == hoy.day;
-
-          // weekday: 1=lun ... 7=dom
+          final dia = hoy.subtract(Duration(days: index));
+          final esSeleccionado = dia.year == estado.fechaSeleccionada.year && dia.month == estado.fechaSeleccionada.month && dia.day == estado.fechaSeleccionada.day;
+          final esHoy = index == 0;
           final letraDia = diasLetras[dia.weekday - 1];
 
           return GestureDetector(
-            onTap: () {
-              setState(() => _diaSeleccionado = dia);
-              // TODO: cargar habitos de ese dia cuando la API lo soporte con fecha
-            },
+            onTap: () { context.read<HabitosProvider>().seleccionarDia(dia); _staggerController.forward(from: 0); },
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 48,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
+              width: 46,
               decoration: BoxDecoration(
-                color: esSeleccionado
-                    ? colorScheme.primary
-                    : esHoy
-                        ? colorScheme.primaryContainer
-                        : colorScheme.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(16),
-                border: esHoy && !esSeleccionado
-                    ? Border.all(color: colorScheme.primary, width: 2)
-                    : null,
+                gradient: esSeleccionado ? LinearGradient(
+                  begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                  colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.7)],
+                ) : null,
+                color: esSeleccionado ? null : esHoy ? colorScheme.surfaceContainerHighest : Colors.transparent,
+                borderRadius: BorderRadius.circular(14),
+                border: esHoy && !esSeleccionado ? Border.all(color: colorScheme.primary.withValues(alpha: 0.5), width: 1.5) : null,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    letraDia,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: esSeleccionado
-                          ? colorScheme.onPrimary
-                          : colorScheme.onSurfaceVariant,
-                    ),
-                  ),
+                  Text(letraDia, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: esSeleccionado ? colorScheme.onPrimary : colorScheme.onSurfaceVariant.withValues(alpha: 0.6))),
                   const SizedBox(height: 4),
-                  Text(
-                    '${dia.day}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: esSeleccionado
-                          ? colorScheme.onPrimary
-                          : colorScheme.onSurface,
-                    ),
-                  ),
+                  Text('${dia.day}', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: esSeleccionado ? colorScheme.onPrimary : colorScheme.onSurface)),
                 ],
               ),
             ),
@@ -354,252 +247,111 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  List<String> _getDiasLetras(AppLocalizations l10n) {
-    return [l10n.lun, l10n.mar, l10n.mie, l10n.jue, l10n.vie, l10n.sab, l10n.dom];
-  }
+  List<String> _getDiasLetras(AppLocalizations l10n) => [l10n.lun, l10n.mar, l10n.mie, l10n.jue, l10n.vie, l10n.sab, l10n.dom];
 
-  // ─────────────────── PROGRESO ───────────────────
+  // ─────────────────── PROGRESO GLASSMORPHISM ───────────────────
 
-  Widget _buildProgresoAnillo(AppLocalizations l10n) {
+  Widget _buildProgresoCard(AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 80,
-            height: 80,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                CircularProgressIndicator(
-                  value: _progreso,
-                  strokeWidth: 8,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation(colorScheme.primary),
-                ),
-                Center(
-                  child: Text(
-                    '${(_progreso * 100).toInt()}%',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final estado = context.watch<HabitosProvider>();
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                ? [colorScheme.primary.withValues(alpha: 0.15), colorScheme.tertiary.withValues(alpha: 0.08)]
+                : [colorScheme.primary.withValues(alpha: 0.1), colorScheme.primaryContainer.withValues(alpha: 0.3)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: colorScheme.primary.withValues(alpha: isDark ? 0.2 : 0.1)),
+          ),
+          child: Row(
+            children: [
+              // Anillo premium
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: estado.progreso),
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeOutCubic,
+                builder: (context, value, _) => SizedBox(
+                  width: 96,
+                  height: 96,
+                  child: CustomPaint(
+                    painter: GradientProgressPainter(
+                      progress: value,
+                      startColor: colorScheme.primary,
+                      endColor: colorScheme.tertiary,
+                      bgColor: colorScheme.onSurface.withValues(alpha: 0.08),
+                      strokeWidth: 10,
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '${(value * 100).toInt()}',
+                            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: colorScheme.onSurface, height: 1),
+                          ),
+                          Text('%', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: colorScheme.onSurfaceVariant)),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.progresoDelDia,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  l10n.habitosContador(_completados, _habitos.length),
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ─────────────────── TITULO HABITOS ───────────────────
-
-  Widget _buildTituloHabitos(AppLocalizations l10n) {
-    return Text(
-      _esHoy ? l10n.tusHabitosDeHoy : l10n.habitosDelDia,
-      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-    );
-  }
-
-  Widget _buildSinHabitos(AppLocalizations l10n) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-      child: Column(
-        children: [
-          Icon(Icons.eco_outlined, size: 64, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          Text(
-            l10n.sinHabitos,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            l10n.sinHabitosMotivacion,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ─────────────────── NAVEGACION AL DETALLE ───────────────────
-
-  Future<void> _abrirDetalle(Habito habito) async {
-    final resultado = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(
-        builder: (_) => DetalleHabitoScreen(habito: habito),
-      ),
-    );
-    if (resultado == true || resultado == null) {
-      cargarDatos();
-    }
-  }
-
-  // ─────────────────── TARJETA DE HABITO (NUEVA) ───────────────────
-
-  Widget _buildHabitoCard(Habito habito, AppLocalizations l10n) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final esNegativo = habito.esNegativo;
-
-    // Colores de la tarjeta
-    final cardColor = esNegativo
-        ? Color.lerp(colorScheme.errorContainer, colorScheme.surface, 0.5)!
-        : colorScheme.surface;
-    final iconBgColor = esNegativo
-        ? colorScheme.error.withValues(alpha: 0.12)
-        : colorScheme.primary.withValues(alpha: 0.12);
-    final iconColor = esNegativo
-        ? colorScheme.error
-        : colorScheme.primary;
-
-    // Progreso mensual aproximado
-    final progresoMensual = _calcularProgresoMensual(habito);
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
-      color: cardColor,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => _abrirDetalle(habito),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Icono grande
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: iconBgColor,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(
-                  HabitIcons.getIcon(habito.icono),
-                  size: 28,
-                  color: iconColor,
-                ),
               ),
-              const SizedBox(width: 14),
-
-              // Contenido central
+              const SizedBox(width: 24),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Nombre
-                    Text(
-                      habito.nombre,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        decoration: habito.completadoHoy ? TextDecoration.lineThrough : null,
-                        color: habito.completadoHoy
-                            ? colorScheme.onSurfaceVariant
-                            : colorScheme.onSurface,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-
-                    // Frecuencia como chips
-                    _buildFrecuenciaChips(habito, l10n),
-                    const SizedBox(height: 10),
-
-                    // Fila inferior: racha/dias-sin + progreso circular
-                    Row(
-                      children: [
-                        // Racha o dias sin
-                        if (esNegativo) ...[
-                          Icon(Icons.shield_outlined, size: 16, color: colorScheme.error),
-                          const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              l10n.diasSinHabito(habito.rachaActual, habito.nombre),
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.error,
+                    Text(l10n.progresoDelDia, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: colorScheme.onSurface)),
+                    const SizedBox(height: 8),
+                    // Barra de progreso
+                    TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0, end: estado.progreso),
+                      duration: const Duration(milliseconds: 800),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, value, _) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: SizedBox(
+                              height: 8,
+                              child: Stack(
+                                children: [
+                                  Container(color: colorScheme.onSurface.withValues(alpha: 0.08)),
+                                  FractionallySizedBox(
+                                    widthFactor: value,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(colors: [colorScheme.primary, colorScheme.tertiary]),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ] else if (habito.rachaActual > 0) ...[
-                          const Icon(Icons.local_fire_department, size: 16, color: Colors.orange),
-                          const SizedBox(width: 4),
+                          const SizedBox(height: 8),
                           Text(
-                            '${habito.rachaActual}',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
-                            ),
+                            l10n.habitosContador(estado.completados, estado.habitos.length),
+                            style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
                           ),
                         ],
-                        const Spacer(),
-
-                        // Mini grafico circular de progreso mensual
-                        SizedBox(
-                          width: 36,
-                          height: 36,
-                          child: CustomPaint(
-                            painter: _MiniProgressPainter(
-                              progress: progresoMensual,
-                              color: esNegativo ? colorScheme.error : colorScheme.primary,
-                              backgroundColor: colorScheme.outlineVariant.withValues(alpha: 0.3),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${(progresoMensual * 100).toInt()}',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                  color: esNegativo ? colorScheme.error : colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-
-              // Boton check
-              _buildCheckButton(habito, colorScheme),
             ],
           ),
         ),
@@ -607,183 +359,246 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildFrecuenciaChips(Habito habito, AppLocalizations l10n) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final diasLetras = _getDiasLetras(l10n);
-    final diasEnum = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'];
+  // ─────────────────── TITULO ───────────────────
 
-    if (habito.frecuencia == 'DIARIO') {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        decoration: BoxDecoration(
-          color: colorScheme.secondaryContainer,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Text(
-          l10n.diario,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: colorScheme.onSecondaryContainer,
-          ),
-        ),
-      );
-    }
-
-    // Chips de dias para frecuencia personalizada
-    return Row(
-      children: List.generate(7, (i) {
-        final activo = habito.diasSemana.contains(diasEnum[i]);
-        return Container(
-          width: 22,
-          height: 22,
-          margin: const EdgeInsets.only(right: 3),
-          decoration: BoxDecoration(
-            color: activo
-                ? colorScheme.primary.withValues(alpha: 0.2)
-                : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Center(
-            child: Text(
-              diasLetras[i],
-              style: TextStyle(
-                fontSize: 9,
-                fontWeight: activo ? FontWeight.bold : FontWeight.normal,
-                color: activo ? colorScheme.primary : colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-        );
-      }),
+  Widget _buildTituloHabitos(AppLocalizations l10n) {
+    final estado = context.watch<HabitosProvider>();
+    return Text(
+      estado.esHoy ? l10n.tusHabitosDeHoy : l10n.habitosDelDia,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
     );
   }
 
-  Widget _buildCheckButton(Habito habito, ColorScheme colorScheme) {
+  Widget _buildSinHabitos(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 20),
+      child: Column(
+        children: [
+          Icon(Icons.eco_outlined, size: 64, color: Colors.grey[600]),
+          const SizedBox(height: 16),
+          Text(l10n.sinHabitos, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          Text(l10n.sinHabitosMotivacion, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _abrirDetalle(Habito habito) async {
+    final resultado = await Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => DetalleHabitoScreen(habito: habito)));
+    if (resultado == true || resultado == null) cargarDatos();
+  }
+
+  // ─────────────────── CARD STAGGER ───────────────────
+
+  Widget _buildAnimatedCard(Habito habito, AppLocalizations l10n, int index) {
+    final delay = (index * 0.08).clamp(0.0, 0.6);
+    final end = (delay + 0.4).clamp(0.0, 1.0);
+    final slide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _staggerController, curve: Interval(delay, end, curve: Curves.easeOutCubic)));
+    final fade = Tween<double>(begin: 0, end: 1)
+        .animate(CurvedAnimation(parent: _staggerController, curve: Interval(delay, end, curve: Curves.easeOut)));
+
+    return SlideTransition(
+      position: slide,
+      child: FadeTransition(opacity: fade, child: _buildHabitoCard(habito, l10n)),
+    );
+  }
+
+  // ─────────────────── TARJETA HABITO GLASSMORPHISM ───────────────────
+
+  Widget _buildHabitoCard(Habito habito, AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final esNegativo = habito.esNegativo;
-    return GestureDetector(
-      onTap: () => _toggleHabito(habito),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: habito.completadoHoy
-              ? (esNegativo ? colorScheme.error : colorScheme.primary)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: habito.completadoHoy
-                ? Colors.transparent
-                : (esNegativo ? colorScheme.error : colorScheme.primary),
-            width: 2,
+    final accentColor = esNegativo ? colorScheme.error : colorScheme.primary;
+    final progresoMensual = habito.progresoMensual;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: Material(
+            color: isDark
+                ? (esNegativo
+                    ? colorScheme.error.withValues(alpha: 0.06)
+                    : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5))
+                : (esNegativo
+                    ? Color.lerp(colorScheme.errorContainer, colorScheme.surface, 0.5)!
+                    : colorScheme.surface),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: accentColor.withValues(alpha: isDark ? 0.12 : 0.06)),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () => _abrirDetalle(habito),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Row(
+                  children: [
+                    // Icono con gradiente
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [accentColor.withValues(alpha: 0.2), accentColor.withValues(alpha: 0.08)],
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(HabitIcons.getIcon(habito.icono), size: 26, color: accentColor),
+                    ),
+                    const SizedBox(width: 14),
+
+                    // Centro
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            habito.nombre,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              decoration: habito.completadoHoy ? TextDecoration.lineThrough : null,
+                              color: habito.completadoHoy ? colorScheme.onSurfaceVariant.withValues(alpha: 0.5) : colorScheme.onSurface,
+                            ),
+                            maxLines: 1, overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          // Racha + progreso en una fila compacta
+                          Row(
+                            children: [
+                              _buildFrecuenciaChip(habito, l10n),
+                              const SizedBox(width: 8),
+                              if (habito.rachaActual > 0 && !esNegativo) _buildRachaPill(habito),
+                              if (esNegativo) _buildDiasSinPill(habito, l10n),
+                              const Spacer(),
+                              // Mini progreso
+                              TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0, end: progresoMensual),
+                                duration: const Duration(milliseconds: 600),
+                                curve: Curves.easeOutCubic,
+                                builder: (context, value, _) => SizedBox(
+                                  width: 32, height: 32,
+                                  child: CustomPaint(
+                                    painter: MiniProgressPainter(progress: value, color: accentColor, backgroundColor: accentColor.withValues(alpha: 0.12)),
+                                    child: Center(child: Text('${(value * 100).toInt()}', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w700, color: accentColor))),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+
+                    // Check
+                    ScaleOnTap(
+                      onTap: () => _toggleHabito(habito),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: 44, height: 44,
+                        decoration: BoxDecoration(
+                          gradient: habito.completadoHoy
+                              ? LinearGradient(colors: [accentColor, accentColor.withValues(alpha: 0.7)])
+                              : null,
+                          color: habito.completadoHoy ? null : Colors.transparent,
+                          borderRadius: BorderRadius.circular(13),
+                          border: habito.completadoHoy ? null : Border.all(color: accentColor.withValues(alpha: 0.4), width: 2),
+                        ),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            habito.completadoHoy ? Icons.check_rounded : (esNegativo ? Icons.close_rounded : Icons.check_rounded),
+                            key: ValueKey(habito.completadoHoy),
+                            size: 22,
+                            color: habito.completadoHoy ? Colors.white : accentColor.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-        child: Icon(
-          habito.completadoHoy ? Icons.check : (esNegativo ? Icons.close : Icons.check),
-          size: 24,
-          color: habito.completadoHoy
-              ? (esNegativo ? colorScheme.onError : colorScheme.onPrimary)
-              : (esNegativo ? colorScheme.error : colorScheme.primary),
         ),
       ),
     );
   }
 
-  // ─────────────────── CALCULO PROGRESO MENSUAL ───────────────────
-
-  /// Calculo aproximado del progreso mensual sin llamada extra a la API.
-  /// Usa la racha actual como estimacion basica.
-  double _calcularProgresoMensual(Habito habito) {
-    final now = DateTime.now();
-    final diaDelMes = now.day;
-
-    if (diaDelMes == 0) return 0;
-
-    int diasEsperados;
+  Widget _buildFrecuenciaChip(Habito habito, AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (habito.frecuencia == 'DIARIO') {
-      diasEsperados = diaDelMes;
-    } else {
-      // Dias personalizados: cuantos dias del set caen hasta hoy en este mes
-      diasEsperados = 0;
-      for (int d = 1; d <= diaDelMes; d++) {
-        final fecha = DateTime(now.year, now.month, d);
-        final nombreDia = _weekdayToEnum(fecha.weekday);
-        if (habito.diasSemana.contains(nombreDia)) {
-          diasEsperados++;
-        }
-      }
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+        decoration: BoxDecoration(
+          color: colorScheme.primary.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(l10n.diario, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: colorScheme.primary)),
+      );
     }
 
-    if (diasEsperados == 0) return 0;
-
-    // Estimacion: la racha actual como dias completados (es conservador)
-    // Si completadoHoy, la racha incluye hoy. Es una aproximacion.
-    final diasCompletadosEstimado = math.min(habito.rachaActual, diasEsperados);
-    return (diasCompletadosEstimado / diasEsperados).clamp(0.0, 1.0);
-  }
-
-  String _weekdayToEnum(int weekday) {
-    const map = {
-      1: 'LUNES',
-      2: 'MARTES',
-      3: 'MIERCOLES',
-      4: 'JUEVES',
-      5: 'VIERNES',
-      6: 'SABADO',
-      7: 'DOMINGO',
-    };
-    return map[weekday] ?? 'LUNES';
-  }
-
-}
-
-// ─────────────────── CUSTOM PAINTER: MINI PROGRESO CIRCULAR ───────────────────
-
-class _MiniProgressPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-  final Color backgroundColor;
-
-  _MiniProgressPainter({
-    required this.progress,
-    required this.color,
-    required this.backgroundColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 3;
-
-    // Fondo
-    final bgPaint = Paint()
-      ..color = backgroundColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.5
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawCircle(center, radius, bgPaint);
-
-    // Progreso
-    final progressPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.5
-      ..strokeCap = StrokeCap.round;
-
-    final sweepAngle = 2 * math.pi * progress;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2,
-      sweepAngle,
-      false,
-      progressPaint,
+    final diasLetras = _getDiasLetras(l10n);
+    final diasEnum = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'];
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(7, (i) {
+        final activo = habito.diasSemana.contains(diasEnum[i]);
+        return Container(
+          width: 18, height: 18,
+          margin: const EdgeInsets.only(right: 2),
+          decoration: BoxDecoration(
+            color: activo ? colorScheme.primary.withValues(alpha: 0.15) : Colors.transparent,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Center(child: Text(diasLetras[i], style: TextStyle(fontSize: 8, fontWeight: activo ? FontWeight.w700 : FontWeight.w400, color: activo ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.4)))),
+        );
+      }),
     );
   }
 
-  @override
-  bool shouldRepaint(_MiniProgressPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.color != color;
+  Widget _buildRachaPill(Habito habito) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [Colors.orange.withValues(alpha: 0.15), Colors.deepOrange.withValues(alpha: 0.1)]),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.local_fire_department_rounded, size: 14, color: Colors.deepOrange),
+          const SizedBox(width: 2),
+          Text('${habito.rachaActual}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.deepOrange)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDiasSinPill(Habito habito, AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Flexible(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+        decoration: BoxDecoration(color: colorScheme.error.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.shield_rounded, size: 14, color: colorScheme.error),
+            const SizedBox(width: 2),
+            Flexible(child: Text(l10n.diasSinHabito(habito.rachaActual, habito.nombre), style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: colorScheme.error), maxLines: 1, overflow: TextOverflow.ellipsis)),
+          ],
+        ),
+      ),
+    );
   }
 }
