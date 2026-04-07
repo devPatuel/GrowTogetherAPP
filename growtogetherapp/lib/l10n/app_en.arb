@@ -149,5 +149,18 @@
   "iconoHabito": "Icon",
   "habitosDelDia": "Habits for this day",
   "diasSinHabito": "{dias} {dias, plural, =1{day} other{days}} without {nombre}",
-  "diasSinLabel": "Days without relapse"
+  "diasSinLabel": "Days without relapse",
+  "errorGenerico": "Something went wrong. Please try again.",
+  "mesEnero": "January",
+  "mesFebrero": "February",
+  "mesMarzo": "March",
+  "mesAbril": "April",
+  "mesMayo": "May",
+  "mesJunio": "June",
+  "mesJulio": "July",
+  "mesAgosto": "August",
+  "mesSeptiembre": "September",
+  "mesOctubre": "October",
+  "mesNoviembre": "November",
+  "mesDiciembre": "December"
 }

@@ -10,6 +10,7 @@ class Habito {
   final Set<String> diasSemana;
   final String tipo;
   final String? icono;
+  final DateTime? fechaInicio;
   final double progresoMensual;
 
   Habito({
@@ -24,6 +25,7 @@ class Habito {
     this.diasSemana = const {},
     this.tipo = 'POSITIVO',
     this.icono,
+    this.fechaInicio,
     this.progresoMensual = 0,
   });
 
@@ -41,6 +43,7 @@ class Habito {
     Set<String>? diasSemana,
     String? tipo,
     String? icono,
+    DateTime? fechaInicio,
     double? progresoMensual,
   }) {
     return Habito(
@@ -55,6 +58,7 @@ class Habito {
       diasSemana: diasSemana ?? this.diasSemana,
       tipo: tipo ?? this.tipo,
       icono: icono ?? this.icono,
+      fechaInicio: fechaInicio ?? this.fechaInicio,
       progresoMensual: progresoMensual ?? this.progresoMensual,
     );
   }
@@ -73,6 +77,7 @@ class Habito {
       diasSemana: dias is List ? dias.map((e) => e.toString()).toSet() : const {},
       tipo: json['tipo'] ?? 'POSITIVO',
       icono: json['icono'],
+      fechaInicio: json['fechaInicio'] != null ? DateTime.parse(json['fechaInicio']) : null,
       progresoMensual: (json['progresoMensual'] ?? 0).toDouble(),
     );
   }

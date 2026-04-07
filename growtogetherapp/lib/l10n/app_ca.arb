@@ -149,5 +149,18 @@
   "iconoHabito": "Icona",
   "habitosDelDia": "H\u00e0bits del dia",
   "diasSinHabito": "{dias} {dias, plural, =1{dia} other{dies}} sense {nombre}",
-  "diasSinLabel": "Dies sense recaure"
+  "diasSinLabel": "Dies sense recaure",
+  "errorGenerico": "Ha passat un error. Torna-ho a intentar.",
+  "mesEnero": "Gener",
+  "mesFebrero": "Febrer",
+  "mesMarzo": "Mar\u00e7",
+  "mesAbril": "Abril",
+  "mesMayo": "Maig",
+  "mesJunio": "Juny",
+  "mesJulio": "Juliol",
+  "mesAgosto": "Agost",
+  "mesSeptiembre": "Setembre",
+  "mesOctubre": "Octubre",
+  "mesNoviembre": "Novembre",
+  "mesDiciembre": "Desembre"
 }

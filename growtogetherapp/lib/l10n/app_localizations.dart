@@ -885,6 +885,84 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Días sin recaer'**
   String get diasSinLabel;
+
+  /// Mensaje de error generico
+  ///
+  /// In es, this message translates to:
+  /// **'Ha ocurrido un error. Inténtalo de nuevo.'**
+  String get errorGenerico;
+
+  /// No description provided for @mesEnero.
+  ///
+  /// In es, this message translates to:
+  /// **'Enero'**
+  String get mesEnero;
+
+  /// No description provided for @mesFebrero.
+  ///
+  /// In es, this message translates to:
+  /// **'Febrero'**
+  String get mesFebrero;
+
+  /// No description provided for @mesMarzo.
+  ///
+  /// In es, this message translates to:
+  /// **'Marzo'**
+  String get mesMarzo;
+
+  /// No description provided for @mesAbril.
+  ///
+  /// In es, this message translates to:
+  /// **'Abril'**
+  String get mesAbril;
+
+  /// No description provided for @mesMayo.
+  ///
+  /// In es, this message translates to:
+  /// **'Mayo'**
+  String get mesMayo;
+
+  /// No description provided for @mesJunio.
+  ///
+  /// In es, this message translates to:
+  /// **'Junio'**
+  String get mesJunio;
+
+  /// No description provided for @mesJulio.
+  ///
+  /// In es, this message translates to:
+  /// **'Julio'**
+  String get mesJulio;
+
+  /// No description provided for @mesAgosto.
+  ///
+  /// In es, this message translates to:
+  /// **'Agosto'**
+  String get mesAgosto;
+
+  /// No description provided for @mesSeptiembre.
+  ///
+  /// In es, this message translates to:
+  /// **'Septiembre'**
+  String get mesSeptiembre;
+
+  /// No description provided for @mesOctubre.
+  ///
+  /// In es, this message translates to:
+  /// **'Octubre'**
+  String get mesOctubre;
+
+  /// No description provided for @mesNoviembre.
+  ///
+  /// In es, this message translates to:
+  /// **'Noviembre'**
+  String get mesNoviembre;
+
+  /// No description provided for @mesDiciembre.
+  ///
+  /// In es, this message translates to:
+  /// **'Diciembre'**
+  String get mesDiciembre;
 }
 
 class _AppLocalizationsDelegate

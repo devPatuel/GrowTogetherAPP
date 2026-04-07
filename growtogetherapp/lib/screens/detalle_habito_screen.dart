@@ -5,118 +5,131 @@ import '../data/models/habito.dart';
 import '../data/models/registro_historial.dart';
 import '../data/repositories/habito_repository.dart';
 import '../l10n/app_localizations.dart';
+import '../providers/detalle_habito_provider.dart';
 import 'widgets/habit_type_selector.dart';
 import 'widgets/icon_selector.dart';
 
-class DetalleHabitoScreen extends StatefulWidget {
+class DetalleHabitoScreen extends StatelessWidget {
   final Habito habito;
 
   const DetalleHabitoScreen({super.key, required this.habito});
 
   @override
-  State<DetalleHabitoScreen> createState() => _DetalleHabitoScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (ctx) => DetalleHabitoProvider(
+        ctx.read<HabitoRepository>(),
+        habito,
+      ),
+      child: const _DetalleHabitoView(),
+    );
+  }
 }
 
-class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
-  HabitoRepository get _repo => context.read<HabitoRepository>();
-
-  late Habito _habito;
-  List<RegistroHistorial> _historial = [];
-  late DateTime _mesActual;
-  bool _cargandoHistorial = true;
-  bool _toggling = false;
-  bool _huboCambios = false;
+class _DetalleHabitoView extends StatelessWidget {
+  const _DetalleHabitoView();
 
   @override
-  void initState() {
-    super.initState();
-    _habito = widget.habito;
-    final now = DateTime.now();
-    _mesActual = DateTime(now.year, now.month);
-    _cargarHistorial();
-  }
-
-  Future<void> _cargarHistorial() async {
-    setState(() => _cargandoHistorial = true);
-    try {
-      final inicio = DateTime(_mesActual.year, _mesActual.month, 1);
-      final fin = DateTime(_mesActual.year, _mesActual.month + 1, 0);
-      final historial = await _repo.obtenerHistorial(
-        _habito.id,
-        fechaInicio: inicio,
-        fechaFin: fin,
-      );
-      if (!mounted) return;
-      setState(() {
-        _historial = historial;
-        _cargandoHistorial = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _cargandoHistorial = false);
-    }
-  }
-
-  Future<void> _toggleCompletar() async {
-    if (_toggling) return;
-    setState(() => _toggling = true);
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    try {
-      Habito actualizado;
-      if (_habito.completadoHoy) {
-        actualizado = await _repo.descompletarHabito(_habito.id);
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.habitoDesmarcado), duration: const Duration(seconds: 1)),
-        );
-      } else {
-        actualizado = await _repo.completarHabito(_habito.id);
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.habitoCompletado),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            duration: const Duration(seconds: 1),
+    final colorScheme = Theme.of(context).colorScheme;
+    final provider = context.watch<DetalleHabitoProvider>();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.detalleHabito),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => _mostrarDialogoEditar(context),
+            tooltip: l10n.editarHabito,
           ),
-        );
-      }
-      setState(() {
-        _habito = actualizado;
-        _huboCambios = true;
-      });
-      _cargarHistorial();
-    } catch (e) {
-      if (!mounted) return;
+          IconButton(
+            icon: Icon(Icons.delete_outline, color: colorScheme.error),
+            onPressed: () => _confirmarEliminar(context),
+            tooltip: l10n.eliminarHabito,
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          _Cabecera(habito: provider.habito),
+          const SizedBox(height: 20),
+          _RachaCard(
+            habito: provider.habito,
+            toggling: provider.toggling,
+            onToggle: () => _onToggle(context),
+          ),
+          const SizedBox(height: 20),
+          _HistorialSection(
+            historial: provider.historial,
+            mesActual: provider.mesActual,
+            cargando: provider.cargandoHistorial,
+            toggling: provider.toggling,
+            onMesAnterior: provider.mesAnterior,
+            onMesSiguiente: provider.mesSiguiente,
+            onDiaPulsado: (fecha) => _onToggleFecha(context, fecha),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _onToggle(BuildContext context) async {
+    final provider = context.read<DetalleHabitoProvider>();
+    final l10n = AppLocalizations.of(context)!;
+    final estabaCompletado = provider.habito.completadoHoy;
+    final ok = await provider.toggleCompletar();
+
+    if (!context.mounted) return;
+    if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(estabaCompletado ? l10n.habitoDesmarcado : l10n.habitoCompletado),
+          backgroundColor: estabaCompletado ? null : Theme.of(context).colorScheme.primary,
+          duration: const Duration(seconds: 1),
+        ),
       );
-    } finally {
-      if (mounted) setState(() => _toggling = false);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.errorGenerico), backgroundColor: Colors.red),
+      );
     }
   }
 
-  void _mesSiguiente() {
-    setState(() {
-      _mesActual = DateTime(_mesActual.year, _mesActual.month + 1);
-    });
-    _cargarHistorial();
-  }
-
-  void _mesAnterior() {
-    setState(() {
-      _mesActual = DateTime(_mesActual.year, _mesActual.month - 1);
-    });
-    _cargarHistorial();
-  }
-
-  Future<void> _mostrarDialogoEditar() async {
+  Future<void> _onToggleFecha(BuildContext context, DateTime fecha) async {
+    final provider = context.read<DetalleHabitoProvider>();
     final l10n = AppLocalizations.of(context)!;
-    final nombreCtrl = TextEditingController(text: _habito.nombre);
-    final descCtrl = TextEditingController(text: _habito.descripcion);
-    String frecuencia = _habito.frecuencia;
-    Set<String> diasSeleccionados = Set.from(_habito.diasSemana);
-    String tipo = _habito.tipo;
-    String? iconoSeleccionado = _habito.icono;
+    final estabaCompletado = provider.estaCompletadoEnFecha(fecha);
+    final ok = await provider.toggleCompletar(fecha: fecha);
+
+    if (!context.mounted) return;
+    if (ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(estabaCompletado ? l10n.habitoDesmarcado : l10n.habitoCompletado),
+          backgroundColor: estabaCompletado ? null : Theme.of(context).colorScheme.primary,
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.errorGenerico), backgroundColor: Colors.red),
+      );
+    }
+  }
+
+  Future<void> _mostrarDialogoEditar(BuildContext context) async {
+    final provider = context.read<DetalleHabitoProvider>();
+    final habito = provider.habito;
+    final l10n = AppLocalizations.of(context)!;
+    final nombreCtrl = TextEditingController(text: habito.nombre);
+    final descCtrl = TextEditingController(text: habito.descripcion);
+    String frecuencia = habito.frecuencia;
+    Set<String> diasSeleccionados = Set.from(habito.diasSemana);
+    String tipo = habito.tipo;
+    String? iconoSeleccionado = habito.icono;
     final formKey = GlobalKey<FormState>();
 
     final resultado = await showDialog<bool>(
@@ -133,7 +146,6 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Tipo
                       Text(l10n.tipoHabito, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
                       HabitTypeSelector(
@@ -141,8 +153,6 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                         onChanged: (val) => setDialogState(() => tipo = val),
                       ),
                       const SizedBox(height: 16),
-
-                      // Icono
                       Text(l10n.iconoHabito, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
                       IconSelector(
@@ -150,7 +160,6 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                         onChanged: (val) => setDialogState(() => iconoSeleccionado = val),
                       ),
                       const SizedBox(height: 16),
-
                       TextFormField(
                         controller: nombreCtrl,
                         decoration: InputDecoration(labelText: l10n.nombreHabito),
@@ -180,7 +189,7 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                         const SizedBox(height: 12),
                         Text(l10n.diasDeLaSemana),
                         const SizedBox(height: 8),
-                        _buildDiasSelector(diasSeleccionados, setDialogState),
+                        _buildDiasSelector(l10n, diasSeleccionados, setDialogState),
                       ],
                     ],
                   ),
@@ -212,35 +221,26 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
     );
 
     if (resultado == true) {
-      try {
-        final actualizado = await _repo.editarHabito(
-          _habito.id,
-          nombre: nombreCtrl.text.trim(),
-          descripcion: descCtrl.text.trim(),
-          frecuencia: frecuencia,
-          diasSemana: frecuencia == 'PERSONALIZADO' ? diasSeleccionados : null,
-          tipo: tipo,
-          icono: iconoSeleccionado,
-        );
-        if (!mounted) return;
-        setState(() {
-          _habito = actualizado;
-          _huboCambios = true;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.habitoActualizado), duration: const Duration(seconds: 1)),
-        );
-      } catch (e) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-        );
-      }
+      final ok = await provider.editarHabito(
+        nombre: nombreCtrl.text.trim(),
+        descripcion: descCtrl.text.trim(),
+        frecuencia: frecuencia,
+        diasSemana: frecuencia == 'PERSONALIZADO' ? diasSeleccionados : null,
+        tipo: tipo,
+        icono: iconoSeleccionado,
+      );
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(ok ? l10n.habitoActualizado : l10n.errorGenerico),
+          backgroundColor: ok ? null : Colors.red,
+          duration: const Duration(seconds: 1),
+        ),
+      );
     }
   }
 
-  Widget _buildDiasSelector(Set<String> diasSeleccionados, StateSetter setDialogState) {
-    final l10n = AppLocalizations.of(context)!;
+  Widget _buildDiasSelector(AppLocalizations l10n, Set<String> diasSeleccionados, StateSetter setDialogState) {
     final dias = [
       ('LUNES', l10n.lun),
       ('MARTES', l10n.mar),
@@ -271,7 +271,8 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
     );
   }
 
-  Future<void> _confirmarEliminar() async {
+  Future<void> _confirmarEliminar(BuildContext context) async {
+    final provider = context.read<DetalleHabitoProvider>();
     final l10n = AppLocalizations.of(context)!;
     final confirmar = await showDialog<bool>(
       context: context,
@@ -295,73 +296,39 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
     );
 
     if (confirmar == true) {
-      try {
-        await _repo.eliminarHabito(_habito.id);
-        if (!mounted) return;
+      final ok = await provider.eliminarHabito();
+      if (!context.mounted) return;
+      if (ok) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.habitoEliminado), duration: const Duration(seconds: 1)),
         );
         Navigator.pop(context, true);
-      } catch (e) {
-        if (!mounted) return;
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.errorGenerico), backgroundColor: Colors.red),
         );
       }
     }
   }
+}
+
+// --- Widgets extraídos ---
+
+class _Cabecera extends StatelessWidget {
+  final Habito habito;
+  const _Cabecera({required this.habito});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-
-    return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (didPop, _) {
-        if (didPop && _huboCambios) {
-          // El resultado true indica que hay cambios
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.detalleHabito),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: _mostrarDialogoEditar,
-              tooltip: l10n.editarHabito,
-            ),
-            IconButton(
-              icon: Icon(Icons.delete_outline, color: colorScheme.error),
-              onPressed: _confirmarEliminar,
-              tooltip: l10n.eliminarHabito,
-            ),
-          ],
-        ),
-        body: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            _buildCabecera(l10n, colorScheme),
-            const SizedBox(height: 20),
-            _buildRachaCard(l10n, colorScheme),
-            const SizedBox(height: 20),
-            _buildHistorialSection(l10n, colorScheme),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCabecera(AppLocalizations l10n, ColorScheme colorScheme) {
-    final esNegativo = _habito.esNegativo;
+    final esNegativo = habito.esNegativo;
     final iconColor = esNegativo ? colorScheme.error : colorScheme.primary;
     final iconBgColor = iconColor.withValues(alpha: 0.12);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Icono grande
         Container(
           width: 64,
           height: 64,
@@ -370,7 +337,7 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
             borderRadius: BorderRadius.circular(18),
           ),
           child: Icon(
-            HabitIcons.getIcon(_habito.icono),
+            HabitIcons.getIcon(habito.icono),
             size: 34,
             color: iconColor,
           ),
@@ -384,7 +351,7 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      _habito.nombre,
+                      habito.nombre,
                       style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -406,29 +373,46 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                     ),
                 ],
               ),
-              if (_habito.descripcion.isNotEmpty) ...[
+              if (habito.descripcion.isNotEmpty) ...[
                 const SizedBox(height: 6),
                 Text(
-                  _habito.descripcion,
+                  habito.descripcion,
                   style: TextStyle(fontSize: 15, color: colorScheme.onSurfaceVariant),
                 ),
               ],
               const SizedBox(height: 12),
-              _buildFrecuenciaChip(l10n, colorScheme),
+              _FrecuenciaChip(habito: habito),
             ],
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildFrecuenciaChip(AppLocalizations l10n, ColorScheme colorScheme) {
+class _FrecuenciaChip extends StatelessWidget {
+  final Habito habito;
+  const _FrecuenciaChip({required this.habito});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     String label;
-    if (_habito.frecuencia == 'DIARIO') {
+    if (habito.frecuencia == 'DIARIO') {
       label = l10n.frecuenciaDiaria;
     } else {
-      final diasCortos = _getDiasCortos(l10n);
-      final dias = _habito.diasSemana.map((d) => diasCortos[d] ?? d).join(', ');
+      final diasCortos = {
+        'LUNES': l10n.diasCortoLun,
+        'MARTES': l10n.diasCortoMar,
+        'MIERCOLES': l10n.diasCortoMie,
+        'JUEVES': l10n.diasCortoJue,
+        'VIERNES': l10n.diasCortoVie,
+        'SABADO': l10n.diasCortoSab,
+        'DOMINGO': l10n.diasCortoDom,
+      };
+      final dias = habito.diasSemana.map((d) => diasCortos[d] ?? d).join(', ');
       label = '${l10n.frecuenciaPersonalizada}: $dias';
     }
 
@@ -439,21 +423,24 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
       side: BorderSide.none,
     );
   }
+}
 
-  Map<String, String> _getDiasCortos(AppLocalizations l10n) {
-    return {
-      'LUNES': l10n.diasCortoLun,
-      'MARTES': l10n.diasCortoMar,
-      'MIERCOLES': l10n.diasCortoMie,
-      'JUEVES': l10n.diasCortoJue,
-      'VIERNES': l10n.diasCortoVie,
-      'SABADO': l10n.diasCortoSab,
-      'DOMINGO': l10n.diasCortoDom,
-    };
-  }
+class _RachaCard extends StatelessWidget {
+  final Habito habito;
+  final bool toggling;
+  final VoidCallback onToggle;
 
-  Widget _buildRachaCard(AppLocalizations l10n, ColorScheme colorScheme) {
-    final esNegativo = _habito.esNegativo;
+  const _RachaCard({
+    required this.habito,
+    required this.toggling,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final esNegativo = habito.esNegativo;
     final accentColor = esNegativo ? colorScheme.error : colorScheme.primary;
 
     return Card(
@@ -486,19 +473,13 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                     children: [
                       Text(
                         esNegativo ? l10n.diasSinLabel : l10n.rachaActual,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
+                        style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
                       ),
                       Text(
                         esNegativo
-                            ? l10n.diasSinHabito(_habito.rachaActual, _habito.nombre)
-                            : '${_habito.rachaActual} ${l10n.dias}',
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            ? l10n.diasSinHabito(habito.rachaActual, habito.nombre)
+                            : '${habito.rachaActual} ${l10n.dias}',
+                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -511,7 +492,7 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
                 Icon(Icons.emoji_events_outlined, size: 18, color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 6),
                 Text(
-                  '${l10n.mejorRacha}: ${_habito.rachaMaxima} ${l10n.dias}',
+                  '${l10n.mejorRacha}: ${habito.rachaMaxima} ${l10n.dias}',
                   style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
                 ),
               ],
@@ -519,20 +500,16 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              child: _toggling
+              child: toggling
                   ? const Center(child: CircularProgressIndicator())
                   : FilledButton.icon(
-                      onPressed: _toggleCompletar,
-                      icon: Icon(
-                        _habito.completadoHoy ? Icons.close : Icons.check,
-                      ),
+                      onPressed: onToggle,
+                      icon: Icon(habito.completadoHoy ? Icons.close : Icons.check),
                       label: Text(
-                        _habito.completadoHoy ? l10n.habitoDesmarcado : l10n.habitoCompletado,
+                        habito.completadoHoy ? l10n.habitoDesmarcado : l10n.habitoCompletado,
                       ),
                       style: FilledButton.styleFrom(
-                        backgroundColor: _habito.completadoHoy
-                            ? colorScheme.error
-                            : accentColor,
+                        backgroundColor: habito.completadoHoy ? colorScheme.error : accentColor,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
@@ -542,19 +519,46 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
       ),
     );
   }
+}
 
-  Widget _buildHistorialSection(AppLocalizations l10n, ColorScheme colorScheme) {
+class _HistorialSection extends StatelessWidget {
+  final List<RegistroHistorial> historial;
+  final DateTime mesActual;
+  final bool cargando;
+  final bool toggling;
+  final VoidCallback onMesAnterior;
+  final VoidCallback onMesSiguiente;
+  final ValueChanged<DateTime> onDiaPulsado;
+
+  const _HistorialSection({
+    required this.historial,
+    required this.mesActual,
+    required this.cargando,
+    required this.toggling,
+    required this.onMesAnterior,
+    required this.onMesSiguiente,
+    required this.onDiaPulsado,
+  });
+
+  List<String> _getMeses(AppLocalizations l10n) => [
+    l10n.mesEnero, l10n.mesFebrero, l10n.mesMarzo, l10n.mesAbril,
+    l10n.mesMayo, l10n.mesJunio, l10n.mesJulio, l10n.mesAgosto,
+    l10n.mesSeptiembre, l10n.mesOctubre, l10n.mesNoviembre, l10n.mesDiciembre,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          l10n.historial,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
+        Text(l10n.historial, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
-        _buildNavegacionMes(colorScheme),
+        _buildNavegacionMes(l10n, colorScheme),
         const SizedBox(height: 8),
-        _cargandoHistorial
+        cargando
             ? const Center(child: Padding(
                 padding: EdgeInsets.all(32),
                 child: CircularProgressIndicator(),
@@ -566,41 +570,34 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
     );
   }
 
-  Widget _buildNavegacionMes(ColorScheme colorScheme) {
+  Widget _buildNavegacionMes(AppLocalizations l10n, ColorScheme colorScheme) {
     final now = DateTime.now();
-    final esMesActual = _mesActual.year == now.year && _mesActual.month == now.month;
-
-    final meses = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
-    ];
+    final esMesActual = mesActual.year == now.year && mesActual.month == now.month;
+    final meses = _getMeses(l10n);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          icon: const Icon(Icons.chevron_left),
-          onPressed: _mesAnterior,
-        ),
+        IconButton(icon: const Icon(Icons.chevron_left), onPressed: onMesAnterior),
         Text(
-          '${meses[_mesActual.month - 1]} ${_mesActual.year}',
+          '${meses[mesActual.month - 1]} ${mesActual.year}',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         IconButton(
           icon: const Icon(Icons.chevron_right),
-          onPressed: esMesActual ? null : _mesSiguiente,
+          onPressed: esMesActual ? null : onMesSiguiente,
         ),
       ],
     );
   }
 
   Widget _buildCalendario(AppLocalizations l10n, ColorScheme colorScheme) {
-    final diasDelMes = DateTime(_mesActual.year, _mesActual.month + 1, 0).day;
-    final primerDia = DateTime(_mesActual.year, _mesActual.month, 1);
+    final diasDelMes = DateTime(mesActual.year, mesActual.month + 1, 0).day;
+    final primerDia = DateTime(mesActual.year, mesActual.month, 1);
     final offsetInicio = primerDia.weekday - 1;
 
     final Map<String, String> estadoPorDia = {};
-    for (final r in _historial) {
+    for (final r in historial) {
       final key = '${r.fecha.year}-${r.fecha.month}-${r.fecha.day}';
       estadoPorDia[key] = r.estado;
     }
@@ -630,12 +627,7 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
               )).toList(),
             ),
             const SizedBox(height: 8),
-            ..._buildFilasCalendario(
-              diasDelMes,
-              offsetInicio,
-              estadoPorDia,
-              colorScheme,
-            ),
+            ..._buildFilasCalendario(diasDelMes, offsetInicio, estadoPorDia, colorScheme),
           ],
         ),
       ),
@@ -664,7 +656,7 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
           continue;
         }
 
-        final fecha = DateTime(_mesActual.year, _mesActual.month, dia);
+        final fecha = DateTime(mesActual.year, mesActual.month, dia);
         final key = '${fecha.year}-${fecha.month}-${fecha.day}';
         final estado = estadoPorDia[key];
         final esHoy = fecha.year == hoy.year && fecha.month == hoy.month && fecha.day == hoy.day;
@@ -689,23 +681,24 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
 
         celdas.add(
           Expanded(
-            child: Container(
-              height: 40,
-              margin: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(8),
-                border: esHoy
-                    ? Border.all(color: colorScheme.primary, width: 2.5)
-                    : null,
-              ),
-              child: Center(
-                child: Text(
-                  '$dia',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: esHoy ? FontWeight.bold : FontWeight.w500,
-                    color: textColor,
+            child: GestureDetector(
+              onTap: esFuturo || toggling ? null : () => onDiaPulsado(fecha),
+              child: Container(
+                height: 40,
+                margin: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(8),
+                  border: esHoy ? Border.all(color: colorScheme.primary, width: 2.5) : null,
+                ),
+                child: Center(
+                  child: Text(
+                    '$dia',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: esHoy ? FontWeight.bold : FontWeight.w500,
+                      color: textColor,
+                    ),
                   ),
                 ),
               ),
@@ -722,29 +715,33 @@ class _DetalleHabitoScreenState extends State<DetalleHabitoScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildLeyendaItem(Colors.green.shade400, l10n.completado),
+        _LeyendaItem(color: Colors.green.shade400, label: l10n.completado),
         const SizedBox(width: 16),
-        _buildLeyendaItem(Colors.red.shade300.withValues(alpha: 0.7), l10n.noCompletado),
+        _LeyendaItem(color: Colors.red.shade300.withValues(alpha: 0.7), label: l10n.noCompletado),
         const SizedBox(width: 16),
-        _buildLeyendaItem(
-          colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-          l10n.pendiente,
+        _LeyendaItem(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+          label: l10n.pendiente,
         ),
       ],
     );
   }
+}
 
-  Widget _buildLeyendaItem(Color color, String label) {
+class _LeyendaItem extends StatelessWidget {
+  final Color color;
+  final String label;
+  const _LeyendaItem({required this.color, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           width: 14,
           height: 14,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(4),
-          ),
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
         ),
         const SizedBox(width: 4),
         Text(label, style: const TextStyle(fontSize: 12)),

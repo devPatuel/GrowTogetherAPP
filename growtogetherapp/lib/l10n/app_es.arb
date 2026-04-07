@@ -409,5 +409,21 @@
   },
 
   "diasSinLabel": "D\u00edas sin recaer",
-  "@diasSinLabel": { "description": "Etiqueta dias sin recaer para habito negativo" }
+  "@diasSinLabel": { "description": "Etiqueta dias sin recaer para habito negativo" },
+
+  "errorGenerico": "Ha ocurrido un error. Int\u00e9ntalo de nuevo.",
+  "@errorGenerico": { "description": "Mensaje de error generico" },
+
+  "mesEnero": "Enero",
+  "mesFebrero": "Febrero",
+  "mesMarzo": "Marzo",
+  "mesAbril": "Abril",
+  "mesMayo": "Mayo",
+  "mesJunio": "Junio",
+  "mesJulio": "Julio",
+  "mesAgosto": "Agosto",
+  "mesSeptiembre": "Septiembre",
+  "mesOctubre": "Octubre",
+  "mesNoviembre": "Noviembre",
+  "mesDiciembre": "Diciembre"
 }

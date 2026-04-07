@@ -419,4 +419,43 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get diasSinLabel => 'Dies sense recaure';
+
+  @override
+  String get errorGenerico => 'Ha passat un error. Torna-ho a intentar.';
+
+  @override
+  String get mesEnero => 'Gener';
+
+  @override
+  String get mesFebrero => 'Febrer';
+
+  @override
+  String get mesMarzo => 'Març';
+
+  @override
+  String get mesAbril => 'Abril';
+
+  @override
+  String get mesMayo => 'Maig';
+
+  @override
+  String get mesJunio => 'Juny';
+
+  @override
+  String get mesJulio => 'Juliol';
+
+  @override
+  String get mesAgosto => 'Agost';
+
+  @override
+  String get mesSeptiembre => 'Setembre';
+
+  @override
+  String get mesOctubre => 'Octubre';
+
+  @override
+  String get mesNoviembre => 'Novembre';
+
+  @override
+  String get mesDiciembre => 'Desembre';
 }
