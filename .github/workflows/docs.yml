@@ -1,0 +1,72 @@
+name: Generar y publicar DartDoc
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'growtogetherapp/lib/**'
+      - 'growtogetherapp/pubspec.yaml'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-docs:
+    name: Generar DartDoc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Instalar dependencias
+        working-directory: growtogetherapp
+        run: flutter pub get
+
+      - name: Generar archivos l10n
+        working-directory: growtogetherapp
+        run: flutter gen-l10n
+
+      - name: Generar DartDoc
+        working-directory: growtogetherapp
+        run: dart doc . --output doc/api
+
+      - name: Subir DartDoc como artifact descargable
+        uses: actions/upload-artifact@v4
+        with:
+          name: dartdoc-html
+          path: growtogetherapp/doc/api/
+          retention-days: 30
+
+      - name: Preparar artifact para GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: growtogetherapp/doc/api/
+
+  deploy-pages:
+    name: Desplegar a GitHub Pages
+    needs: build-docs
+    runs-on: ubuntu-latest
+    # continue-on-error evita que el workflow falle si Pages aun no esta habilitado
+    # (repo privado sin GitHub Pro). El artifact del job anterior sigue disponible.
+    continue-on-error: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

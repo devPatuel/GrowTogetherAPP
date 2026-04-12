@@ -7,6 +7,7 @@ import '../core/utils/habit_icons.dart';
 import '../data/local/secure_storage_service.dart';
 import '../data/models/habito.dart';
 import '../l10n/app_localizations.dart';
+import '../core/utils/snack_helper.dart';
 import '../providers/habitos_provider.dart';
 import 'detalle_habito_screen.dart';
 import 'widgets/progress_painters.dart';
@@ -23,9 +24,10 @@ class DashboardScreenState extends State<DashboardScreen>
     with TickerProviderStateMixin {
   String _nombreUsuario = '';
   bool _tipChecked = false;
-  static const int _maxDiasAtras = 365;
+  static const int _maxDiasAtras = 30;
 
   late AnimationController _staggerController;
+  late ScrollController _carruselController;
 
   @override
   void initState() {
@@ -34,7 +36,16 @@ class DashboardScreenState extends State<DashboardScreen>
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
+    _carruselController = ScrollController();
     _cargarInicial();
+  }
+
+  void _scrollToToday() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_carruselController.hasClients) {
+        _carruselController.jumpTo(_carruselController.position.maxScrollExtent);
+      }
+    });
   }
 
   Future<void> _cargarInicial() async {
@@ -45,12 +56,14 @@ class DashboardScreenState extends State<DashboardScreen>
     if (mounted) {
       setState(() {});
       _staggerController.forward(from: 0);
+      _scrollToToday();
     }
   }
 
   @override
   void dispose() {
     _staggerController.dispose();
+    _carruselController.dispose();
     super.dispose();
   }
 
@@ -111,18 +124,17 @@ class DashboardScreenState extends State<DashboardScreen>
 
   Future<void> _toggleHabito(Habito habito) async {
     final l10n = AppLocalizations.of(context)!;
+    final estabaCompletado = habito.completadoHoy;
     final ok = await context.read<HabitosProvider>().toggleHabito(habito);
     if (!mounted) return;
     if (ok) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(habito.completadoHoy ? l10n.habitoDesmarcado : l10n.habitoCompletado),
-        backgroundColor: habito.completadoHoy ? null : Theme.of(context).colorScheme.primary,
-        duration: const Duration(seconds: 1),
-      ));
+      if (estabaCompletado) {
+        context.showSnack(l10n.habitoDesmarcado, duration: const Duration(seconds: 1));
+      } else {
+        context.showSnackSuccess(l10n.habitoCompletado, duration: const Duration(seconds: 1));
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al actualizar'), backgroundColor: Colors.red),
-      );
+      context.showSnackError('Error al actualizar');
     }
   }
 
@@ -205,39 +217,75 @@ class DashboardScreenState extends State<DashboardScreen>
     final diasLetras = _getDiasLetras(l10n);
 
     return SizedBox(
-      height: 68,
+      height: 80,
       child: ListView.separated(
+        controller: _carruselController,
         scrollDirection: Axis.horizontal,
-        reverse: true,
         itemCount: _maxDiasAtras,
         separatorBuilder: (_, __) => const SizedBox(width: 6),
         itemBuilder: (context, index) {
-          final dia = hoy.subtract(Duration(days: index));
-          final esSeleccionado = dia.year == estado.fechaSeleccionada.year && dia.month == estado.fechaSeleccionada.month && dia.day == estado.fechaSeleccionada.day;
-          final esHoy = index == 0;
+          // index 0 = más antiguo (29 días atrás), index 29 = hoy
+          final diasAtras = (_maxDiasAtras - 1) - index;
+          final dia = hoy.subtract(Duration(days: diasAtras));
+          final esSeleccionado = dia.year == estado.fechaSeleccionada.year &&
+              dia.month == estado.fechaSeleccionada.month &&
+              dia.day == estado.fechaSeleccionada.day;
+          final esHoy = diasAtras == 0;
           final letraDia = diasLetras[dia.weekday - 1];
 
+          final textColor = esSeleccionado
+              ? colorScheme.onPrimary
+              : colorScheme.onSurface;
+          final subColor = esSeleccionado
+              ? colorScheme.onPrimary.withValues(alpha: 0.8)
+              : colorScheme.onSurfaceVariant.withValues(alpha: 0.6);
+
           return GestureDetector(
-            onTap: () { context.read<HabitosProvider>().seleccionarDia(dia); _staggerController.forward(from: 0); },
+            onTap: () {
+              context.read<HabitosProvider>().seleccionarDia(dia);
+              _staggerController.forward(from: 0);
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 250),
               curve: Curves.easeOutCubic,
               width: 46,
               decoration: BoxDecoration(
-                gradient: esSeleccionado ? LinearGradient(
-                  begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                  colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.7)],
-                ) : null,
-                color: esSeleccionado ? null : esHoy ? colorScheme.surfaceContainerHighest : Colors.transparent,
+                gradient: esSeleccionado
+                    ? LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          colorScheme.primary,
+                          colorScheme.primary.withValues(alpha: 0.7),
+                        ],
+                      )
+                    : null,
+                color: esSeleccionado
+                    ? null
+                    : esHoy
+                        ? colorScheme.surfaceContainerHighest
+                        : Colors.transparent,
                 borderRadius: BorderRadius.circular(14),
-                border: esHoy && !esSeleccionado ? Border.all(color: colorScheme.primary.withValues(alpha: 0.5), width: 1.5) : null,
+                border: esHoy && !esSeleccionado
+                    ? Border.all(
+                        color: colorScheme.primary.withValues(alpha: 0.5),
+                        width: 1.5)
+                    : null,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(letraDia, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: esSeleccionado ? colorScheme.onPrimary : colorScheme.onSurfaceVariant.withValues(alpha: 0.6))),
+                  Text(letraDia,
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: subColor)),
                   const SizedBox(height: 4),
-                  Text('${dia.day}', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: esSeleccionado ? colorScheme.onPrimary : colorScheme.onSurface)),
+                  Text('${dia.day}',
+                      style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: textColor)),
                 ],
               ),
             ),
@@ -474,11 +522,25 @@ class DashboardScreenState extends State<DashboardScreen>
                           // Racha + progreso en una fila compacta
                           Row(
                             children: [
-                              _buildFrecuenciaChip(habito, l10n),
+                              Expanded(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _buildFrecuenciaChip(habito, l10n),
+                                      const SizedBox(width: 8),
+                                      if (habito.rachaActual > 0 && !esNegativo) _buildRachaPill(habito),
+                                      if (esNegativo) ConstrainedBox(
+                                        constraints: const BoxConstraints(maxWidth: 150),
+                                        child: _buildDiasSinPill(habito, l10n),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                               const SizedBox(width: 8),
-                              if (habito.rachaActual > 0 && !esNegativo) _buildRachaPill(habito),
-                              if (esNegativo) _buildDiasSinPill(habito, l10n),
-                              const Spacer(),
                               // Mini progreso
                               TweenAnimationBuilder<double>(
                                 tween: Tween(begin: 0, end: progresoMensual),
@@ -586,18 +648,22 @@ class DashboardScreenState extends State<DashboardScreen>
 
   Widget _buildDiasSinPill(Habito habito, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Flexible(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-        decoration: BoxDecoration(color: colorScheme.error.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.shield_rounded, size: 14, color: colorScheme.error),
-            const SizedBox(width: 2),
-            Flexible(child: Text(l10n.diasSinHabito(habito.rachaActual, habito.nombre), style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: colorScheme.error), maxLines: 1, overflow: TextOverflow.ellipsis)),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: colorScheme.error.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.shield_rounded, size: 14, color: colorScheme.error),
+          const SizedBox(width: 2),
+          Text(
+            '${habito.rachaActual}',
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: colorScheme.error),
+          ),
+        ],
       ),
     );
   }

@@ -458,4 +458,90 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get mesDiciembre => 'Desembre';
+
+  @override
+  String get actividadGeneral => 'Activitat general';
+
+  @override
+  String get recordsRachas => 'Rècords de ratxes';
+
+  @override
+  String get porHabito => 'Per hàbit';
+
+  @override
+  String get totalCompletados => 'Total completats';
+
+  @override
+  String get mejorRachaGlobal => 'Millor ratxa';
+
+  @override
+  String get promedioDiario => 'Mitjana diària';
+
+  @override
+  String get habitosActivos => 'Hàbits actius';
+
+  @override
+  String get detalleGeneral => 'Detall general';
+
+  @override
+  String get resumenGeneral => 'Resum general';
+
+  @override
+  String ultimosDias(int dias) {
+    return 'Últims $dias dies';
+  }
+
+  @override
+  String get sinRacha => 'Sense ratxa';
+
+  @override
+  String get menos => 'Menys';
+
+  @override
+  String get mas => 'Més';
+
+  @override
+  String get sinDatosEstadisticas =>
+      'Quan crees hàbits, aquí veuràs les estadístiques';
+
+  @override
+  String rachaPlural(int dias) {
+    String _temp0 = intl.Intl.pluralLogic(
+      dias,
+      locale: localeName,
+      other: '$dias dies',
+      one: '1 dia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get marcarComoCompletado => 'Marcar com a completat';
+
+  @override
+  String get desmarcar => 'Desmarcar';
+
+  @override
+  String get cambiarEstado => 'Canviar estat';
+
+  @override
+  String get estadoCompletado => 'Completat';
+
+  @override
+  String get estadoNoCompletado => 'No completat';
+
+  @override
+  String get estadoPendiente => 'Pendent';
+
+  @override
+  String get temaClaro => 'Clar';
+
+  @override
+  String get temaOscuro => 'Fosc';
+
+  @override
+  String get temaMorado => 'Morat';
+
+  @override
+  String get temaNaturaleza => 'Natura';
 }

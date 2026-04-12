@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../core/utils/snack_helper.dart';
 import '../data/repositories/habito_repository.dart';
 import '../l10n/app_localizations.dart';
 import 'widgets/day_of_week_selector.dart';
@@ -43,14 +44,12 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
     final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
-    if (_frecuencia == 'PERSONALIZADO' && !_diasSeleccionados.contains(true)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.seleccionaAlMenosUnDia),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
+    // Normalizar: todos los dias o ninguno → DIARIO
+    if (_frecuencia == 'PERSONALIZADO') {
+      final count = _diasSeleccionados.where((d) => d).length;
+      if (count == 0 || count == 7) {
+        setState(() => _frecuencia = 'DIARIO');
+      }
     }
 
     setState(() => _guardando = true);
@@ -67,19 +66,12 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.habitoCreado),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ),
-      );
+      context.showSnackSuccess(l10n.habitoCreado);
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
       setState(() => _guardando = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-      );
+      context.showSnackError(e.toString());
     }
   }
 

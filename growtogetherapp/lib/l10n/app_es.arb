@@ -425,5 +425,90 @@
   "mesSeptiembre": "Septiembre",
   "mesOctubre": "Octubre",
   "mesNoviembre": "Noviembre",
-  "mesDiciembre": "Diciembre"
+  "mesDiciembre": "Diciembre",
+
+  "actividadGeneral": "Actividad general",
+  "@actividadGeneral": { "description": "Titulo del heatmap general en estadisticas" },
+
+  "recordsRachas": "Records de rachas",
+  "@recordsRachas": { "description": "Titulo del card de mejores rachas" },
+
+  "porHabito": "Por h\u00e1bito",
+  "@porHabito": { "description": "Titulo seccion heatmap por habito" },
+
+  "totalCompletados": "Total completados",
+  "@totalCompletados": { "description": "Metrica total completados" },
+
+  "mejorRachaGlobal": "Mejor racha",
+  "@mejorRachaGlobal": { "description": "Mejor racha global" },
+
+  "promedioDiario": "Media diaria",
+  "@promedioDiario": { "description": "Promedio de habitos completados por dia" },
+
+  "habitosActivos": "H\u00e1bitos activos",
+  "@habitosActivos": { "description": "Numero de habitos activos" },
+
+  "detalleGeneral": "Detalle general",
+  "@detalleGeneral": { "description": "Titulo pantalla detalle general" },
+
+  "resumenGeneral": "Resumen general",
+  "@resumenGeneral": { "description": "Card de resumen general" },
+
+  "ultimosDias": "\u00daltimos {dias} d\u00edas",
+  "@ultimosDias": {
+    "description": "Subtitulo periodo heatmap",
+    "placeholders": {
+      "dias": { "type": "int" }
+    }
+  },
+
+  "sinRacha": "Sin racha",
+  "@sinRacha": { "description": "Cuando un habito no tiene racha" },
+
+  "menos": "Menos",
+  "@menos": { "description": "Leyenda heatmap extremo bajo" },
+
+  "mas": "M\u00e1s",
+  "@mas": { "description": "Leyenda heatmap extremo alto" },
+
+  "sinDatosEstadisticas": "Cuando crees h\u00e1bitos, aqu\u00ed ver\u00e1s tus estad\u00edsticas",
+  "@sinDatosEstadisticas": { "description": "Estado vacio de estadisticas" },
+
+  "rachaPlural": "{dias, plural, =1{1 d\u00eda} other{{dias} d\u00edas}}",
+  "@rachaPlural": {
+    "description": "Texto de racha en dias",
+    "placeholders": {
+      "dias": { "type": "int" }
+    }
+  },
+
+  "marcarComoCompletado": "Marcar como completado",
+  "@marcarComoCompletado": { "description": "Boton de accion para completar habito" },
+
+  "desmarcar": "Desmarcar",
+  "@desmarcar": { "description": "Boton de accion para desmarcar habito" },
+
+  "cambiarEstado": "Cambiar estado",
+  "@cambiarEstado": { "description": "Titulo del bottom sheet de estados del dia" },
+
+  "estadoCompletado": "Completado",
+  "@estadoCompletado": { "description": "Opcion de estado: completado" },
+
+  "estadoNoCompletado": "No completado",
+  "@estadoNoCompletado": { "description": "Opcion de estado: no completado" },
+
+  "estadoPendiente": "Pendiente",
+  "@estadoPendiente": { "description": "Opcion de estado: pendiente" },
+
+  "temaClaro": "Claro",
+  "@temaClaro": { "description": "Nombre del tema claro" },
+
+  "temaOscuro": "Oscuro",
+  "@temaOscuro": { "description": "Nombre del tema oscuro" },
+
+  "temaMorado": "Morado",
+  "@temaMorado": { "description": "Nombre del tema morado" },
+
+  "temaNaturaleza": "Naturaleza",
+  "@temaNaturaleza": { "description": "Nombre del tema naturaleza" }
 }

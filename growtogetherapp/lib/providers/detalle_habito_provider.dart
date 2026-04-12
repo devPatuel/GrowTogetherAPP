@@ -79,6 +79,46 @@ class DetalleHabitoProvider extends ChangeNotifier {
         _esMismoDia(r.fecha, fecha) && r.estado == 'COMPLETADO');
   }
 
+  String estadoEnFecha(DateTime fecha) {
+    final reg = _historial.where((r) => _esMismoDia(r.fecha, fecha));
+    if (reg.isEmpty) return 'PENDIENTE';
+    return reg.first.estado;
+  }
+
+  /// Establece explicitamente el estado de un dia pasado.
+  /// - 'COMPLETADO'    → llama completarHabito
+  /// - 'NO_COMPLETADO' → llama descompletarHabito + actualiza historial local
+  /// - 'PENDIENTE'     → llama descompletarHabito + elimina del historial local
+  Future<bool> setEstado(DateTime fecha, String nuevoEstado) async {
+    if (_toggling) return false;
+    _toggling = true;
+    notifyListeners();
+
+    try {
+      if (nuevoEstado == 'COMPLETADO') {
+        _habito = await _repo.completarHabito(_habito.id, fecha: fecha);
+      } else {
+        _habito = await _repo.descompletarHabito(_habito.id, fecha: fecha);
+      }
+      _huboCambios = true;
+
+      // Actualizar historial local de forma optimista
+      _historial.removeWhere((r) => _esMismoDia(r.fecha, fecha));
+      if (nuevoEstado != 'PENDIENTE') {
+        _historial.add(RegistroHistorial(fecha: fecha, estado: nuevoEstado));
+      }
+
+      _toggling = false;
+      notifyListeners();
+      cargarHistorial(); // Sincronizar con el servidor en background
+      return true;
+    } catch (_) {
+      _toggling = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   static bool _esMismoDia(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
 

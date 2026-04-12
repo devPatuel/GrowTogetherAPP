@@ -162,5 +162,43 @@
   "mesSeptiembre": "September",
   "mesOctubre": "October",
   "mesNoviembre": "November",
-  "mesDiciembre": "December"
+  "mesDiciembre": "December",
+
+  "actividadGeneral": "Overall activity",
+  "recordsRachas": "Streak records",
+  "porHabito": "By habit",
+  "totalCompletados": "Total completed",
+  "mejorRachaGlobal": "Best streak",
+  "promedioDiario": "Daily average",
+  "habitosActivos": "Active habits",
+  "detalleGeneral": "Overall detail",
+  "resumenGeneral": "Overall summary",
+  "ultimosDias": "Last {dias} days",
+  "@ultimosDias": {
+    "placeholders": {
+      "dias": { "type": "int" }
+    }
+  },
+  "sinRacha": "No streak",
+  "menos": "Less",
+  "mas": "More",
+  "sinDatosEstadisticas": "When you create habits, you'll see your stats here",
+  "rachaPlural": "{dias, plural, =1{1 day} other{{dias} days}}",
+  "@rachaPlural": {
+    "placeholders": {
+      "dias": { "type": "int" }
+    }
+  },
+
+  "marcarComoCompletado": "Mark as completed",
+  "desmarcar": "Unmark",
+  "cambiarEstado": "Change state",
+  "estadoCompletado": "Completed",
+  "estadoNoCompletado": "Not completed",
+  "estadoPendiente": "Pending",
+
+  "temaClaro": "Light",
+  "temaOscuro": "Dark",
+  "temaMorado": "Purple",
+  "temaNaturaleza": "Nature"
 }

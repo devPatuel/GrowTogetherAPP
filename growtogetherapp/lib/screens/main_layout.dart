@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/habitos_provider.dart';
+import '../providers/statistics_provider.dart';
 import 'crear_habito_screen.dart';
 import 'dashboard_screen.dart';
 import 'statistics_screen.dart';
@@ -34,7 +35,10 @@ class _MainLayoutState extends State<MainLayout> {
 
     if (resultado == true) {
       provider.cargar();
-      if (mounted) setState(() => _indiceActual = 0);
+      if (mounted) {
+        context.read<StatisticsProvider>().cargar();
+        setState(() => _indiceActual = 0);
+      }
     }
   }
 
@@ -91,7 +95,10 @@ class _MainLayoutState extends State<MainLayout> {
     final colorScheme = Theme.of(context).colorScheme;
     return Expanded(
       child: InkWell(
-        onTap: () => setState(() => _indiceActual = indice),
+        onTap: () {
+          if (indice == 1) context.read<StatisticsProvider>().cargar();
+          setState(() => _indiceActual = indice);
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(

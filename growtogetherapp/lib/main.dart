@@ -13,6 +13,7 @@ import 'l10n/app_localizations.dart';
 import 'providers/auth_provider.dart';
 import 'providers/habitos_provider.dart';
 import 'providers/perfil_provider.dart';
+import 'providers/statistics_provider.dart';
 import 'screens/login_screen.dart';
 
 void main() async {
@@ -38,6 +39,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => HabitosProvider(habitoRepo, storage)),
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepo, userRepo)),
         ChangeNotifierProvider(create: (_) => PerfilProvider(userRepo, storage)),
+        ChangeNotifierProvider(create: (_) => StatisticsProvider(habitoRepo, storage)),
       ],
       child: const GrowTogetherApp(),
     ),

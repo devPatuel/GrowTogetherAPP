@@ -162,5 +162,43 @@
   "mesSeptiembre": "Setembre",
   "mesOctubre": "Octubre",
   "mesNoviembre": "Novembre",
-  "mesDiciembre": "Desembre"
+  "mesDiciembre": "Desembre",
+
+  "actividadGeneral": "Activitat general",
+  "recordsRachas": "R\u00e8cords de ratxes",
+  "porHabito": "Per h\u00e0bit",
+  "totalCompletados": "Total completats",
+  "mejorRachaGlobal": "Millor ratxa",
+  "promedioDiario": "Mitjana di\u00e0ria",
+  "habitosActivos": "H\u00e0bits actius",
+  "detalleGeneral": "Detall general",
+  "resumenGeneral": "Resum general",
+  "ultimosDias": "\u00daltims {dias} dies",
+  "@ultimosDias": {
+    "placeholders": {
+      "dias": { "type": "int" }
+    }
+  },
+  "sinRacha": "Sense ratxa",
+  "menos": "Menys",
+  "mas": "M\u00e9s",
+  "sinDatosEstadisticas": "Quan crees h\u00e0bits, aqu\u00ed veur\u00e0s les estad\u00edstiques",
+  "rachaPlural": "{dias, plural, =1{1 dia} other{{dias} dies}}",
+  "@rachaPlural": {
+    "placeholders": {
+      "dias": { "type": "int" }
+    }
+  },
+
+  "marcarComoCompletado": "Marcar com a completat",
+  "desmarcar": "Desmarcar",
+  "cambiarEstado": "Canviar estat",
+  "estadoCompletado": "Completat",
+  "estadoNoCompletado": "No completat",
+  "estadoPendiente": "Pendent",
+
+  "temaClaro": "Clar",
+  "temaOscuro": "Fosc",
+  "temaMorado": "Morat",
+  "temaNaturaleza": "Natura"
 }

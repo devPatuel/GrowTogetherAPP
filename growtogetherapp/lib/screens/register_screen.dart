@@ -46,7 +46,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     final ok = await auth.register(nombre, email, password);
     if (ok && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.cuentaCreada)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l10n.cuentaCreada),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ));
       Navigator.pop(context);
     }
   }

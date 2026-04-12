@@ -456,4 +456,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mesDiciembre => 'December';
+
+  @override
+  String get actividadGeneral => 'Overall activity';
+
+  @override
+  String get recordsRachas => 'Streak records';
+
+  @override
+  String get porHabito => 'By habit';
+
+  @override
+  String get totalCompletados => 'Total completed';
+
+  @override
+  String get mejorRachaGlobal => 'Best streak';
+
+  @override
+  String get promedioDiario => 'Daily average';
+
+  @override
+  String get habitosActivos => 'Active habits';
+
+  @override
+  String get detalleGeneral => 'Overall detail';
+
+  @override
+  String get resumenGeneral => 'Overall summary';
+
+  @override
+  String ultimosDias(int dias) {
+    return 'Last $dias days';
+  }
+
+  @override
+  String get sinRacha => 'No streak';
+
+  @override
+  String get menos => 'Less';
+
+  @override
+  String get mas => 'More';
+
+  @override
+  String get sinDatosEstadisticas =>
+      'When you create habits, you\'ll see your stats here';
+
+  @override
+  String rachaPlural(int dias) {
+    String _temp0 = intl.Intl.pluralLogic(
+      dias,
+      locale: localeName,
+      other: '$dias days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get marcarComoCompletado => 'Mark as completed';
+
+  @override
+  String get desmarcar => 'Unmark';
+
+  @override
+  String get cambiarEstado => 'Change state';
+
+  @override
+  String get estadoCompletado => 'Completed';
+
+  @override
+  String get estadoNoCompletado => 'Not completed';
+
+  @override
+  String get estadoPendiente => 'Pending';
+
+  @override
+  String get temaClaro => 'Light';
+
+  @override
+  String get temaOscuro => 'Dark';
+
+  @override
+  String get temaMorado => 'Purple';
+
+  @override
+  String get temaNaturaleza => 'Nature';
 }

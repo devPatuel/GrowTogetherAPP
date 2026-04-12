@@ -63,11 +63,6 @@ class _DialogoCambiarContrasenaState extends State<DialogoCambiarContrasena> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(_error!, style: TextStyle(color: Colors.red.shade700, fontSize: 13)),
-              ),
             TextField(
               controller: _actualController,
               obscureText: _ocultarActual,
@@ -106,6 +101,29 @@ class _DialogoCambiarContrasenaState extends State<DialogoCambiarContrasena> {
                 ),
               ),
             ),
+            if (_error != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline, size: 16, color: Colors.red.shade700),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _error!,
+                        style: TextStyle(color: Colors.red.shade700, fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),

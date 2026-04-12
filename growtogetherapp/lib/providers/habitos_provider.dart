@@ -17,8 +17,22 @@ class HabitosProvider extends ChangeNotifier {
     _fechaSeleccionada = DateTime(now.year, now.month, now.day);
   }
 
+  // Mapeo DateTime.weekday (1=Lun, 7=Dom) → nombre usado en la app y la API
+  static const _weekdayNames = [
+    'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO',
+  ];
+
   // Getters
-  List<Habito> get habitos => _habitos;
+  /// Habitos filtrados por dia de la semana:
+  /// los PERSONALIZADO solo aparecen si el dia seleccionado esta en su lista.
+  List<Habito> get habitos {
+    final weekdayStr = _weekdayNames[_fechaSeleccionada.weekday - 1];
+    return _habitos.where((h) {
+      if (h.frecuencia != 'PERSONALIZADO') return true;
+      return h.diasSemana.contains(weekdayStr);
+    }).toList();
+  }
+
   bool get cargando => _cargando;
   String? get error => _error;
   DateTime get fechaSeleccionada => _fechaSeleccionada;
@@ -30,8 +44,11 @@ class HabitosProvider extends ChangeNotifier {
         _fechaSeleccionada.day == now.day;
   }
 
-  int get completados => _habitos.where((h) => h.completadoHoy).length;
-  double get progreso => _habitos.isEmpty ? 0 : completados / _habitos.length;
+  int get completados => habitos.where((h) => h.completadoHoy).length;
+  double get progreso {
+    final h = habitos;
+    return h.isEmpty ? 0 : h.where((x) => x.completadoHoy).length / h.length;
+  }
 
   /// Carga los habitos del usuario para la fecha seleccionada
   Future<void> cargar() async {

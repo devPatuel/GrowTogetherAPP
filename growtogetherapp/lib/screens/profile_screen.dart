@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../core/l10n/locale_controller.dart';
 import '../core/theme/app_themes.dart';
 import '../core/theme/theme_controller.dart';
+import '../core/utils/snack_helper.dart';
 import '../core/utils/validators.dart';
 import '../data/models/usuario.dart';
 import '../l10n/app_localizations.dart';
@@ -36,11 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       MaterialPageRoute(builder: (_) => const LoginScreen()),
       (_) => false,
     );
-    if (mensaje != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(mensaje)),
-      );
-    }
+    if (mensaje != null) context.showSnack(mensaje);
   }
 
   // --- Editar foto ---
@@ -100,31 +97,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
         : ImageSource.gallery;
 
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, maxWidth: 400, imageQuality: 70);
+    // maxWidth 150 + quality 40 para mantener el base64 en ~3-5KB
+    final picked = await picker.pickImage(source: source, maxWidth: 150, imageQuality: 40);
     if (picked == null) return;
 
     try {
       final bytes = await picked.readAsBytes();
       final base64Str = base64Encode(bytes);
-      await perfil.editarFoto(base64Str);
+      final ok = await perfil.editarFoto(base64Str);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.fotoActualizada)));
+        if (ok) {
+          context.showSnack(l10n.fotoActualizada);
+        } else {
+          context.showSnackError(perfil.error ?? l10n.errorGenerico);
+        }
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
-      }
+      if (mounted) context.showSnackError(e.toString());
     }
   }
 
   Future<void> _quitarFoto() async {
     final l10n = AppLocalizations.of(context)!;
     final ok = await context.read<PerfilProvider>().quitarFoto();
-    if (mounted && ok) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.fotoEliminada)));
-    }
+    if (mounted && ok) context.showSnack(l10n.fotoEliminada);
   }
 
   // --- Editar nombre ---
@@ -160,9 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (resultado == null || resultado.isEmpty || resultado == perfil.usuario?.nombre) return;
 
     final ok = await perfil.editarNombre(resultado);
-    if (mounted && ok) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.perfilActualizado)));
-    }
+    if (mounted && ok) context.showSnack(l10n.perfilActualizado);
   }
 
   // --- Editar email (cierra sesion porque invalida el JWT) ---
@@ -204,9 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       invalido: l10n.validatorEmailInvalido,
     );
     if (errorEmail != null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorEmail)));
-      }
+      if (mounted) context.showSnack(errorEmail);
       return;
     }
 
@@ -271,6 +263,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final ok = await context.read<PerfilProvider>().cambiarContrasena(resultado['actual']!, resultado['nueva']!);
     if (ok && mounted) {
       _irALogin(mensaje: l10n.sesionCerradaPorCambio);
+    } else if (!ok && mounted) {
+      context.showSnackError(context.read<PerfilProvider>().error ?? l10n.errorGenerico);
     }
   }
 
@@ -331,7 +325,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     AppThemes.icon(tipo),
                     color: AppThemes.previewColor(tipo),
                   ),
-                  title: Text(AppThemes.label(tipo)),
+                  title: Text(switch (tipo) {
+                    AppThemeType.claro => l10n.temaClaro,
+                    AppThemeType.oscuro => l10n.temaOscuro,
+                    AppThemeType.morado => l10n.temaMorado,
+                    AppThemeType.naturaleza => l10n.temaNaturaleza,
+                  }),
                   trailing: seleccionado
                       ? Icon(Icons.check, color: Theme.of(ctx).colorScheme.primary)
                       : null,
@@ -492,31 +491,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             usuario.email,
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
-          const SizedBox(height: 8),
-
-          // Puntos
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: colorScheme.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.star, color: colorScheme.primary, size: 20),
-                const SizedBox(width: 4),
-                Text(
-                  '${usuario.puntosTotales} ${l10n.puntos}',
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
 
           // Seccion: Informacion de cuenta
           Align(
@@ -573,7 +548,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               leading: Icon(Icons.palette_outlined, color: colorScheme.primary),
               title: Text(l10n.tema, style: const TextStyle(fontSize: 13, color: Colors.grey)),
               subtitle: Text(
-                AppThemes.label(ThemeController.instance.value),
+                switch (ThemeController.instance.value) {
+                  AppThemeType.claro => l10n.temaClaro,
+                  AppThemeType.oscuro => l10n.temaOscuro,
+                  AppThemeType.morado => l10n.temaMorado,
+                  AppThemeType.naturaleza => l10n.temaNaturaleza,
+                },
                 style: const TextStyle(fontSize: 15),
               ),
               trailing: const Icon(Icons.chevron_right),

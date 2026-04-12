@@ -21,7 +21,10 @@ class PerfilProvider extends ChangeNotifier {
   Future<void> cargar() async {
     _cargando = true;
     _error = null;
-    notifyListeners();
+    // No llamar notifyListeners() aquí de forma síncrona: puede
+    // dispararse durante la fase de build y provocar el error
+    // "setState called during build". El estado de carga ya se
+    // notifica cuando termina la operación asíncrona.
 
     try {
       final id = await _storage.getUserId();
@@ -73,6 +76,11 @@ class PerfilProvider extends ChangeNotifier {
       return true;
     } on ApiException catch (e) {
       _error = e.message;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      // Captura errores genéricos (ej. payload demasiado grande en web)
+      _error = e.toString();
       notifyListeners();
       return false;
     }

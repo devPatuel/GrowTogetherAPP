@@ -963,6 +963,156 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Diciembre'**
   String get mesDiciembre;
+
+  /// Titulo del heatmap general en estadisticas
+  ///
+  /// In es, this message translates to:
+  /// **'Actividad general'**
+  String get actividadGeneral;
+
+  /// Titulo del card de mejores rachas
+  ///
+  /// In es, this message translates to:
+  /// **'Records de rachas'**
+  String get recordsRachas;
+
+  /// Titulo seccion heatmap por habito
+  ///
+  /// In es, this message translates to:
+  /// **'Por hábito'**
+  String get porHabito;
+
+  /// Metrica total completados
+  ///
+  /// In es, this message translates to:
+  /// **'Total completados'**
+  String get totalCompletados;
+
+  /// Mejor racha global
+  ///
+  /// In es, this message translates to:
+  /// **'Mejor racha'**
+  String get mejorRachaGlobal;
+
+  /// Promedio de habitos completados por dia
+  ///
+  /// In es, this message translates to:
+  /// **'Media diaria'**
+  String get promedioDiario;
+
+  /// Numero de habitos activos
+  ///
+  /// In es, this message translates to:
+  /// **'Hábitos activos'**
+  String get habitosActivos;
+
+  /// Titulo pantalla detalle general
+  ///
+  /// In es, this message translates to:
+  /// **'Detalle general'**
+  String get detalleGeneral;
+
+  /// Card de resumen general
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen general'**
+  String get resumenGeneral;
+
+  /// Subtitulo periodo heatmap
+  ///
+  /// In es, this message translates to:
+  /// **'Últimos {dias} días'**
+  String ultimosDias(int dias);
+
+  /// Cuando un habito no tiene racha
+  ///
+  /// In es, this message translates to:
+  /// **'Sin racha'**
+  String get sinRacha;
+
+  /// Leyenda heatmap extremo bajo
+  ///
+  /// In es, this message translates to:
+  /// **'Menos'**
+  String get menos;
+
+  /// Leyenda heatmap extremo alto
+  ///
+  /// In es, this message translates to:
+  /// **'Más'**
+  String get mas;
+
+  /// Estado vacio de estadisticas
+  ///
+  /// In es, this message translates to:
+  /// **'Cuando crees hábitos, aquí verás tus estadísticas'**
+  String get sinDatosEstadisticas;
+
+  /// Texto de racha en dias
+  ///
+  /// In es, this message translates to:
+  /// **'{dias, plural, =1{1 día} other{{dias} días}}'**
+  String rachaPlural(int dias);
+
+  /// Boton de accion para completar habito
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar como completado'**
+  String get marcarComoCompletado;
+
+  /// Boton de accion para desmarcar habito
+  ///
+  /// In es, this message translates to:
+  /// **'Desmarcar'**
+  String get desmarcar;
+
+  /// Titulo del bottom sheet de estados del dia
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar estado'**
+  String get cambiarEstado;
+
+  /// Opcion de estado: completado
+  ///
+  /// In es, this message translates to:
+  /// **'Completado'**
+  String get estadoCompletado;
+
+  /// Opcion de estado: no completado
+  ///
+  /// In es, this message translates to:
+  /// **'No completado'**
+  String get estadoNoCompletado;
+
+  /// Opcion de estado: pendiente
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get estadoPendiente;
+
+  /// Nombre del tema claro
+  ///
+  /// In es, this message translates to:
+  /// **'Claro'**
+  String get temaClaro;
+
+  /// Nombre del tema oscuro
+  ///
+  /// In es, this message translates to:
+  /// **'Oscuro'**
+  String get temaOscuro;
+
+  /// Nombre del tema morado
+  ///
+  /// In es, this message translates to:
+  /// **'Morado'**
+  String get temaMorado;
+
+  /// Nombre del tema naturaleza
+  ///
+  /// In es, this message translates to:
+  /// **'Naturaleza'**
+  String get temaNaturaleza;
 }
 
 class _AppLocalizationsDelegate

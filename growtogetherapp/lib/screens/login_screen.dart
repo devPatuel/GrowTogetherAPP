@@ -45,7 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
       auth.limpiarError();
       setState(() {});
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.rellenaTodosLosCampos)),
+        SnackBar(
+          content: Text(l10n.rellenaTodosLosCampos),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       );
       return;
     }
@@ -88,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
                   labelText: l10n.email,
                   prefixIcon: const Icon(Icons.email_outlined),
@@ -99,6 +105,10 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: _passwordController,
                 obscureText: _ocultarPassword,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) {
+                  if (!auth.cargando) _iniciarSesion();
+                },
                 decoration: InputDecoration(
                   labelText: l10n.contrasena,
                   prefixIcon: const Icon(Icons.lock_outline),

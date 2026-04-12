@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/utils/habit_icons.dart';
+import '../core/utils/snack_helper.dart';
 import '../data/models/habito.dart';
 import '../data/models/registro_historial.dart';
 import '../data/repositories/habito_repository.dart';
@@ -69,7 +70,8 @@ class _DetalleHabitoView extends StatelessWidget {
             toggling: provider.toggling,
             onMesAnterior: provider.mesAnterior,
             onMesSiguiente: provider.mesSiguiente,
-            onDiaPulsado: (fecha) => _onToggleFecha(context, fecha),
+            onDiaPulsado: (fecha) => _onDiaPulsado(context, fecha),
+            habito: provider.habito,
           ),
         ],
       ),
@@ -84,21 +86,89 @@ class _DetalleHabitoView extends StatelessWidget {
 
     if (!context.mounted) return;
     if (ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(estabaCompletado ? l10n.habitoDesmarcado : l10n.habitoCompletado),
-          backgroundColor: estabaCompletado ? null : Theme.of(context).colorScheme.primary,
-          duration: const Duration(seconds: 1),
-        ),
-      );
+      if (estabaCompletado) {
+        context.showSnack(l10n.habitoDesmarcado, duration: const Duration(seconds: 1));
+      } else {
+        context.showSnackSuccess(l10n.habitoCompletado, duration: const Duration(seconds: 1));
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.errorGenerico), backgroundColor: Colors.red),
-      );
+      context.showSnackError(l10n.errorGenerico);
     }
   }
 
+  /// Para dias pasados muestra bottom sheet con 3 opciones de estado.
+  Future<void> _onDiaPulsado(BuildContext context, DateTime fecha) async {
+    final provider = context.read<DetalleHabitoProvider>();
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final estadoActual = provider.estadoEnFecha(fecha);
+
+    final meses = [
+      l10n.mesEnero, l10n.mesFebrero, l10n.mesMarzo, l10n.mesAbril,
+      l10n.mesMayo, l10n.mesJunio, l10n.mesJulio, l10n.mesAgosto,
+      l10n.mesSeptiembre, l10n.mesOctubre, l10n.mesNoviembre, l10n.mesDiciembre,
+    ];
+    final titulo = '${fecha.day} ${meses[fecha.month - 1]}';
+
+    final nuevoEstado = await showModalBottomSheet<String>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(
+                '${l10n.cambiarEstado} — $titulo',
+                style: Theme.of(ctx).textTheme.titleMedium,
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.check_circle, color: Colors.green),
+              title: Text(l10n.estadoCompletado),
+              trailing: estadoActual == 'COMPLETADO'
+                  ? Icon(Icons.radio_button_checked, color: colorScheme.primary)
+                  : const Icon(Icons.radio_button_unchecked),
+              onTap: () => Navigator.pop(ctx, 'COMPLETADO'),
+            ),
+            ListTile(
+              leading: Icon(Icons.radio_button_unchecked,
+                  color: colorScheme.onSurfaceVariant),
+              title: Text(l10n.estadoPendiente),
+              // NO_COMPLETADO se muestra como "pendiente" visualmente en el selector
+              trailing: (estadoActual == 'PENDIENTE' || estadoActual == 'NO_COMPLETADO')
+                  ? Icon(Icons.radio_button_checked, color: colorScheme.primary)
+                  : const Icon(Icons.radio_button_unchecked),
+              onTap: () => Navigator.pop(ctx, 'PENDIENTE'),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+
+    if (nuevoEstado == null || nuevoEstado == estadoActual) return;
+    if (!context.mounted) return;
+
+    final ok = await provider.setEstado(fecha, nuevoEstado);
+    if (!context.mounted) return;
+    if (!ok) context.showSnackError(l10n.errorGenerico);
+  }
+
   Future<void> _onToggleFecha(BuildContext context, DateTime fecha) async {
+    // Metodo mantenido por compatibilidad, ya no se invoca desde el calendario.
     final provider = context.read<DetalleHabitoProvider>();
     final l10n = AppLocalizations.of(context)!;
     final estabaCompletado = provider.estaCompletadoEnFecha(fecha);
@@ -106,17 +176,13 @@ class _DetalleHabitoView extends StatelessWidget {
 
     if (!context.mounted) return;
     if (ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(estabaCompletado ? l10n.habitoDesmarcado : l10n.habitoCompletado),
-          backgroundColor: estabaCompletado ? null : Theme.of(context).colorScheme.primary,
-          duration: const Duration(seconds: 1),
-        ),
-      );
+      if (estabaCompletado) {
+        context.showSnack(l10n.habitoDesmarcado, duration: const Duration(seconds: 1));
+      } else {
+        context.showSnackSuccess(l10n.habitoCompletado, duration: const Duration(seconds: 1));
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.errorGenerico), backgroundColor: Colors.red),
-      );
+      context.showSnackError(l10n.errorGenerico);
     }
   }
 
@@ -204,9 +270,7 @@ class _DetalleHabitoView extends StatelessWidget {
                   onPressed: () {
                     if (!formKey.currentState!.validate()) return;
                     if (frecuencia == 'PERSONALIZADO' && diasSeleccionados.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.seleccionaAlMenosUnDia)),
-                      );
+                      context.showSnack(l10n.seleccionaAlMenosUnDia);
                       return;
                     }
                     Navigator.pop(ctx, true);
@@ -230,13 +294,11 @@ class _DetalleHabitoView extends StatelessWidget {
         icono: iconoSeleccionado,
       );
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(ok ? l10n.habitoActualizado : l10n.errorGenerico),
-          backgroundColor: ok ? null : Colors.red,
-          duration: const Duration(seconds: 1),
-        ),
-      );
+      if (ok) {
+        context.showSnack(l10n.habitoActualizado, duration: const Duration(seconds: 1));
+      } else {
+        context.showSnackError(l10n.errorGenerico, duration: const Duration(seconds: 1));
+      }
     }
   }
 
@@ -299,14 +361,10 @@ class _DetalleHabitoView extends StatelessWidget {
       final ok = await provider.eliminarHabito();
       if (!context.mounted) return;
       if (ok) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.habitoEliminado), duration: const Duration(seconds: 1)),
-        );
+        context.showSnack(l10n.habitoEliminado, duration: const Duration(seconds: 1));
         Navigator.pop(context, true);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorGenerico), backgroundColor: Colors.red),
-        );
+        context.showSnackError(l10n.errorGenerico);
       }
     }
   }
@@ -476,9 +534,7 @@ class _RachaCard extends StatelessWidget {
                         style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
                       ),
                       Text(
-                        esNegativo
-                            ? l10n.diasSinHabito(habito.rachaActual, habito.nombre)
-                            : '${habito.rachaActual} ${l10n.dias}',
+                        '${habito.rachaActual} ${l10n.dias}',
                         style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -506,7 +562,7 @@ class _RachaCard extends StatelessWidget {
                       onPressed: onToggle,
                       icon: Icon(habito.completadoHoy ? Icons.close : Icons.check),
                       label: Text(
-                        habito.completadoHoy ? l10n.habitoDesmarcado : l10n.habitoCompletado,
+                        habito.completadoHoy ? l10n.desmarcar : l10n.marcarComoCompletado,
                       ),
                       style: FilledButton.styleFrom(
                         backgroundColor: habito.completadoHoy ? colorScheme.error : accentColor,
@@ -529,6 +585,7 @@ class _HistorialSection extends StatelessWidget {
   final VoidCallback onMesAnterior;
   final VoidCallback onMesSiguiente;
   final ValueChanged<DateTime> onDiaPulsado;
+  final Habito habito;
 
   const _HistorialSection({
     required this.historial,
@@ -538,6 +595,7 @@ class _HistorialSection extends StatelessWidget {
     required this.onMesAnterior,
     required this.onMesSiguiente,
     required this.onDiaPulsado,
+    required this.habito,
   });
 
   List<String> _getMeses(AppLocalizations l10n) => [
@@ -627,11 +685,21 @@ class _HistorialSection extends StatelessWidget {
               )).toList(),
             ),
             const SizedBox(height: 8),
-            ..._buildFilasCalendario(diasDelMes, offsetInicio, estadoPorDia, colorScheme),
+            ..._buildFilasCalendario(diasDelMes, offsetInicio, estadoPorDia, colorScheme, habito),
           ],
         ),
       ),
     );
+  }
+
+  static bool _esDiaDefinido(DateTime fecha, Habito habito) {
+    if (habito.frecuencia != 'PERSONALIZADO') return true;
+    if (habito.diasSemana.isEmpty) return true;
+    const diasMap = {
+      1: 'LUNES', 2: 'MARTES', 3: 'MIERCOLES', 4: 'JUEVES',
+      5: 'VIERNES', 6: 'SABADO', 7: 'DOMINGO',
+    };
+    return habito.diasSemana.contains(diasMap[fecha.weekday]);
   }
 
   List<Widget> _buildFilasCalendario(
@@ -639,6 +707,7 @@ class _HistorialSection extends StatelessWidget {
     int offsetInicio,
     Map<String, String> estadoPorDia,
     ColorScheme colorScheme,
+    Habito habito,
   ) {
     final filas = <Widget>[];
     final totalCeldas = offsetInicio + diasDelMes;
@@ -661,11 +730,15 @@ class _HistorialSection extends StatelessWidget {
         final estado = estadoPorDia[key];
         final esHoy = fecha.year == hoy.year && fecha.month == hoy.month && fecha.day == hoy.day;
         final esFuturo = fecha.isAfter(hoy);
+        final esDiaDefinido = _esDiaDefinido(fecha, habito);
 
         Color bgColor;
         Color textColor;
 
-        if (estado == 'COMPLETADO') {
+        if (!esDiaDefinido) {
+          bgColor = colorScheme.surfaceContainerHighest.withValues(alpha: 0.25);
+          textColor = colorScheme.onSurfaceVariant.withValues(alpha: 0.3);
+        } else if (estado == 'COMPLETADO') {
           bgColor = Colors.green.shade400;
           textColor = Colors.white;
         } else if (estado == 'NO_COMPLETADO') {
@@ -682,7 +755,7 @@ class _HistorialSection extends StatelessWidget {
         celdas.add(
           Expanded(
             child: GestureDetector(
-              onTap: esFuturo || toggling ? null : () => onDiaPulsado(fecha),
+              onTap: esFuturo || toggling || !esDiaDefinido ? null : () => onDiaPulsado(fecha),
               child: Container(
                 height: 40,
                 margin: const EdgeInsets.all(2),
