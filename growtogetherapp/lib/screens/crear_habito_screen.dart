@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/utils/snack_helper.dart';
-import '../data/repositories/habito_repository.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import '../l10n/app_localizations.dart';
 import 'widgets/day_of_week_selector.dart';
 import 'widgets/habit_type_selector.dart';
@@ -24,7 +24,6 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
   String _tipo = 'POSITIVO';
   String? _iconoSeleccionado;
 
-
   bool _guardando = false;
 
   @override
@@ -33,7 +32,6 @@ class _CrearHabitoScreenState extends State<CrearHabitoScreen> {
     _descCtrl.dispose();
     super.dispose();
   }
-
 
   Set<String>? _getDiasSemana() {
     if (_frecuencia == 'DIARIO') return null;

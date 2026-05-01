@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../data/local/secure_storage_service.dart';
-import '../data/models/desafio.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import '../providers/desafios_provider.dart';
 import 'detalle_desafio_screen.dart';
 import 'widgets/desafio_card.dart';

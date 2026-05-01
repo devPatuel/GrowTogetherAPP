@@ -1,8 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../data/api/api_exceptions.dart';
-import '../data/models/usuario.dart';
-import '../data/models/solicitud_amistad.dart';
-import '../data/repositories/amistad_repository.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 
 class AmistadProvider extends ChangeNotifier {
   final AmistadRepository _repo;

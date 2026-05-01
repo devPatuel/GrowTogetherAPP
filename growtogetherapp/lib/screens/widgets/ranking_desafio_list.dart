@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../core/utils/challenge_colors.dart';
-import '../../data/models/participante_desafio.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import 'gema_puntos.dart';
 
 /// Lista vertical del ranking del desafío. Cada fila tiene un borde con el color

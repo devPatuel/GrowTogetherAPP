@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../data/models/usuario.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import '../../providers/amistad_provider.dart';
 import 'usuario_tile.dart';
 

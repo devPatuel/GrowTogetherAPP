@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/utils/habit_icons.dart';
-import '../data/models/habito.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/statistics_provider.dart';
 import 'detalle_general_screen.dart';

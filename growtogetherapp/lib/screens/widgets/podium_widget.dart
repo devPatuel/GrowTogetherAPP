@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../core/utils/challenge_colors.dart';
-import '../../data/models/participante_desafio.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import 'gema_puntos.dart';
 
 /// Podio top 3 estilo Playus: tres barras de colores con alturas distintas,

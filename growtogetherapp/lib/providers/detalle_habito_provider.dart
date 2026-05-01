@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../data/models/habito.dart';
-import '../data/models/registro_historial.dart';
-import '../data/repositories/habito_repository.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 
 class DetalleHabitoProvider extends ChangeNotifier {
   final HabitoRepository _repo;

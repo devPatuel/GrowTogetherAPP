@@ -1,8 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../data/api/api_exceptions.dart';
-import '../data/local/secure_storage_service.dart';
-import '../data/models/usuario.dart';
-import '../data/repositories/user_repository.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 
 class PerfilProvider extends ChangeNotifier {
   final UserRepository _repo;

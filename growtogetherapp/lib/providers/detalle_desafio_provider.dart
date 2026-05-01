@@ -1,8 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../data/models/desafio.dart';
-import '../data/models/participante_desafio.dart';
-import '../data/models/registro_desafio.dart';
-import '../data/repositories/desafio_repository.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 
 class DetalleDesafioProvider extends ChangeNotifier {
   final DesafioRepository _repo;
