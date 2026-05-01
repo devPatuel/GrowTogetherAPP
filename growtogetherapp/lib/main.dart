@@ -6,11 +6,15 @@ import 'core/theme/app_themes.dart';
 import 'core/theme/theme_controller.dart';
 import 'data/api/dio_client.dart';
 import 'data/local/secure_storage_service.dart';
+import 'data/repositories/amistad_repository.dart';
 import 'data/repositories/auth_repository.dart';
+import 'data/repositories/desafio_repository.dart';
 import 'data/repositories/habito_repository.dart';
 import 'data/repositories/user_repository.dart';
 import 'l10n/app_localizations.dart';
+import 'providers/amistad_provider.dart';
 import 'providers/auth_provider.dart';
+import 'providers/desafios_provider.dart';
 import 'providers/habitos_provider.dart';
 import 'providers/perfil_provider.dart';
 import 'providers/statistics_provider.dart';
@@ -27,6 +31,8 @@ void main() async {
   final authRepo = AuthRepository(dioClient, storage);
   final habitoRepo = HabitoRepository(dioClient);
   final userRepo = UserRepository(dioClient);
+  final amistadRepo = AmistadRepository(dioClient);
+  final desafioRepo = DesafioRepository(dioClient);
 
   runApp(
     MultiProvider(
@@ -36,10 +42,14 @@ void main() async {
         Provider<AuthRepository>.value(value: authRepo),
         Provider<HabitoRepository>.value(value: habitoRepo),
         Provider<UserRepository>.value(value: userRepo),
+        Provider<AmistadRepository>.value(value: amistadRepo),
+        Provider<DesafioRepository>.value(value: desafioRepo),
         ChangeNotifierProvider(create: (_) => HabitosProvider(habitoRepo, storage)),
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepo, userRepo)),
         ChangeNotifierProvider(create: (_) => PerfilProvider(userRepo, storage)),
         ChangeNotifierProvider(create: (_) => StatisticsProvider(habitoRepo, storage)),
+        ChangeNotifierProvider(create: (_) => AmistadProvider(amistadRepo)),
+        ChangeNotifierProvider(create: (_) => DesafiosProvider(desafioRepo)),
       ],
       child: const GrowTogetherApp(),
     ),
