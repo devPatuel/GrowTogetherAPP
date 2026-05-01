@@ -1113,6 +1113,132 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Naturaleza'**
   String get temaNaturaleza;
+
+  /// Tooltip del icono para abrir la pantalla de busqueda de amigos
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar amigos'**
+  String get buscarAmigos;
+
+  /// Tooltip y titulo de la pantalla de lista de amigos
+  ///
+  /// In es, this message translates to:
+  /// **'Mis amigos'**
+  String get misAmigos;
+
+  /// Titulo de la tab de amigos
+  ///
+  /// In es, this message translates to:
+  /// **'Amigos'**
+  String get amigos;
+
+  /// Titulo de la tab de peticiones pendientes
+  ///
+  /// In es, this message translates to:
+  /// **'Peticiones'**
+  String get peticiones;
+
+  /// Titulo de la tab de peticiones con contador
+  ///
+  /// In es, this message translates to:
+  /// **'Peticiones ({n})'**
+  String peticionesConContador(int n);
+
+  /// Placeholder del campo de busqueda de usuarios
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar por nombre o ID'**
+  String get buscarPorNombreOId;
+
+  /// Boton para enviar peticion de amistad
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar solicitud'**
+  String get enviarSolicitud;
+
+  /// Mensaje de confirmacion tras enviar peticion
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitud enviada'**
+  String get solicitudEnviada;
+
+  /// Boton aceptar peticion
+  ///
+  /// In es, this message translates to:
+  /// **'Aceptar'**
+  String get aceptar;
+
+  /// Boton rechazar peticion
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar'**
+  String get rechazar;
+
+  /// Accion de eliminar de la lista de amigos
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar amigo'**
+  String get eliminarAmigo;
+
+  /// Mensaje de confirmacion antes de eliminar un amigo
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar a {nombre} de tus amigos?'**
+  String confirmarEliminarAmigo(String nombre);
+
+  /// Mensaje cuando la lista de amigos esta vacia
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no tienes amigos. Busca usuarios con el icono +'**
+  String get sinAmigosTodavia;
+
+  /// Mensaje cuando no hay peticiones pendientes
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes peticiones pendientes'**
+  String get sinPeticionesPendientes;
+
+  /// Cabecera de la seccion de peticiones recibidas
+  ///
+  /// In es, this message translates to:
+  /// **'Recibidas'**
+  String get peticionesRecibidas;
+
+  /// Cabecera de la seccion de peticiones enviadas
+  ///
+  /// In es, this message translates to:
+  /// **'Enviadas'**
+  String get peticionesEnviadas;
+
+  /// Tooltip y accion para cancelar una solicitud enviada
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar solicitud'**
+  String get cancelarSolicitud;
+
+  /// Mensaje de confirmacion antes de cancelar una solicitud enviada
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cancelar la solicitud enviada a {nombre}?'**
+  String confirmarCancelarSolicitud(String nombre);
+
+  /// Mensaje cuando no hay peticiones enviadas pendientes
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes peticiones enviadas'**
+  String get sinPeticionesEnviadas;
+
+  /// Mensaje cuando la busqueda no devuelve resultados
+  ///
+  /// In es, this message translates to:
+  /// **'No se han encontrado usuarios'**
+  String get sinResultadosBusqueda;
+
+  /// Mensaje inicial de la pantalla de busqueda
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe un nombre o un ID para buscar'**
+  String get usuarioEscribeParaBuscar;
 }
 
 class _AppLocalizationsDelegate

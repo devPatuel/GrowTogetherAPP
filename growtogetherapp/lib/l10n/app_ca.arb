@@ -200,5 +200,42 @@
   "temaClaro": "Clar",
   "temaOscuro": "Fosc",
   "temaMorado": "Morat",
-  "temaNaturaleza": "Natura"
+  "temaNaturaleza": "Natura",
+
+  "buscarAmigos": "Cercar amics",
+  "misAmigos": "Els meus amics",
+  "amigos": "Amics",
+  "peticiones": "Peticions",
+  "peticionesConContador": "Peticions ({n})",
+  "@peticionesConContador": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "buscarPorNombreOId": "Cerca per nom o ID",
+  "enviarSolicitud": "Enviar petició",
+  "solicitudEnviada": "Petició enviada",
+  "aceptar": "Acceptar",
+  "rechazar": "Rebutjar",
+  "eliminarAmigo": "Eliminar amic",
+  "confirmarEliminarAmigo": "Eliminar {nombre} dels teus amics?",
+  "@confirmarEliminarAmigo": {
+    "placeholders": {
+      "nombre": { "type": "String" }
+    }
+  },
+  "sinAmigosTodavia": "Encara no tens amics. Cerca usuaris amb la icona +",
+  "sinPeticionesPendientes": "No tens peticions pendents",
+  "peticionesRecibidas": "Rebudes",
+  "peticionesEnviadas": "Enviades",
+  "cancelarSolicitud": "Cancel·lar petició",
+  "confirmarCancelarSolicitud": "Cancel·lar la petició enviada a {nombre}?",
+  "@confirmarCancelarSolicitud": {
+    "placeholders": {
+      "nombre": { "type": "String" }
+    }
+  },
+  "sinPeticionesEnviadas": "No tens peticions enviades",
+  "sinResultadosBusqueda": "No s'han trobat usuaris",
+  "usuarioEscribeParaBuscar": "Escriu un nom o un ID per cercar"
 }

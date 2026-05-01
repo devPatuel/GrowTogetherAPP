@@ -200,5 +200,42 @@
   "temaClaro": "Light",
   "temaOscuro": "Dark",
   "temaMorado": "Purple",
-  "temaNaturaleza": "Nature"
+  "temaNaturaleza": "Nature",
+
+  "buscarAmigos": "Find friends",
+  "misAmigos": "My friends",
+  "amigos": "Friends",
+  "peticiones": "Requests",
+  "peticionesConContador": "Requests ({n})",
+  "@peticionesConContador": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "buscarPorNombreOId": "Search by name or ID",
+  "enviarSolicitud": "Send request",
+  "solicitudEnviada": "Request sent",
+  "aceptar": "Accept",
+  "rechazar": "Decline",
+  "eliminarAmigo": "Remove friend",
+  "confirmarEliminarAmigo": "Remove {nombre} from your friends?",
+  "@confirmarEliminarAmigo": {
+    "placeholders": {
+      "nombre": { "type": "String" }
+    }
+  },
+  "sinAmigosTodavia": "You don't have friends yet. Use the + icon to find users",
+  "sinPeticionesPendientes": "No pending requests",
+  "peticionesRecibidas": "Received",
+  "peticionesEnviadas": "Sent",
+  "cancelarSolicitud": "Cancel request",
+  "confirmarCancelarSolicitud": "Cancel the request sent to {nombre}?",
+  "@confirmarCancelarSolicitud": {
+    "placeholders": {
+      "nombre": { "type": "String" }
+    }
+  },
+  "sinPeticionesEnviadas": "No sent requests",
+  "sinResultadosBusqueda": "No users found",
+  "usuarioEscribeParaBuscar": "Type a name or ID to search"
 }

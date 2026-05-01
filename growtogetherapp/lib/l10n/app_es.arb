@@ -510,5 +510,83 @@
   "@temaMorado": { "description": "Nombre del tema morado" },
 
   "temaNaturaleza": "Naturaleza",
-  "@temaNaturaleza": { "description": "Nombre del tema naturaleza" }
+  "@temaNaturaleza": { "description": "Nombre del tema naturaleza" },
+
+  "buscarAmigos": "Buscar amigos",
+  "@buscarAmigos": { "description": "Tooltip del icono para abrir la pantalla de busqueda de amigos" },
+
+  "misAmigos": "Mis amigos",
+  "@misAmigos": { "description": "Tooltip y titulo de la pantalla de lista de amigos" },
+
+  "amigos": "Amigos",
+  "@amigos": { "description": "Titulo de la tab de amigos" },
+
+  "peticiones": "Peticiones",
+  "@peticiones": { "description": "Titulo de la tab de peticiones pendientes" },
+
+  "peticionesConContador": "Peticiones ({n})",
+  "@peticionesConContador": {
+    "description": "Titulo de la tab de peticiones con contador",
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+
+  "buscarPorNombreOId": "Buscar por nombre o ID",
+  "@buscarPorNombreOId": { "description": "Placeholder del campo de busqueda de usuarios" },
+
+  "enviarSolicitud": "Enviar solicitud",
+  "@enviarSolicitud": { "description": "Boton para enviar peticion de amistad" },
+
+  "solicitudEnviada": "Solicitud enviada",
+  "@solicitudEnviada": { "description": "Mensaje de confirmacion tras enviar peticion" },
+
+  "aceptar": "Aceptar",
+  "@aceptar": { "description": "Boton aceptar peticion" },
+
+  "rechazar": "Rechazar",
+  "@rechazar": { "description": "Boton rechazar peticion" },
+
+  "eliminarAmigo": "Eliminar amigo",
+  "@eliminarAmigo": { "description": "Accion de eliminar de la lista de amigos" },
+
+  "confirmarEliminarAmigo": "¿Eliminar a {nombre} de tus amigos?",
+  "@confirmarEliminarAmigo": {
+    "description": "Mensaje de confirmacion antes de eliminar un amigo",
+    "placeholders": {
+      "nombre": { "type": "String" }
+    }
+  },
+
+  "sinAmigosTodavia": "Aún no tienes amigos. Busca usuarios con el icono +",
+  "@sinAmigosTodavia": { "description": "Mensaje cuando la lista de amigos esta vacia" },
+
+  "sinPeticionesPendientes": "No tienes peticiones pendientes",
+  "@sinPeticionesPendientes": { "description": "Mensaje cuando no hay peticiones pendientes" },
+
+  "peticionesRecibidas": "Recibidas",
+  "@peticionesRecibidas": { "description": "Cabecera de la seccion de peticiones recibidas" },
+
+  "peticionesEnviadas": "Enviadas",
+  "@peticionesEnviadas": { "description": "Cabecera de la seccion de peticiones enviadas" },
+
+  "cancelarSolicitud": "Cancelar solicitud",
+  "@cancelarSolicitud": { "description": "Tooltip y accion para cancelar una solicitud enviada" },
+
+  "confirmarCancelarSolicitud": "¿Cancelar la solicitud enviada a {nombre}?",
+  "@confirmarCancelarSolicitud": {
+    "description": "Mensaje de confirmacion antes de cancelar una solicitud enviada",
+    "placeholders": {
+      "nombre": { "type": "String" }
+    }
+  },
+
+  "sinPeticionesEnviadas": "No tienes peticiones enviadas",
+  "@sinPeticionesEnviadas": { "description": "Mensaje cuando no hay peticiones enviadas pendientes" },
+
+  "sinResultadosBusqueda": "No se han encontrado usuarios",
+  "@sinResultadosBusqueda": { "description": "Mensaje cuando la busqueda no devuelve resultados" },
+
+  "usuarioEscribeParaBuscar": "Escribe un nombre o un ID para buscar",
+  "@usuarioEscribeParaBuscar": { "description": "Mensaje inicial de la pantalla de busqueda" }
 }

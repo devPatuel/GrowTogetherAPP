@@ -542,4 +542,74 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get temaNaturaleza => 'Nature';
+
+  @override
+  String get buscarAmigos => 'Find friends';
+
+  @override
+  String get misAmigos => 'My friends';
+
+  @override
+  String get amigos => 'Friends';
+
+  @override
+  String get peticiones => 'Requests';
+
+  @override
+  String peticionesConContador(int n) {
+    return 'Requests ($n)';
+  }
+
+  @override
+  String get buscarPorNombreOId => 'Search by name or ID';
+
+  @override
+  String get enviarSolicitud => 'Send request';
+
+  @override
+  String get solicitudEnviada => 'Request sent';
+
+  @override
+  String get aceptar => 'Accept';
+
+  @override
+  String get rechazar => 'Decline';
+
+  @override
+  String get eliminarAmigo => 'Remove friend';
+
+  @override
+  String confirmarEliminarAmigo(String nombre) {
+    return 'Remove $nombre from your friends?';
+  }
+
+  @override
+  String get sinAmigosTodavia =>
+      'You don\'t have friends yet. Use the + icon to find users';
+
+  @override
+  String get sinPeticionesPendientes => 'No pending requests';
+
+  @override
+  String get peticionesRecibidas => 'Received';
+
+  @override
+  String get peticionesEnviadas => 'Sent';
+
+  @override
+  String get cancelarSolicitud => 'Cancel request';
+
+  @override
+  String confirmarCancelarSolicitud(String nombre) {
+    return 'Cancel the request sent to $nombre?';
+  }
+
+  @override
+  String get sinPeticionesEnviadas => 'No sent requests';
+
+  @override
+  String get sinResultadosBusqueda => 'No users found';
+
+  @override
+  String get usuarioEscribeParaBuscar => 'Type a name or ID to search';
 }

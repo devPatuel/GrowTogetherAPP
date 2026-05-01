@@ -542,4 +542,75 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get temaNaturaleza => 'Naturaleza';
+
+  @override
+  String get buscarAmigos => 'Buscar amigos';
+
+  @override
+  String get misAmigos => 'Mis amigos';
+
+  @override
+  String get amigos => 'Amigos';
+
+  @override
+  String get peticiones => 'Peticiones';
+
+  @override
+  String peticionesConContador(int n) {
+    return 'Peticiones ($n)';
+  }
+
+  @override
+  String get buscarPorNombreOId => 'Buscar por nombre o ID';
+
+  @override
+  String get enviarSolicitud => 'Enviar solicitud';
+
+  @override
+  String get solicitudEnviada => 'Solicitud enviada';
+
+  @override
+  String get aceptar => 'Aceptar';
+
+  @override
+  String get rechazar => 'Rechazar';
+
+  @override
+  String get eliminarAmigo => 'Eliminar amigo';
+
+  @override
+  String confirmarEliminarAmigo(String nombre) {
+    return '¿Eliminar a $nombre de tus amigos?';
+  }
+
+  @override
+  String get sinAmigosTodavia =>
+      'Aún no tienes amigos. Busca usuarios con el icono +';
+
+  @override
+  String get sinPeticionesPendientes => 'No tienes peticiones pendientes';
+
+  @override
+  String get peticionesRecibidas => 'Recibidas';
+
+  @override
+  String get peticionesEnviadas => 'Enviadas';
+
+  @override
+  String get cancelarSolicitud => 'Cancelar solicitud';
+
+  @override
+  String confirmarCancelarSolicitud(String nombre) {
+    return '¿Cancelar la solicitud enviada a $nombre?';
+  }
+
+  @override
+  String get sinPeticionesEnviadas => 'No tienes peticiones enviadas';
+
+  @override
+  String get sinResultadosBusqueda => 'No se han encontrado usuarios';
+
+  @override
+  String get usuarioEscribeParaBuscar =>
+      'Escribe un nombre o un ID para buscar';
 }

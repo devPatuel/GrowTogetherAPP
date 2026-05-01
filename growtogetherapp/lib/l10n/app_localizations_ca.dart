@@ -544,4 +544,74 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get temaNaturaleza => 'Natura';
+
+  @override
+  String get buscarAmigos => 'Cercar amics';
+
+  @override
+  String get misAmigos => 'Els meus amics';
+
+  @override
+  String get amigos => 'Amics';
+
+  @override
+  String get peticiones => 'Peticions';
+
+  @override
+  String peticionesConContador(int n) {
+    return 'Peticions ($n)';
+  }
+
+  @override
+  String get buscarPorNombreOId => 'Cerca per nom o ID';
+
+  @override
+  String get enviarSolicitud => 'Enviar petició';
+
+  @override
+  String get solicitudEnviada => 'Petició enviada';
+
+  @override
+  String get aceptar => 'Acceptar';
+
+  @override
+  String get rechazar => 'Rebutjar';
+
+  @override
+  String get eliminarAmigo => 'Eliminar amic';
+
+  @override
+  String confirmarEliminarAmigo(String nombre) {
+    return 'Eliminar $nombre dels teus amics?';
+  }
+
+  @override
+  String get sinAmigosTodavia =>
+      'Encara no tens amics. Cerca usuaris amb la icona +';
+
+  @override
+  String get sinPeticionesPendientes => 'No tens peticions pendents';
+
+  @override
+  String get peticionesRecibidas => 'Rebudes';
+
+  @override
+  String get peticionesEnviadas => 'Enviades';
+
+  @override
+  String get cancelarSolicitud => 'Cancel·lar petició';
+
+  @override
+  String confirmarCancelarSolicitud(String nombre) {
+    return 'Cancel·lar la petició enviada a $nombre?';
+  }
+
+  @override
+  String get sinPeticionesEnviadas => 'No tens peticions enviades';
+
+  @override
+  String get sinResultadosBusqueda => 'No s\'han trobat usuaris';
+
+  @override
+  String get usuarioEscribeParaBuscar => 'Escriu un nom o un ID per cercar';
 }
