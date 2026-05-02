@@ -19,7 +19,9 @@ dependencies:
   image_picker: ^1.1.2
 
   growtogether_data:
-    path: ../../GrowTogetherDATA
+    git:
+      url: https://github.com/devPatuel/GrowTogetherDATA.git
+      ref: v0.1.0
 
 dev_dependencies:
   flutter_test:
