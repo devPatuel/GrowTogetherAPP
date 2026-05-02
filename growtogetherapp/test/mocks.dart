@@ -1,11 +1,4 @@
-import 'package:growtogetherapp/data/api/api_exceptions.dart';
-import 'package:growtogetherapp/data/local/secure_storage_service.dart';
-import 'package:growtogetherapp/data/models/habito.dart';
-import 'package:growtogetherapp/data/models/registro_historial.dart';
-import 'package:growtogetherapp/data/models/usuario.dart';
-import 'package:growtogetherapp/data/repositories/auth_repository.dart';
-import 'package:growtogetherapp/data/repositories/habito_repository.dart';
-import 'package:growtogetherapp/data/repositories/user_repository.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 
 /// Mock de SecureStorageService que guarda en memoria
 class MockStorage implements SecureStorageService {
@@ -91,7 +84,6 @@ class MockHabitoRepository implements HabitoRepository {
   Future<Habito> getProgreso(int id) async => habitos.firstWhere((h) => h.id == id);
 
   @override
-  @override
   Future<List<RegistroHistorial>> obtenerHistorial(int habitoId, {DateTime? fechaInicio, DateTime? fechaFin}) async => [];
 
   @override
@@ -118,9 +110,6 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<Usuario?> getCurrentUser() async => usuarioLogueado;
-
-  @override
-  void aplicarPreferenciasDesdeUsuario(Usuario perfil) {}
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

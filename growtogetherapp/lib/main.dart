@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import 'package:provider/provider.dart';
 import 'core/l10n/locale_controller.dart';
 import 'core/theme/app_themes.dart';
 import 'core/theme/theme_controller.dart';
-import 'data/api/dio_client.dart';
-import 'data/local/secure_storage_service.dart';
-import 'data/repositories/amistad_repository.dart';
-import 'data/repositories/auth_repository.dart';
-import 'data/repositories/desafio_repository.dart';
-import 'data/repositories/habito_repository.dart';
-import 'data/repositories/user_repository.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/amistad_provider.dart';
 import 'providers/auth_provider.dart';
@@ -26,8 +20,9 @@ void main() async {
   await LocaleController.instance.cargar();
 
   // Inyeccion de dependencias centralizada
+  final apiConfig = ApiConfig.fromEnv(fallback: 'http://localhost:8081/api/v1');
   final storage = SecureStorageService();
-  final dioClient = DioClient(storage);
+  final dioClient = DioClient(apiConfig, storage);
   final authRepo = AuthRepository(dioClient, storage);
   final habitoRepo = HabitoRepository(dioClient);
   final userRepo = UserRepository(dioClient);

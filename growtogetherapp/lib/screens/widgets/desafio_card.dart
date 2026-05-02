@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/utils/challenge_colors.dart';
 import '../../core/utils/habit_icons.dart';
-import '../../data/models/desafio.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import 'avatar_stack.dart';
 import 'gema_puntos.dart';
 import 'scale_on_tap.dart';

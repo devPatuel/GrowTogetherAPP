@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../../data/models/participante_desafio.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 
 /// Apila los avatares circulares de los participantes con un offset negativo.
 /// Si hay más de [maxVisible], muestra el último círculo con "+N".

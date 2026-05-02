@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
-import '../data/api/api_exceptions.dart';
-import '../data/models/usuario.dart';
-import '../data/repositories/auth_repository.dart';
-import '../data/repositories/user_repository.dart';
+import 'package:flutter/widgets.dart' show Locale;
+import 'package:growtogether_data/growtogether_data.dart';
+import '../core/l10n/locale_controller.dart';
+import '../core/theme/app_themes.dart';
+import '../core/theme/theme_controller.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _authRepo;
@@ -27,7 +28,7 @@ class AuthProvider extends ChangeNotifier {
     if (usuario != null) {
       try {
         final perfil = await _userRepo.obtenerPerfil(usuario.id);
-        _authRepo.aplicarPreferenciasDesdeUsuario(perfil);
+        _aplicarPreferencias(perfil.tema, perfil.idioma);
       } catch (_) {}
     }
     return usuario;
@@ -40,7 +41,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authRepo.login(email, password);
+      final usuario = await _authRepo.login(email, password);
+      _aplicarPreferencias(usuario.tema, usuario.idioma);
       _cargando = false;
       notifyListeners();
       return true;
@@ -68,6 +70,18 @@ class AuthProvider extends ChangeNotifier {
       _cargando = false;
       notifyListeners();
       return false;
+    }
+  }
+
+  /// Aplica tema e idioma recibidos del servidor a los controladores locales.
+  /// Si alguno es null o no reconocido, se respeta el valor actual.
+  void _aplicarPreferencias(String? tema, String? idioma) {
+    final themeType = AppThemes.fromApiString(tema);
+    if (themeType != null) {
+      ThemeController.instance.cambiar(themeType);
+    }
+    if (idioma != null && ['es', 'en', 'ca'].contains(idioma)) {
+      LocaleController.instance.cambiar(Locale(idioma));
     }
   }
 }

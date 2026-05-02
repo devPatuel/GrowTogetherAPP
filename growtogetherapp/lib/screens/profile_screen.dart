@@ -9,7 +9,7 @@ import '../core/theme/app_themes.dart';
 import '../core/theme/theme_controller.dart';
 import '../core/utils/snack_helper.dart';
 import '../core/utils/validators.dart';
-import '../data/models/usuario.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/perfil_provider.dart';
 import 'login_screen.dart';

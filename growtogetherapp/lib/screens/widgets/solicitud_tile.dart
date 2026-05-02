@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/models/solicitud_amistad.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import '../../l10n/app_localizations.dart';
 import 'usuario_tile.dart';
 

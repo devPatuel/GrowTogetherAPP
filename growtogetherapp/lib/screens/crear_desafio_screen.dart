@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/utils/snack_helper.dart';
-import '../data/models/participante_desafio.dart';
-import '../data/models/usuario.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/amistad_provider.dart';
 import '../providers/desafios_provider.dart';

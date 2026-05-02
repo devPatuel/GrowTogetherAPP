@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../data/models/habito.dart';
-import '../data/repositories/habito_repository.dart';
-import '../data/local/secure_storage_service.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 
 class HabitosProvider extends ChangeNotifier {
   final HabitoRepository _repo;
