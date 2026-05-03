@@ -20,7 +20,6 @@ concurrency:
 
 env:
   API_URL: https://growtogether.jordipatuel.com/api/v1
-  FLUTTER_VERSION: '3.27.0'
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -58,7 +57,6 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 
@@ -163,7 +161,6 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 
