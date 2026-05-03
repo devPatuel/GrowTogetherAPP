@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../core/utils/daily_tip_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/utils/habit_icons.dart';
 import 'package:growtogether_data/growtogether_data.dart';
 import '../l10n/app_localizations.dart';
@@ -72,12 +72,29 @@ class DashboardScreenState extends State<DashboardScreen>
     if (mounted) _staggerController.forward(from: 0);
   }
 
+  /// Pide a la API el consejo asignado a hoy y lo muestra una sola vez por día.
+  /// La unicidad por día se controla con SharedPreferences combinando la fecha
+  /// y el id del consejo, así si el admin cambia el consejo del día el usuario
+  /// vuelve a verlo.
   Future<void> _mostrarConsejoDiario() async {
     if (_tipChecked) return;
     _tipChecked = true;
-    final lang = Localizations.localeOf(context).languageCode;
-    final tip = await DailyTipService.getTipIfNewDay(lang);
-    if (tip == null || !mounted) return;
+
+    Consejo? consejo;
+    try {
+      consejo = await context.read<ConsejoRepository>().obtenerConsejoDeHoy();
+    } catch (_) {
+      return;
+    }
+    if (consejo == null || !mounted) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final hoy = DateTime.now().toIso8601String().substring(0, 10);
+    final claveActual = '$hoy:${consejo.id}';
+    if (prefs.getString('consejo_diario_visto') == claveActual) return;
+    await prefs.setString('consejo_diario_visto', claveActual);
+
+    if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     showDialog(
@@ -99,9 +116,9 @@ class DashboardScreenState extends State<DashboardScreen>
                 child: const Icon(Icons.lightbulb_outline_rounded, size: 32, color: Colors.white),
               ),
               const SizedBox(height: 16),
-              Text(l10n.consejoDia, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+              Text(consejo!.titulo, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
               const SizedBox(height: 16),
-              Text(tip, textAlign: TextAlign.center, style: TextStyle(fontSize: 15, height: 1.5, color: colorScheme.onSurfaceVariant)),
+              Text(consejo.descripcion, textAlign: TextAlign.center, style: TextStyle(fontSize: 15, height: 1.5, color: colorScheme.onSurfaceVariant)),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,

@@ -28,6 +28,7 @@ void main() async {
   final userRepo = UserRepository(dioClient);
   final amistadRepo = AmistadRepository(dioClient);
   final desafioRepo = DesafioRepository(dioClient);
+  final consejoRepo = ConsejoRepository(dioClient);
 
   runApp(
     MultiProvider(
@@ -39,6 +40,7 @@ void main() async {
         Provider<UserRepository>.value(value: userRepo),
         Provider<AmistadRepository>.value(value: amistadRepo),
         Provider<DesafioRepository>.value(value: desafioRepo),
+        Provider<ConsejoRepository>.value(value: consejoRepo),
         ChangeNotifierProvider(create: (_) => HabitosProvider(habitoRepo, storage)),
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepo, userRepo)),
         ChangeNotifierProvider(create: (_) => PerfilProvider(userRepo, storage)),

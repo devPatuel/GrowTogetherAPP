@@ -10,7 +10,7 @@ class MultilineChart extends StatelessWidget {
   /// Mapa usuarioId → color asignado al participante (paleta cíclica de Playus).
   final Map<int, Color> coloresPorUsuario;
 
-  /// Etiqueta de los días en el eje X (ej. ['1', '5', '10', ...]).
+  /// Etiqueta de los días en el eje X (ej. `'1'`, `'5'`, `'10'`...).
   final List<String>? labelsX;
 
   const MultilineChart({

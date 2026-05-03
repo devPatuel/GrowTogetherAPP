@@ -13,6 +13,7 @@ Inspirada en *Atomic Habits* de James Clear: construye hábitos consistentes, vi
 | Framework | Flutter 3.x + Dart |
 | State management | Provider 6.x (ChangeNotifier) |
 | HTTP | Dio 5.x + interceptor JWT |
+| Capa de datos | Paquete local `growtogether_data` (compartido con el panel admin) |
 | Almacenamiento seguro | flutter_secure_storage 9.x |
 | Imágenes | image_picker |
 | i18n | Flutter ARB (es / en / ca) |
@@ -52,31 +53,16 @@ flutter gen-l10n
 
 ## Configuración
 
-La URL base de la API se configura en `lib/core/config/api_config.dart`:
+La URL base de la API se inyecta en compile time vía `--dart-define=API_URL=...`.
+El `main.dart` la lee con `ApiConfig.fromEnv(fallback: 'http://localhost:8081/api/v1')`,
+así que sin flag se usa el fallback de localhost.
 
-```dart
-// Emulador Android
-static const String baseUrl = 'http://10.0.2.2:8081/api/v1';
-
-// Dispositivo físico con túnel USB (recomendado)
-// static const String baseUrl = 'http://localhost:8081/api/v1';
-
-// Dispositivo físico en la misma red WiFi
-// static const String baseUrl = 'http://192.168.X.X:8081/api/v1';
-
-// Web
-// static const String baseUrl = 'http://localhost:8081/api/v1';
-```
-
-### Dispositivo físico por USB (recomendado para desarrollo)
-
-```bash
-# Crea un túnel para que el móvil acceda al localhost del PC
-adb reverse tcp:8081 tcp:8081
-
-# Lanza la app
-flutter run
-```
+| Escenario | Comando |
+|---|---|
+| Emulador Android (default) | `flutter run --dart-define=API_URL=http://10.0.2.2:8081/api/v1` |
+| Dispositivo físico (USB + adb reverse) | `adb reverse tcp:8081 tcp:8081 && flutter run` |
+| Dispositivo en LAN | `flutter run --dart-define=API_URL=http://192.168.X.X:8081/api/v1` |
+| Chrome (web) | `flutter run -d chrome --dart-define=API_URL=http://localhost:8081/api/v1` |
 
 ---
 
@@ -108,23 +94,22 @@ flutter run -d chrome
 
 ```
 lib/
-├── main.dart                    # MultiProvider + MaterialApp
+├── main.dart                    # MultiProvider + MaterialApp + bootstrap de repos
 ├── core/
-│   ├── config/api_config.dart   # URL base y timeouts
-│   ├── constants/               # Tips diarios por idioma
+│   ├── constants/scoring.dart   # Puntos por hábito completado
 │   ├── l10n/                    # Controlador de idioma (ValueNotifier)
 │   ├── theme/                   # 4 temas + controlador (ValueNotifier)
-│   └── utils/                   # Validadores, iconos de hábitos, snack helper
-├── data/
-│   ├── api/                     # DioClient + AuthInterceptor (inyección JWT + gestión 401)
-│   ├── local/                   # SecureStorageService (token, userId, nombre, email)
-│   ├── models/                  # Usuario, Habito, RegistroHistorial
-│   └── repositories/            # AuthRepository, HabitoRepository, UserRepository
-├── providers/                   # ChangeNotifiers (Auth, Habitos, DetalleHabito, Perfil, Statistics)
+│   └── utils/                   # Validadores, iconos de hábitos, colores de desafíos, snack helper
+├── providers/                   # ChangeNotifiers (Auth, Habitos, DetalleHabito, Perfil, Statistics, Amistad, Desafios)
 ├── screens/                     # Pantallas
 │   └── widgets/                 # Widgets reutilizables (HeatmapCalendar, ProgressPainters, etc.)
 └── l10n/                        # ARB generados por flutter gen-l10n
 ```
+
+> Los modelos, el cliente HTTP (Dio + interceptor JWT), el almacenamiento seguro
+> y los repositorios viven en el paquete local `growtogether_data` (referenciado
+> por path desde `pubspec.yaml`). Es el mismo paquete que consume el panel admin
+> web, así garantizamos un único contrato con la API.
 
 ---
 
@@ -137,6 +122,9 @@ lib/
 - **Estadísticas**: heatmap general + por hábito (16 semanas), récords de racha, métricas globales
 - **Perfil**: foto de perfil (cámara/galería), editar nombre y email, 4 temas de color, 3 idiomas
 - **i18n**: español, inglés y catalán con sincronización de preferencias en servidor
+- **Consejo del día**: el dashboard muestra el consejo asignado a la fecha de hoy
+  desde la API (`GET /usuarios/consejo/hoy`). Lo gestiona el panel admin, no
+  está hardcoded.
 
 ---
 
@@ -160,6 +148,17 @@ flutter test
 ```
 
 Cobertura actual: 24 tests unitarios sobre `AuthProvider`, `HabitosProvider` y `PerfilProvider`.
+
+---
+
+## Generar documentación API
+
+```bash
+dart doc .
+```
+
+Salida en `doc/api/`. Por defecto está incluida en `.gitignore` (quita la línea
+`**/doc/api/` si quieres versionarla o publicarla a GitHub Pages).
 
 ---
 

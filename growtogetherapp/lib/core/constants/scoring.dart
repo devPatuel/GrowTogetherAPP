@@ -1,5 +1,5 @@
 /// Constantes de puntuación de desafíos.
-/// Deben mantenerse sincronizadas con [Scoring.java] del backend.
+/// Deben mantenerse sincronizadas con `Scoring.java` del backend.
 /// Solo se usan en cliente para previsualizar puntos al usuario; el cálculo real lo hace el backend.
 class Scoring {
   static const int puntosBase = 10;
