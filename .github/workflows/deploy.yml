@@ -1,0 +1,185 @@
+name: Deploy APP web + APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'growtogetherapp/lib/**'
+      - 'growtogetherapp/pubspec.yaml'
+      - 'growtogetherapp/pubspec.lock'
+      - 'growtogetherapp/web/**'
+      - 'growtogetherapp/android/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+# Cancela ejecuciones anteriores si pusheas dos veces seguidas: solo nos
+# interesa desplegar el ultimo commit, no encadenar runs.
+concurrency:
+  group: deploy-app
+  cancel-in-progress: true
+
+env:
+  API_URL: https://growtogether.jordipatuel.com/api/v1
+  FLUTTER_VERSION: '3.27.0'
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: build de la app web y deploy a EC2.
+  # ---------------------------------------------------------------------------
+  web:
+    name: Build web + deploy a EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Cargar la clave privada de DATA en el ssh-agent. Asi cuando flutter
+      # pub get intenta clonar https://github.com/devPatuel/GrowTogetherDATA,
+      # el siguiente paso (insteadOf) lo redirige a SSH y se autentica con
+      # esta clave (que es la que registramos como deploy key en DATA).
+      - name: Configurar SSH agent con DATA_REPO_KEY
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DATA_REPO_KEY }}
+
+      # Forzar git a usar SSH para clonar GrowTogetherDATA aunque pubspec
+      # apunte a https. La deploy key SSH solo es valida para SSH protocol.
+      - name: Forzar SSH para clonar DATA
+        run: |
+          git config --global url."git@github.com:devPatuel/GrowTogetherDATA.git".insteadOf "https://github.com/devPatuel/GrowTogetherDATA.git"
+
+      # Borrar pubspec_overrides.yaml: en local redirige al path local,
+      # pero en CI tenemos que usar el git ref del pubspec.
+      - name: Borrar pubspec_overrides.yaml
+        working-directory: growtogetherapp
+        run: rm -f pubspec_overrides.yaml
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: flutter pub get
+        working-directory: growtogetherapp
+        run: flutter pub get
+
+      - name: flutter analyze
+        working-directory: growtogetherapp
+        run: flutter analyze --no-fatal-infos
+
+      # Build web inyectando la URL real de la API (se queda hardcoded en el
+      # JS resultante). El --base-href=/ hace que las rutas funcionen desde
+      # la raiz del dominio.
+      - name: Build web
+        working-directory: growtogetherapp
+        run: |
+          flutter build web --release \
+            --dart-define=API_URL=${{ env.API_URL }} \
+            --base-href=/
+
+      # Empaquetar el build en un tar.gz para SCP rapido.
+      - name: Empaquetar build
+        working-directory: growtogetherapp
+        run: tar -czf ../web.tar.gz -C build/web .
+
+      # Copiar el tar.gz a /tmp de la EC2.
+      - name: SCP tar a EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: web.tar.gz
+          target: /tmp/
+
+      # Extraer con swap atomico: descomprimimos en una carpeta nueva y al
+      # final movemos. Asi nunca hay un estado intermedio donde nginx sirva
+      # archivos a medio escribir. Si la extraccion falla, la carpeta vieja
+      # sigue intacta.
+      - name: SSH a EC2 y swap atomico
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            echo "===== EXTRAER ====="
+            rm -rf /opt/growtogether/web.new
+            mkdir -p /opt/growtogether/web.new
+            tar -xzf /tmp/web.tar.gz -C /opt/growtogether/web.new
+
+            echo "===== SWAP ATOMICO ====="
+            rm -rf /opt/growtogether/web.old
+            mv /opt/growtogether/web /opt/growtogether/web.old
+            mv /opt/growtogether/web.new /opt/growtogether/web
+
+            echo "===== RELOAD NGINX ====="
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            echo "===== LIMPIAR ====="
+            rm -f /tmp/web.tar.gz
+            rm -rf /opt/growtogether/web.old
+
+            echo "===== VERIFICAR ====="
+            curl -sf -o /dev/null https://growtogether.jordipatuel.com/ && echo "Deploy OK" || (echo "Deploy FALLO" && exit 1)
+
+  # ---------------------------------------------------------------------------
+  # Job 2: build APK Android y subirlo como artifact descargable.
+  # No firma con keystore real (eso requiere setup de Play Store).
+  # Para TFG e instalacion manual sirve el APK debug-signed.
+  # ---------------------------------------------------------------------------
+  apk:
+    name: Build APK Android
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar SSH agent con DATA_REPO_KEY
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DATA_REPO_KEY }}
+
+      - name: Forzar SSH para clonar DATA
+        run: |
+          git config --global url."git@github.com:devPatuel/GrowTogetherDATA.git".insteadOf "https://github.com/devPatuel/GrowTogetherDATA.git"
+
+      - name: Borrar pubspec_overrides.yaml
+        working-directory: growtogetherapp
+        run: rm -f pubspec_overrides.yaml
+
+      - name: Setup Java 17 (necesario para Android Gradle)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: flutter pub get
+        working-directory: growtogetherapp
+        run: flutter pub get
+
+      - name: Build APK release
+        working-directory: growtogetherapp
+        run: |
+          flutter build apk --release \
+            --dart-define=API_URL=${{ env.API_URL }}
+
+      - name: Subir APK como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: growtogether-apk-${{ github.sha }}
+          path: growtogetherapp/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
