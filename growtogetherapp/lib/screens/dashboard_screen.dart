@@ -7,6 +7,7 @@ import '../core/utils/habit_icons.dart';
 import 'package:growtogether_data/growtogether_data.dart';
 import '../l10n/app_localizations.dart';
 import '../core/utils/snack_helper.dart';
+import '../core/feedback/feedback_service.dart';
 import '../providers/habitos_provider.dart';
 import 'detalle_habito_screen.dart';
 import 'widgets/progress_painters.dart';
@@ -141,6 +142,9 @@ class DashboardScreenState extends State<DashboardScreen>
   Future<void> _toggleHabito(Habito habito) async {
     final l10n = AppLocalizations.of(context)!;
     final estabaCompletado = habito.completadoHoy;
+    // Feedback haptico inmediato al pulsar (antes de esperar al backend)
+    // para que la respuesta tactil acompane al cambio optimista de la UI.
+    FeedbackService.marcarHabito();
     final ok = await context.read<HabitosProvider>().toggleHabito(habito);
     if (!mounted) return;
     if (ok) {
