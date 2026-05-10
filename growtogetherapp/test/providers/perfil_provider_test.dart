@@ -1,6 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:growtogetherapp/providers/perfil_provider.dart';
+import 'package:growtogetherapp/services/local_notifications_service.dart';
 import '../mocks.dart';
+
+/// Fake inline para no contagiar el import del plugin nativo a tests vecinos
+/// que comparten mocks.dart pero no tocan notificaciones.
+class _FakeLocalNotifs implements LocalNotificationsService {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => Future.value();
+}
 
 void main() {
   late PerfilProvider provider;
@@ -10,7 +18,7 @@ void main() {
   setUp(() {
     mockRepo = MockUserRepository();
     mockStorage = MockStorage();
-    provider = PerfilProvider(mockRepo, mockStorage);
+    provider = PerfilProvider(mockRepo, mockStorage, _FakeLocalNotifs());
   });
 
   group('PerfilProvider', () {

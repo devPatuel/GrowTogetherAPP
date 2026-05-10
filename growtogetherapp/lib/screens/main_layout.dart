@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/amistad_provider.dart';
+import '../providers/connectivity_provider.dart';
 import '../providers/desafios_provider.dart';
 import '../providers/habitos_provider.dart';
 import '../providers/statistics_provider.dart';
@@ -97,9 +98,16 @@ class _MainLayoutState extends State<MainLayout> {
         centerTitle: true,
         actions: _indiceActual == 2 ? _buildAccionesDesafios(l10n) : null,
       ),
-      body: IndexedStack(
-        index: _indiceActual,
-        children: _pantallas,
+      body: Column(
+        children: [
+          const _BannerSinConexion(),
+          Expanded(
+            child: IndexedStack(
+              index: _indiceActual,
+              children: _pantallas,
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _abrirCrearSegunPestana,
@@ -212,6 +220,53 @@ class _MainLayoutState extends State<MainLayout> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Banner persistente que aparece cuando se pierde la conexion.
+/// Escucha [ConnectivityProvider] y se anima al entrar/salir.
+class _BannerSinConexion extends StatelessWidget {
+  const _BannerSinConexion();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final sinInternet = context.watch<ConnectivityProvider>().sinInternet;
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 250),
+      switchInCurve: Curves.easeOut,
+      switchOutCurve: Curves.easeIn,
+      transitionBuilder: (child, animation) => SizeTransition(
+        sizeFactor: animation,
+        axisAlignment: -1,
+        child: FadeTransition(opacity: animation, child: child),
+      ),
+      child: !sinInternet
+          ? const SizedBox.shrink()
+          : Container(
+              key: const ValueKey('banner-sin-conexion'),
+              width: double.infinity,
+              color: colorScheme.error,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Row(
+                children: [
+                  Icon(Icons.wifi_off_rounded,
+                      size: 16, color: colorScheme.onError),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.sinConexion,
+                    style: TextStyle(
+                      color: colorScheme.onError,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }

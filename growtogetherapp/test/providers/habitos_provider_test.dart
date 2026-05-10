@@ -1,13 +1,20 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:growtogetherapp/providers/habitos_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../mocks.dart';
 
 void main() {
+  // HabitosProvider toca DashboardCache, que llama a SharedPreferences.
+  // El binding de Flutter y un store mock son necesarios para que las llamadas
+  // a SharedPreferences.getInstance() respondan en el test.
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late HabitosProvider provider;
   late MockHabitoRepository mockRepo;
   late MockStorage mockStorage;
 
   setUp(() {
+    SharedPreferences.setMockInitialValues({});
     mockRepo = MockHabitoRepository();
     mockStorage = MockStorage();
     provider = HabitosProvider(mockRepo, mockStorage);

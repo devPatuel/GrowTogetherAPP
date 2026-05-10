@@ -9,11 +9,14 @@ import 'core/theme/theme_controller.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/amistad_provider.dart';
 import 'providers/auth_provider.dart';
+import 'providers/connectivity_provider.dart';
 import 'providers/desafios_provider.dart';
 import 'providers/habitos_provider.dart';
+import 'providers/notificaciones_provider.dart';
 import 'providers/perfil_provider.dart';
 import 'providers/statistics_provider.dart';
 import 'screens/login_screen.dart';
+import 'services/local_notifications_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +34,9 @@ void main() async {
   final amistadRepo = AmistadRepository(dioClient);
   final desafioRepo = DesafioRepository(dioClient);
   final consejoRepo = ConsejoRepository(dioClient);
+  final notificacionRepo = NotificacionRepository(dioClient);
+  final localNotifs = LocalNotificationsService();
+  await localNotifs.inicializar();
 
   runApp(
     MultiProvider(
@@ -43,12 +49,16 @@ void main() async {
         Provider<AmistadRepository>.value(value: amistadRepo),
         Provider<DesafioRepository>.value(value: desafioRepo),
         Provider<ConsejoRepository>.value(value: consejoRepo),
+        Provider<NotificacionRepository>.value(value: notificacionRepo),
+        Provider<LocalNotificationsService>.value(value: localNotifs),
         ChangeNotifierProvider(create: (_) => HabitosProvider(habitoRepo, storage)),
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepo, userRepo)),
-        ChangeNotifierProvider(create: (_) => PerfilProvider(userRepo, storage)),
+        ChangeNotifierProvider(create: (_) => PerfilProvider(userRepo, storage, localNotifs)),
         ChangeNotifierProvider(create: (_) => StatisticsProvider(habitoRepo, storage)),
         ChangeNotifierProvider(create: (_) => AmistadProvider(amistadRepo)),
         ChangeNotifierProvider(create: (_) => DesafiosProvider(desafioRepo)),
+        ChangeNotifierProvider(create: (_) => ConnectivityProvider()),
+        ChangeNotifierProvider(create: (_) => NotificacionesProvider(notificacionRepo, localNotifs)),
       ],
       child: const GrowTogetherApp(),
     ),

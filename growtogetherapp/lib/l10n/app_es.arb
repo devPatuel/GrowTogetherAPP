@@ -579,5 +579,65 @@
   "@sinResultadosBusqueda": { "description": "Mensaje cuando la busqueda no devuelve resultados" },
 
   "usuarioEscribeParaBuscar": "Escribe un nombre o un ID para buscar",
-  "@usuarioEscribeParaBuscar": { "description": "Mensaje inicial de la pantalla de busqueda" }
+  "@usuarioEscribeParaBuscar": { "description": "Mensaje inicial de la pantalla de busqueda" },
+
+  "sinConexion": "Sin conexión",
+  "@sinConexion": { "description": "Banner cuando no hay internet" },
+
+  "mostrandoDatosGuardados": "Mostrando datos guardados",
+  "@mostrandoDatosGuardados": { "description": "Aviso de que los datos vienen del cache local" },
+
+  "recordatorio": "Recordatorio",
+  "@recordatorio": { "description": "Titulo de la seccion de recordatorio en detalle de habito" },
+
+  "sinRecordatorio": "Aún no hay recordatorio para este hábito",
+  "@sinRecordatorio": { "description": "Mensaje cuando un habito no tiene recordatorio" },
+
+  "anadirRecordatorio": "Añadir recordatorio",
+  "@anadirRecordatorio": { "description": "Boton para crear recordatorio" },
+
+  "editarRecordatorio": "Editar recordatorio",
+  "@editarRecordatorio": { "description": "Titulo dialogo editar recordatorio" },
+
+  "eliminarRecordatorio": "Eliminar recordatorio",
+  "@eliminarRecordatorio": { "description": "Boton eliminar recordatorio" },
+
+  "confirmarEliminarRecordatorio": "¿Seguro que quieres eliminar el recordatorio? Dejarás de recibir notificaciones de este hábito.",
+  "@confirmarEliminarRecordatorio": { "description": "Confirmacion al eliminar recordatorio" },
+
+  "horaRecordatorio": "Hora",
+  "@horaRecordatorio": { "description": "Label hora del recordatorio" },
+
+  "mensajeRecordatorio": "Mensaje",
+  "@mensajeRecordatorio": { "description": "Label mensaje del recordatorio" },
+
+  "mensajeRecordatorioObligatorio": "El mensaje no puede estar vacío",
+  "@mensajeRecordatorioObligatorio": { "description": "Validacion mensaje vacio" },
+
+  "recordatorioMensajePorDefecto": "No olvides:",
+  "@recordatorioMensajePorDefecto": { "description": "Texto inicial del mensaje al crear un recordatorio nuevo" },
+
+  "recordatorioGuardado": "Recordatorio guardado",
+  "@recordatorioGuardado": { "description": "Snackbar tras guardar recordatorio" },
+
+  "recordatorioEliminado": "Recordatorio eliminado",
+  "@recordatorioEliminado": { "description": "Snackbar tras eliminar recordatorio" },
+
+  "permisoNotificacionesDenegado": "Necesitas conceder permiso de notificaciones para activar el recordatorio",
+  "@permisoNotificacionesDenegado": { "description": "Snackbar cuando el usuario rechaza el permiso" },
+
+  "permisoNotificacionesBloqueado": "Permiso bloqueado",
+  "@permisoNotificacionesBloqueado": { "description": "Titulo dialogo cuando las notificaciones estan denegadas permanentemente" },
+
+  "permisoNotificacionesBloqueadoDesc": "Has rechazado el permiso de notificaciones. Para activar los recordatorios, ábrelo manualmente desde los ajustes de la app.",
+  "@permisoNotificacionesBloqueadoDesc": { "description": "Descripcion del dialogo de permiso bloqueado" },
+
+  "abrirAjustes": "Abrir ajustes",
+  "@abrirAjustes": { "description": "Boton para abrir los ajustes del sistema" },
+
+  "editar": "Editar",
+  "@editar": { "description": "Boton editar generico" },
+
+  "eliminar": "Eliminar",
+  "@eliminar": { "description": "Boton eliminar generico" }
 }

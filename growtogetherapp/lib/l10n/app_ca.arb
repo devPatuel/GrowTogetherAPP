@@ -234,5 +234,26 @@
   },
   "sinPeticionesEnviadas": "No tens peticions enviades",
   "sinResultadosBusqueda": "No s'han trobat usuaris",
-  "usuarioEscribeParaBuscar": "Escriu un nom o un ID per cercar"
+  "usuarioEscribeParaBuscar": "Escriu un nom o un ID per cercar",
+  "sinConexion": "Sense connexió",
+  "mostrandoDatosGuardados": "Mostrant dades desades",
+
+  "recordatorio": "Recordatori",
+  "sinRecordatorio": "Encara no hi ha recordatori per a aquest hàbit",
+  "anadirRecordatorio": "Afegir recordatori",
+  "editarRecordatorio": "Editar recordatori",
+  "eliminarRecordatorio": "Eliminar recordatori",
+  "confirmarEliminarRecordatorio": "Segur que vols eliminar el recordatori? Deixaràs de rebre notificacions d'aquest hàbit.",
+  "horaRecordatorio": "Hora",
+  "mensajeRecordatorio": "Missatge",
+  "mensajeRecordatorioObligatorio": "El missatge no pot estar buit",
+  "recordatorioMensajePorDefecto": "No oblides:",
+  "recordatorioGuardado": "Recordatori desat",
+  "recordatorioEliminado": "Recordatori eliminat",
+  "permisoNotificacionesDenegado": "Has de concedir el permís de notificacions per activar el recordatori",
+  "permisoNotificacionesBloqueado": "Permís bloquejat",
+  "permisoNotificacionesBloqueadoDesc": "Has rebutjat el permís de notificacions. Per activar els recordatoris, obre'l manualment des dels ajustos de l'aplicació.",
+  "abrirAjustes": "Obrir ajustos",
+  "editar": "Editar",
+  "eliminar": "Eliminar"
 }

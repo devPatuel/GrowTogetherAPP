@@ -1221,6 +1221,126 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Escribe un nombre o un ID para buscar'**
   String get usuarioEscribeParaBuscar;
+
+  /// Banner cuando no hay internet
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión'**
+  String get sinConexion;
+
+  /// Aviso de que los datos vienen del cache local
+  ///
+  /// In es, this message translates to:
+  /// **'Mostrando datos guardados'**
+  String get mostrandoDatosGuardados;
+
+  /// Titulo de la seccion de recordatorio en detalle de habito
+  ///
+  /// In es, this message translates to:
+  /// **'Recordatorio'**
+  String get recordatorio;
+
+  /// Mensaje cuando un habito no tiene recordatorio
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay recordatorio para este hábito'**
+  String get sinRecordatorio;
+
+  /// Boton para crear recordatorio
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir recordatorio'**
+  String get anadirRecordatorio;
+
+  /// Titulo dialogo editar recordatorio
+  ///
+  /// In es, this message translates to:
+  /// **'Editar recordatorio'**
+  String get editarRecordatorio;
+
+  /// Boton eliminar recordatorio
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar recordatorio'**
+  String get eliminarRecordatorio;
+
+  /// Confirmacion al eliminar recordatorio
+  ///
+  /// In es, this message translates to:
+  /// **'¿Seguro que quieres eliminar el recordatorio? Dejarás de recibir notificaciones de este hábito.'**
+  String get confirmarEliminarRecordatorio;
+
+  /// Label hora del recordatorio
+  ///
+  /// In es, this message translates to:
+  /// **'Hora'**
+  String get horaRecordatorio;
+
+  /// Label mensaje del recordatorio
+  ///
+  /// In es, this message translates to:
+  /// **'Mensaje'**
+  String get mensajeRecordatorio;
+
+  /// Validacion mensaje vacio
+  ///
+  /// In es, this message translates to:
+  /// **'El mensaje no puede estar vacío'**
+  String get mensajeRecordatorioObligatorio;
+
+  /// Texto inicial del mensaje al crear un recordatorio nuevo
+  ///
+  /// In es, this message translates to:
+  /// **'No olvides:'**
+  String get recordatorioMensajePorDefecto;
+
+  /// Snackbar tras guardar recordatorio
+  ///
+  /// In es, this message translates to:
+  /// **'Recordatorio guardado'**
+  String get recordatorioGuardado;
+
+  /// Snackbar tras eliminar recordatorio
+  ///
+  /// In es, this message translates to:
+  /// **'Recordatorio eliminado'**
+  String get recordatorioEliminado;
+
+  /// Snackbar cuando el usuario rechaza el permiso
+  ///
+  /// In es, this message translates to:
+  /// **'Necesitas conceder permiso de notificaciones para activar el recordatorio'**
+  String get permisoNotificacionesDenegado;
+
+  /// Titulo dialogo cuando las notificaciones estan denegadas permanentemente
+  ///
+  /// In es, this message translates to:
+  /// **'Permiso bloqueado'**
+  String get permisoNotificacionesBloqueado;
+
+  /// Descripcion del dialogo de permiso bloqueado
+  ///
+  /// In es, this message translates to:
+  /// **'Has rechazado el permiso de notificaciones. Para activar los recordatorios, ábrelo manualmente desde los ajustes de la app.'**
+  String get permisoNotificacionesBloqueadoDesc;
+
+  /// Boton para abrir los ajustes del sistema
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir ajustes'**
+  String get abrirAjustes;
+
+  /// Boton editar generico
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get editar;
+
+  /// Boton eliminar generico
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get eliminar;
 }
 
 class _AppLocalizationsDelegate
