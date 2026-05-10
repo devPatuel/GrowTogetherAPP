@@ -17,6 +17,7 @@ dependencies:
   go_router: ^14.2.0
   shared_preferences: ^2.3.2
   image_picker: ^1.1.2
+  confetti: ^0.7.0
 
   growtogether_data:
     git:
