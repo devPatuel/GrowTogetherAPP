@@ -10,8 +10,8 @@ import '../core/utils/snack_helper.dart';
 import '../core/feedback/feedback_service.dart';
 import '../providers/habitos_provider.dart';
 import 'detalle_habito_screen.dart';
+import 'widgets/habito_check.dart';
 import 'widgets/progress_painters.dart';
-import 'widgets/scale_on_tap.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -581,30 +581,12 @@ class DashboardScreenState extends State<DashboardScreen>
                     ),
                     const SizedBox(width: 10),
 
-                    // Check
-                    ScaleOnTap(
+                    // Check con bounce al completar
+                    HabitoCheck(
+                      completado: habito.completadoHoy,
+                      esNegativo: esNegativo,
+                      accentColor: accentColor,
                       onTap: () => _toggleHabito(habito),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: 44, height: 44,
-                        decoration: BoxDecoration(
-                          gradient: habito.completadoHoy
-                              ? LinearGradient(colors: [accentColor, accentColor.withValues(alpha: 0.7)])
-                              : null,
-                          color: habito.completadoHoy ? null : Colors.transparent,
-                          borderRadius: BorderRadius.circular(13),
-                          border: habito.completadoHoy ? null : Border.all(color: accentColor.withValues(alpha: 0.4), width: 2),
-                        ),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: Icon(
-                            habito.completadoHoy ? Icons.check_rounded : (esNegativo ? Icons.close_rounded : Icons.check_rounded),
-                            key: ValueKey(habito.completadoHoy),
-                            size: 22,
-                            color: habito.completadoHoy ? Colors.white : accentColor.withValues(alpha: 0.5),
-                          ),
-                        ),
-                      ),
                     ),
                   ],
                 ),
