@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:growtogether_data/growtogether_data.dart';
 import 'package:provider/provider.dart';
+import 'core/feedback/feedback_controller.dart';
 import 'core/l10n/locale_controller.dart';
 import 'core/theme/app_themes.dart';
 import 'core/theme/theme_controller.dart';
@@ -18,6 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ThemeController.instance.cargar();
   await LocaleController.instance.cargar();
+  await FeedbackController.instance.cargar();
 
   // Inyeccion de dependencias centralizada
   final apiConfig = ApiConfig.fromEnv(fallback: 'http://localhost:8081/api/v1');
