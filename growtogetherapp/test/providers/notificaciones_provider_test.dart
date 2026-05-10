@@ -67,7 +67,6 @@ void main() {
           mensaje: any(named: 'mensaje'),
           hora: any(named: 'hora'),
           minuto: any(named: 'minuto'),
-          frecuencia: any(named: 'frecuencia'),
           activa: any(named: 'activa'),
         )).thenAnswer((_) async => creada);
 
@@ -96,7 +95,6 @@ void main() {
           mensaje: any(named: 'mensaje'),
           hora: any(named: 'hora'),
           minuto: any(named: 'minuto'),
-          frecuencia: any(named: 'frecuencia'),
           activa: any(named: 'activa'),
         )).thenAnswer((_) async => actualizada);
 
@@ -119,7 +117,6 @@ void main() {
           mensaje: any(named: 'mensaje'),
           hora: any(named: 'hora'),
           minuto: any(named: 'minuto'),
-          frecuencia: any(named: 'frecuencia'),
           activa: any(named: 'activa'),
         )).thenAnswer((_) async => _notif(activa: false));
 

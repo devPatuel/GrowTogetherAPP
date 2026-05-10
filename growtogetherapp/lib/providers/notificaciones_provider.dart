@@ -49,7 +49,6 @@ class NotificacionesProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      final frecuencia = habito.frecuencia;
       Notificacion guardada;
       if (_recordatorio == null) {
         guardada = await _repo.crear(
@@ -57,7 +56,6 @@ class NotificacionesProvider extends ChangeNotifier {
           mensaje: mensaje,
           hora: hora,
           minuto: minuto,
-          frecuencia: frecuencia,
           activa: activa,
         );
       } else {
@@ -67,7 +65,6 @@ class NotificacionesProvider extends ChangeNotifier {
           mensaje: mensaje,
           hora: hora,
           minuto: minuto,
-          frecuencia: frecuencia,
           activa: activa,
         );
       }
