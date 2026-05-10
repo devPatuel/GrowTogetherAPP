@@ -116,10 +116,70 @@ class StatisticsProvider extends ChangeNotifier {
         .reduce((a, b) => a > b ? a : b);
   }
 
-  /// Promedio de completados por dia en el rango.
+  /// Media diaria global del usuario, expresada como ratio en [0, 1].
+  ///
+  /// Para cada hábito se calcula su media individual: completados sobre
+  /// días elegibles. La media global es la media aritmética de las medias
+  /// individuales (no se ponderan por antigüedad ni por número de
+  /// completados absolutos).
+  ///
+  /// Días elegibles de un hábito:
+  /// - Empiezan en el máximo entre la fecha de creación del hábito y el
+  ///   inicio del rango del heatmap (no contamos días anteriores a su
+  ///   creación, que sesgaban la media a la baja).
+  /// - Acaban en hoy.
+  /// - Si la frecuencia es PERSONALIZADO, solo se cuentan los días que
+  ///   estén en `habito.diasSemana` (no penaliza saltarse un martes si el
+  ///   hábito es de lunes/miércoles/viernes).
   double get promedioDiario {
     if (_habitos.isEmpty) return 0;
-    return totalCompletados / diasHeatmap;
+    final medias = _habitos.map(_mediaHabito).toList();
+    final suma = medias.fold<double>(0, (acc, m) => acc + m);
+    return suma / medias.length;
+  }
+
+  /// Media individual de un hábito en [0, 1]. Devuelve 0 si todavía no
+  /// tiene días elegibles dentro del rango (por ejemplo un hábito recién
+  /// creado hoy).
+  double _mediaHabito(Habito h) {
+    final dias = _diasElegibles(h);
+    if (dias == 0) return 0;
+    final completados = (_historialPorHabito[h.id] ?? const [])
+        .where((r) => r.completado)
+        .length;
+    return completados / dias;
+  }
+
+  /// Cuenta los días dentro del rango del heatmap que son elegibles para
+  /// un hábito concreto. Aplica los dos ajustes descritos en
+  /// [promedioDiario]: recorta por fecha de creación y filtra por
+  /// `diasSemana` si la frecuencia es PERSONALIZADO.
+  int _diasElegibles(Habito h) {
+    final rangoIni = fechaInicio;
+    final rangoFin = fechaFin;
+    DateTime cursor = rangoIni;
+    if (h.fechaInicio != null) {
+      final creacion = _dateOnly(h.fechaInicio!);
+      if (creacion.isAfter(rangoIni)) cursor = creacion;
+    }
+    if (cursor.isAfter(rangoFin)) return 0;
+
+    int dias = 0;
+    while (!cursor.isAfter(rangoFin)) {
+      if (h.frecuencia != 'PERSONALIZADO' || _diaProgramado(h, cursor)) {
+        dias++;
+      }
+      cursor = cursor.add(const Duration(days: 1));
+    }
+    return dias;
+  }
+
+  static const _nombresDias = [
+    'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO',
+  ];
+
+  bool _diaProgramado(Habito h, DateTime fecha) {
+    return h.diasSemana.contains(_nombresDias[fecha.weekday - 1]);
   }
 
   /// Carga los habitos y todos sus historiales en paralelo.

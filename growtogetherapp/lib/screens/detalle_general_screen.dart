@@ -148,7 +148,7 @@ class _MetricasGrid extends StatelessWidget {
       _Metrica(
         icono: Icons.trending_up,
         label: l10n.promedioDiario,
-        valor: provider.promedioDiario.toStringAsFixed(1),
+        valor: '${(provider.promedioDiario * 100).toStringAsFixed(0)}%',
         color: colorScheme.tertiary,
       ),
       _Metrica(

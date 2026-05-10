@@ -205,7 +205,7 @@ class _MetricasRow extends StatelessWidget {
         Expanded(
           child: _MetricChip(
             icon: Icons.trending_up,
-            value: provider.promedioDiario.toStringAsFixed(1),
+            value: '${(provider.promedioDiario * 100).toStringAsFixed(0)}%',
             label: AppLocalizations.of(context)!.promedioDiario,
             color: colorScheme.secondary,
           ),
