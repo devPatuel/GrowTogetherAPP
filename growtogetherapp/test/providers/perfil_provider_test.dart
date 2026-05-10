@@ -10,7 +10,7 @@ void main() {
   setUp(() {
     mockRepo = MockUserRepository();
     mockStorage = MockStorage();
-    provider = PerfilProvider(mockRepo, mockStorage);
+    provider = PerfilProvider(mockRepo, mockStorage, FakeLocalNotificationsService());
   });
 
   group('PerfilProvider', () {

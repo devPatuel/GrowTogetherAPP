@@ -1,15 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:growtogether_data/growtogether_data.dart';
+import '../services/local_notifications_service.dart';
 
 class PerfilProvider extends ChangeNotifier {
   final UserRepository _repo;
   final SecureStorageService _storage;
+  final LocalNotificationsService _localNotifs;
 
   Usuario? _usuario;
   bool _cargando = true;
   String? _error;
 
-  PerfilProvider(this._repo, this._storage);
+  PerfilProvider(this._repo, this._storage, this._localNotifs);
 
   Usuario? get usuario => _usuario;
   bool get cargando => _cargando;
@@ -118,7 +120,12 @@ class PerfilProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
+  /// Cierra sesion borrando credenciales locales y cancelando todas las
+  /// notificaciones programadas. El cancelarTodas evita que recordatorios del
+  /// usuario que cierra sesion sigan disparandose si otra cuenta inicia
+  /// sesion en el mismo dispositivo.
   Future<void> cerrarSesion() async {
+    await _localNotifs.cancelarTodas();
     await _storage.deleteAll();
   }
 }

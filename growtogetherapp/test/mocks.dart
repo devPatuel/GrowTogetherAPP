@@ -1,4 +1,13 @@
 import 'package:growtogether_data/growtogether_data.dart';
+import 'package:growtogetherapp/services/local_notifications_service.dart';
+
+/// Fake del LocalNotificationsService que no toca el plugin nativo.
+/// Sirve para satisfacer la dependencia en tests donde el comportamiento
+/// concreto de las notificaciones no es lo que se esta probando.
+class FakeLocalNotificationsService implements LocalNotificationsService {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => Future.value();
+}
 
 /// Mock de SecureStorageService que guarda en memoria
 class MockStorage implements SecureStorageService {

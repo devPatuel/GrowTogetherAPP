@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:growtogether_data/growtogether_data.dart';
+import '../core/utils/dashboard_cache.dart';
 
 class HabitosProvider extends ChangeNotifier {
   final HabitoRepository _repo;
@@ -8,6 +9,8 @@ class HabitosProvider extends ChangeNotifier {
   List<Habito> _habitos = [];
   bool _cargando = true;
   String? _error;
+  bool _datosDeCache = false;
+  DateTime? _fechaCache;
   late DateTime _fechaSeleccionada;
 
   HabitosProvider(this._repo, this._storage) {
@@ -35,6 +38,12 @@ class HabitosProvider extends ChangeNotifier {
   String? get error => _error;
   DateTime get fechaSeleccionada => _fechaSeleccionada;
 
+  /// Indica si los habitos visibles vienen de la cache local (sin red).
+  bool get datosDeCache => _datosDeCache;
+
+  /// Fecha en que se cachearon los datos visibles (solo si datosDeCache).
+  DateTime? get fechaCache => _fechaCache;
+
   bool get esHoy {
     final now = DateTime.now();
     return _fechaSeleccionada.year == now.year &&
@@ -48,20 +57,46 @@ class HabitosProvider extends ChangeNotifier {
     return h.isEmpty ? 0 : h.where((x) => x.completadoHoy).length / h.length;
   }
 
-  /// Carga los habitos del usuario para la fecha seleccionada
+  /// Carga los habitos del usuario para la fecha seleccionada.
+  ///
+  /// Estrategia: intenta API; si falla y la fecha es hoy, cae a cache local.
+  /// Solo cachea lecturas del dia de hoy (no dias pasados) para mantener
+  /// la cache simple y util cuando el usuario abre la app sin red.
   Future<void> cargar() async {
     _cargando = true;
     _error = null;
     notifyListeners();
 
+    final userId = await _storage.getUserId();
+    if (userId == null) {
+      _cargando = false;
+      notifyListeners();
+      return;
+    }
+
     try {
-      final userId = await _storage.getUserId();
-      if (userId == null) return;
       final fecha = esHoy ? null : _fechaSeleccionada;
       _habitos = await _repo.getHabitos(userId, fecha: fecha);
+      _datosDeCache = false;
+      _fechaCache = null;
+      if (esHoy) {
+        await DashboardCache.guardarHabitos(userId, _habitos);
+      }
       _cargando = false;
       notifyListeners();
     } catch (e) {
+      if (esHoy) {
+        final cacheados = await DashboardCache.leerHabitos(userId);
+        if (cacheados != null) {
+          _habitos = cacheados;
+          _datosDeCache = true;
+          _fechaCache = await DashboardCache.fechaCacheHabitos(userId);
+          _error = null;
+          _cargando = false;
+          notifyListeners();
+          return;
+        }
+      }
       _error = e.toString();
       _cargando = false;
       notifyListeners();

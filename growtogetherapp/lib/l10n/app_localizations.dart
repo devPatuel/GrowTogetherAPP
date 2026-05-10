@@ -1221,6 +1221,63 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Escribe un nombre o un ID para buscar'**
   String get usuarioEscribeParaBuscar;
+
+  /// Banner cuando no hay internet
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión'**
+  String get sinConexion;
+
+  /// Aviso de que los datos vienen del cache local
+  ///
+  /// In es, this message translates to:
+  /// **'Mostrando datos guardados'**
+  String get mostrandoDatosGuardados;
+
+  /// Titulo de la seccion de recordatorio en detalle de habito
+  String get recordatorio;
+
+  /// Mensaje cuando un habito no tiene recordatorio
+  String get sinRecordatorio;
+
+  /// Boton para crear recordatorio
+  String get anadirRecordatorio;
+
+  /// Titulo dialogo editar recordatorio
+  String get editarRecordatorio;
+
+  /// Boton eliminar recordatorio
+  String get eliminarRecordatorio;
+
+  /// Confirmacion al eliminar recordatorio
+  String get confirmarEliminarRecordatorio;
+
+  /// Label hora del recordatorio
+  String get horaRecordatorio;
+
+  /// Label mensaje del recordatorio
+  String get mensajeRecordatorio;
+
+  /// Validacion mensaje vacio
+  String get mensajeRecordatorioObligatorio;
+
+  /// Texto inicial del mensaje al crear un recordatorio nuevo
+  String get recordatorioMensajePorDefecto;
+
+  /// Snackbar tras guardar recordatorio
+  String get recordatorioGuardado;
+
+  /// Snackbar tras eliminar recordatorio
+  String get recordatorioEliminado;
+
+  /// Snackbar cuando el usuario rechaza el permiso
+  String get permisoNotificacionesDenegado;
+
+  /// Boton editar generico
+  String get editar;
+
+  /// Boton eliminar generico
+  String get eliminar;
 }
 
 class _AppLocalizationsDelegate

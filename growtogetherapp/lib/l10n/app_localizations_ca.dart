@@ -606,4 +606,57 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get usuarioEscribeParaBuscar => 'Escriu un nom o un ID per cercar';
+
+  @override
+  String get sinConexion => 'Sense connexió';
+
+  @override
+  String get mostrandoDatosGuardados => 'Mostrant dades desades';
+
+  @override
+  String get recordatorio => 'Recordatori';
+
+  @override
+  String get sinRecordatorio => 'Encara no hi ha recordatori per a aquest hàbit';
+
+  @override
+  String get anadirRecordatorio => 'Afegir recordatori';
+
+  @override
+  String get editarRecordatorio => 'Editar recordatori';
+
+  @override
+  String get eliminarRecordatorio => 'Eliminar recordatori';
+
+  @override
+  String get confirmarEliminarRecordatorio =>
+      'Segur que vols eliminar el recordatori? Deixaràs de rebre notificacions d\'aquest hàbit.';
+
+  @override
+  String get horaRecordatorio => 'Hora';
+
+  @override
+  String get mensajeRecordatorio => 'Missatge';
+
+  @override
+  String get mensajeRecordatorioObligatorio => 'El missatge no pot estar buit';
+
+  @override
+  String get recordatorioMensajePorDefecto => 'No oblides:';
+
+  @override
+  String get recordatorioGuardado => 'Recordatori desat';
+
+  @override
+  String get recordatorioEliminado => 'Recordatori eliminat';
+
+  @override
+  String get permisoNotificacionesDenegado =>
+      'Has de concedir el permís de notificacions per activar el recordatori';
+
+  @override
+  String get editar => 'Editar';
+
+  @override
+  String get eliminar => 'Eliminar';
 }

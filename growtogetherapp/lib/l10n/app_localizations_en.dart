@@ -604,4 +604,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usuarioEscribeParaBuscar => 'Type a name or ID to search';
+
+  @override
+  String get sinConexion => 'No connection';
+
+  @override
+  String get mostrandoDatosGuardados => 'Showing saved data';
+
+  @override
+  String get recordatorio => 'Reminder';
+
+  @override
+  String get sinRecordatorio => 'No reminder set for this habit yet';
+
+  @override
+  String get anadirRecordatorio => 'Add reminder';
+
+  @override
+  String get editarRecordatorio => 'Edit reminder';
+
+  @override
+  String get eliminarRecordatorio => 'Delete reminder';
+
+  @override
+  String get confirmarEliminarRecordatorio =>
+      'Delete this reminder? You will stop receiving notifications for this habit.';
+
+  @override
+  String get horaRecordatorio => 'Time';
+
+  @override
+  String get mensajeRecordatorio => 'Message';
+
+  @override
+  String get mensajeRecordatorioObligatorio => 'Message cannot be empty';
+
+  @override
+  String get recordatorioMensajePorDefecto => 'Don\'t forget:';
+
+  @override
+  String get recordatorioGuardado => 'Reminder saved';
+
+  @override
+  String get recordatorioEliminado => 'Reminder deleted';
+
+  @override
+  String get permisoNotificacionesDenegado =>
+      'You need to grant notification permission to enable the reminder';
+
+  @override
+  String get editar => 'Edit';
+
+  @override
+  String get eliminar => 'Delete';
 }

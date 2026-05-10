@@ -234,5 +234,23 @@
   },
   "sinPeticionesEnviadas": "No sent requests",
   "sinResultadosBusqueda": "No users found",
-  "usuarioEscribeParaBuscar": "Type a name or ID to search"
+  "usuarioEscribeParaBuscar": "Type a name or ID to search",
+  "sinConexion": "No connection",
+  "mostrandoDatosGuardados": "Showing saved data",
+
+  "recordatorio": "Reminder",
+  "sinRecordatorio": "No reminder set for this habit yet",
+  "anadirRecordatorio": "Add reminder",
+  "editarRecordatorio": "Edit reminder",
+  "eliminarRecordatorio": "Delete reminder",
+  "confirmarEliminarRecordatorio": "Delete this reminder? You will stop receiving notifications for this habit.",
+  "horaRecordatorio": "Time",
+  "mensajeRecordatorio": "Message",
+  "mensajeRecordatorioObligatorio": "Message cannot be empty",
+  "recordatorioMensajePorDefecto": "Don't forget:",
+  "recordatorioGuardado": "Reminder saved",
+  "recordatorioEliminado": "Reminder deleted",
+  "permisoNotificacionesDenegado": "You need to grant notification permission to enable the reminder",
+  "editar": "Edit",
+  "eliminar": "Delete"
 }

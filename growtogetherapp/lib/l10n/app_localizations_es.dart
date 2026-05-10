@@ -605,4 +605,57 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get usuarioEscribeParaBuscar =>
       'Escribe un nombre o un ID para buscar';
+
+  @override
+  String get sinConexion => 'Sin conexión';
+
+  @override
+  String get mostrandoDatosGuardados => 'Mostrando datos guardados';
+
+  @override
+  String get recordatorio => 'Recordatorio';
+
+  @override
+  String get sinRecordatorio => 'Aún no hay recordatorio para este hábito';
+
+  @override
+  String get anadirRecordatorio => 'Añadir recordatorio';
+
+  @override
+  String get editarRecordatorio => 'Editar recordatorio';
+
+  @override
+  String get eliminarRecordatorio => 'Eliminar recordatorio';
+
+  @override
+  String get confirmarEliminarRecordatorio =>
+      '¿Seguro que quieres eliminar el recordatorio? Dejarás de recibir notificaciones de este hábito.';
+
+  @override
+  String get horaRecordatorio => 'Hora';
+
+  @override
+  String get mensajeRecordatorio => 'Mensaje';
+
+  @override
+  String get mensajeRecordatorioObligatorio => 'El mensaje no puede estar vacío';
+
+  @override
+  String get recordatorioMensajePorDefecto => 'No olvides:';
+
+  @override
+  String get recordatorioGuardado => 'Recordatorio guardado';
+
+  @override
+  String get recordatorioEliminado => 'Recordatorio eliminado';
+
+  @override
+  String get permisoNotificacionesDenegado =>
+      'Necesitas conceder permiso de notificaciones para activar el recordatorio';
+
+  @override
+  String get editar => 'Editar';
+
+  @override
+  String get eliminar => 'Eliminar';
 }

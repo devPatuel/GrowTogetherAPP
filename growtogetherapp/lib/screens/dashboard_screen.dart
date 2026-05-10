@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../core/utils/dashboard_cache.dart';
 import '../core/utils/habit_icons.dart';
 import 'package:growtogether_data/growtogether_data.dart';
 import '../l10n/app_localizations.dart';
@@ -83,8 +84,12 @@ class DashboardScreenState extends State<DashboardScreen>
     Consejo? consejo;
     try {
       consejo = await context.read<ConsejoRepository>().obtenerConsejoDeHoy();
+      if (consejo != null) {
+        await DashboardCache.guardarConsejo(consejo);
+      }
     } catch (_) {
-      return;
+      // Sin red: intentamos mostrar el consejo cacheado si existe
+      consejo = await DashboardCache.leerConsejo();
     }
     if (consejo == null || !mounted) return;
 
@@ -178,6 +183,7 @@ class DashboardScreenState extends State<DashboardScreen>
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
+          if (estado.datosDeCache) _buildAvisoCache(l10n),
           _buildSaludo(l10n),
           const SizedBox(height: 20),
           _buildCarruselDias(l10n),
@@ -189,6 +195,50 @@ class DashboardScreenState extends State<DashboardScreen>
           if (estado.habitos.isEmpty) _buildSinHabitos(l10n)
           else ...List.generate(estado.habitos.length, (i) => _buildAnimatedCard(estado.habitos[i], l10n, i)),
         ],
+      ),
+    );
+  }
+
+  // ─────────────────── AVISO DATOS CACHE ───────────────────
+
+  /// Aviso discreto que se muestra cuando los datos del dashboard provienen
+  /// del cache local porque la app no pudo contactar con la API.
+  Widget _buildAvisoCache(AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final fecha = context.watch<HabitosProvider>().fechaCache;
+    final fechaFormateada = fecha != null
+        ? DateFormat('d MMM HH:mm').format(fecha)
+        : '';
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: colorScheme.tertiaryContainer.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: colorScheme.tertiary.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.cloud_off_rounded,
+                size: 16, color: colorScheme.onTertiaryContainer),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                fechaFormateada.isEmpty
+                    ? l10n.mostrandoDatosGuardados
+                    : '${l10n.mostrandoDatosGuardados} · $fechaFormateada',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colorScheme.onTertiaryContainer,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

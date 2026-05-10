@@ -5,8 +5,11 @@ import '../core/utils/snack_helper.dart';
 import 'package:growtogether_data/growtogether_data.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/detalle_habito_provider.dart';
+import '../providers/notificaciones_provider.dart';
+import '../services/local_notifications_service.dart';
 import 'widgets/habit_type_selector.dart';
 import 'widgets/icon_selector.dart';
+import 'widgets/recordatorio_card.dart';
 
 class DetalleHabitoScreen extends StatelessWidget {
   final Habito habito;
@@ -15,18 +18,31 @@ class DetalleHabitoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => DetalleHabitoProvider(
-        ctx.read<HabitoRepository>(),
-        habito,
-      ),
-      child: const _DetalleHabitoView(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => DetalleHabitoProvider(
+            ctx.read<HabitoRepository>(),
+            habito,
+          ),
+        ),
+        // Provider de notificaciones propio del detalle: lo creamos aqui en
+        // lugar de a nivel app porque expone el recordatorio del habito actual.
+        ChangeNotifierProvider(
+          create: (ctx) => NotificacionesProvider(
+            ctx.read<NotificacionRepository>(),
+            ctx.read<LocalNotificationsService>(),
+          ),
+        ),
+      ],
+      child: _DetalleHabitoView(habito: habito),
     );
   }
 }
 
 class _DetalleHabitoView extends StatelessWidget {
-  const _DetalleHabitoView();
+  final Habito habito;
+  const _DetalleHabitoView({required this.habito});
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +76,8 @@ class _DetalleHabitoView extends StatelessWidget {
             toggling: provider.toggling,
             onToggle: () => _onToggle(context),
           ),
+          const SizedBox(height: 20),
+          RecordatorioCard(habito: provider.habito),
           const SizedBox(height: 20),
           _HistorialSection(
             historial: provider.historial,
@@ -293,11 +311,32 @@ class _DetalleHabitoView extends StatelessWidget {
       );
       if (!context.mounted) return;
       if (ok) {
+        // Reprogramar notis: si se cambia frecuencia o dias, las alarmas
+        // antiguas siguen vivas hasta que se cancelan y reprograman.
+        await _resincronizarNotificaciones(context);
+        if (!context.mounted) return;
         context.showSnack(l10n.habitoActualizado, duration: const Duration(seconds: 1));
       } else {
         context.showSnackError(l10n.errorGenerico, duration: const Duration(seconds: 1));
       }
     }
+  }
+
+  /// Vuelve a sincronizar las notis locales con el backend tras editar o
+  /// eliminar un habito. Si falla la red, se ignora: el siguiente login
+  /// volvera a intentarlo.
+  Future<void> _resincronizarNotificaciones(BuildContext context) async {
+    final localNotifs = context.read<LocalNotificationsService>();
+    final notificacionRepo = context.read<NotificacionRepository>();
+    final habitoRepo = context.read<HabitoRepository>();
+    final storage = context.read<SecureStorageService>();
+    final usuarioId = await storage.getUserId();
+    if (usuarioId == null) return;
+    await localNotifs.sincronizarConBackend(
+      notificacionRepo: notificacionRepo,
+      habitoRepo: habitoRepo,
+      usuarioId: usuarioId,
+    );
   }
 
   Widget _buildDiasSelector(AppLocalizations l10n, Set<String> diasSeleccionados, StateSetter setDialogState) {
@@ -359,6 +398,11 @@ class _DetalleHabitoView extends StatelessWidget {
       final ok = await provider.eliminarHabito();
       if (!context.mounted) return;
       if (ok) {
+        // Cancelar notis del habito eliminado: el backend hace cascade del
+        // recordatorio en BD, pero las alarmas del SO siguen vivas hasta que
+        // las canceles explicitamente.
+        await _resincronizarNotificaciones(context);
+        if (!context.mounted) return;
         context.showSnack(l10n.habitoEliminado, duration: const Duration(seconds: 1));
         Navigator.pop(context, true);
       } else {

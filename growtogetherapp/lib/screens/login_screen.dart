@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:growtogether_data/growtogether_data.dart';
 import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
+import '../services/local_notifications_service.dart';
 import 'register_screen.dart';
 import 'main_layout.dart';
 import 'widgets/error_banner.dart';
@@ -28,11 +30,24 @@ class _LoginScreenState extends State<LoginScreen> {
     final auth = context.read<AuthProvider>();
     final usuario = await auth.verificarSesion();
     if (usuario != null && mounted) {
+      await _sincronizarNotificaciones(usuario.id);
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MainLayout()),
       );
     }
+  }
+
+  Future<void> _sincronizarNotificaciones(int usuarioId) async {
+    final localNotifs = context.read<LocalNotificationsService>();
+    final notificacionRepo = context.read<NotificacionRepository>();
+    final habitoRepo = context.read<HabitoRepository>();
+    await localNotifs.sincronizarConBackend(
+      notificacionRepo: notificacionRepo,
+      habitoRepo: habitoRepo,
+      usuarioId: usuarioId,
+    );
   }
 
   Future<void> _iniciarSesion() async {
@@ -57,6 +72,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final ok = await auth.login(email, password);
     if (ok && mounted) {
+      final authRepo = context.read<AuthRepository>();
+      final usuario = await authRepo.getCurrentUser();
+      if (!mounted) return;
+      if (usuario != null) {
+        await _sincronizarNotificaciones(usuario.id);
+        if (!mounted) return;
+      }
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MainLayout()),
