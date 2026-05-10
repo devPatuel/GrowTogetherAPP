@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../core/feedback/feedback_controller.dart';
 import '../core/l10n/locale_controller.dart';
 import '../core/theme/app_themes.dart';
 import '../core/theme/theme_controller.dart';
@@ -572,6 +573,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: _mostrarSelectorIdioma,
+            ),
+          ),
+
+          // Toggle de feedback haptico + animaciones expresivas
+          // TODO: i18n (clave feedbackHaptico) cuando se mergee la rama de l10n
+          Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ValueListenableBuilder<bool>(
+              valueListenable: FeedbackController.instance,
+              builder: (context, activo, _) => SwitchListTile(
+                secondary: Icon(Icons.vibration, color: colorScheme.primary),
+                title: const Text('Vibracion y animaciones',
+                    style: TextStyle(fontSize: 15)),
+                subtitle: const Text('Activa la respuesta haptica y los efectos visuales',
+                    style: TextStyle(fontSize: 13, color: Colors.grey)),
+                value: activo,
+                onChanged: FeedbackController.instance.cambiar,
+              ),
             ),
           ),
 
