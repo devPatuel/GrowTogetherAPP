@@ -94,6 +94,13 @@ class _MainLayoutState extends State<MainLayout> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Image.asset(
+            'assets/branding/logo_square.png',
+            fit: BoxFit.contain,
+          ),
+        ),
         title: Text(titulos[_indiceActual]),
         centerTitle: true,
         actions: _indiceActual == 2 ? _buildAccionesDesafios(l10n) : null,
