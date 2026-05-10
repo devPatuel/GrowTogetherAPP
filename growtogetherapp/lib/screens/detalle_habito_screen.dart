@@ -183,25 +183,6 @@ class _DetalleHabitoView extends StatelessWidget {
     if (!ok) context.showSnackError(l10n.errorGenerico);
   }
 
-  Future<void> _onToggleFecha(BuildContext context, DateTime fecha) async {
-    // Metodo mantenido por compatibilidad, ya no se invoca desde el calendario.
-    final provider = context.read<DetalleHabitoProvider>();
-    final l10n = AppLocalizations.of(context)!;
-    final estabaCompletado = provider.estaCompletadoEnFecha(fecha);
-    final ok = await provider.toggleCompletar(fecha: fecha);
-
-    if (!context.mounted) return;
-    if (ok) {
-      if (estabaCompletado) {
-        context.showSnack(l10n.habitoDesmarcado, duration: const Duration(seconds: 1));
-      } else {
-        context.showSnackSuccess(l10n.habitoCompletado, duration: const Duration(seconds: 1));
-      }
-    } else {
-      context.showSnackError(l10n.errorGenerico);
-    }
-  }
-
   Future<void> _mostrarDialogoEditar(BuildContext context) async {
     final provider = context.read<DetalleHabitoProvider>();
     final habito = provider.habito;
