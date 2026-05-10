@@ -183,3 +183,35 @@ jobs:
           name: growtogether-apk-${{ github.sha }}
           path: growtogetherapp/build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
+
+      # Renombrar a app.apk para que el SCP suba con nombre fijo (sin sha en
+      # la ruta destino).
+      - name: Renombrar APK
+        run: cp growtogetherapp/build/app/outputs/flutter-apk/app-release.apk app.apk
+
+      # SCP del APK a /tmp/ en la EC2.
+      - name: SCP APK a EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: app.apk
+          target: /tmp/
+
+      # Swap atomico: subimos a app.apk.new y renombramos. Asi nginx nunca
+      # sirve un APK a medio escribir si alguien justo descarga durante el
+      # deploy. La carpeta /opt/growtogether/apk/ y el location nginx ya
+      # estan configurados manualmente (URL fija: /app.apk).
+      - name: SSH a EC2 y publicar APK
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            mv /tmp/app.apk /opt/growtogether/apk/app.apk.new
+            mv /opt/growtogether/apk/app.apk.new /opt/growtogether/apk/app.apk
+            ls -lh /opt/growtogether/apk/app.apk
+            curl -sf -o /dev/null -w "GET /app.apk -> HTTP %{http_code}\n" https://growtogether.jordipatuel.com/app.apk
