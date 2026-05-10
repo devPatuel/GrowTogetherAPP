@@ -654,6 +654,16 @@ class AppLocalizationsEs extends AppLocalizations {
       'Necesitas conceder permiso de notificaciones para activar el recordatorio';
 
   @override
+  String get permisoNotificacionesBloqueado => 'Permiso bloqueado';
+
+  @override
+  String get permisoNotificacionesBloqueadoDesc =>
+      'Has rechazado el permiso de notificaciones. Para activar los recordatorios, ábrelo manualmente desde los ajustes de la app.';
+
+  @override
+  String get abrirAjustes => 'Abrir ajustes';
+
+  @override
   String get editar => 'Editar';
 
   @override

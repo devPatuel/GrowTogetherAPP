@@ -653,6 +653,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'You need to grant notification permission to enable the reminder';
 
   @override
+  String get permisoNotificacionesBloqueado => 'Permission blocked';
+
+  @override
+  String get permisoNotificacionesBloqueadoDesc =>
+      'You have denied notification permission. To enable reminders, open it manually from the app settings.';
+
+  @override
+  String get abrirAjustes => 'Open settings';
+
+  @override
   String get editar => 'Edit';
 
   @override

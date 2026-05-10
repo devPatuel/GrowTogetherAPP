@@ -210,12 +210,47 @@ class _ConRecordatorio extends StatelessWidget {
 }
 
 Future<bool> _asegurarPermisos(BuildContext context) async {
-  final ok = await context.read<LocalNotificationsService>().pedirPermisos();
-  if (!ok && context.mounted) {
-    final l10n = AppLocalizations.of(context)!;
-    context.showSnackError(l10n.permisoNotificacionesDenegado);
+  final servicio = context.read<LocalNotificationsService>();
+  final estado = await servicio.pedirPermisos();
+  if (estado == PermisoNotificacionEstado.concedido) return true;
+  if (!context.mounted) return false;
+  final l10n = AppLocalizations.of(context)!;
+  if (estado == PermisoNotificacionEstado.denegadoPermanentemente) {
+    await _mostrarDialogoAjustes(context, servicio, l10n);
+    return false;
   }
-  return ok;
+  context.showSnackError(l10n.permisoNotificacionesDenegado);
+  return false;
+}
+
+/// Cuando el sistema bloquea las notificaciones permanentemente, solo se
+/// pueden activar desde los ajustes de la app. Este dialogo ofrece llevar
+/// al usuario directamente.
+Future<void> _mostrarDialogoAjustes(
+  BuildContext context,
+  LocalNotificationsService servicio,
+  AppLocalizations l10n,
+) async {
+  final abrir = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(l10n.permisoNotificacionesBloqueado),
+      content: Text(l10n.permisoNotificacionesBloqueadoDesc),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          child: Text(l10n.cancelar),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          child: Text(l10n.abrirAjustes),
+        ),
+      ],
+    ),
+  );
+  if (abrir == true) {
+    await servicio.abrirAjustes();
+  }
 }
 
 Future<void> _abrirEditor(

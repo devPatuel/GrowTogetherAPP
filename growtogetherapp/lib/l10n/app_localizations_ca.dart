@@ -655,6 +655,16 @@ class AppLocalizationsCa extends AppLocalizations {
       'Has de concedir el permís de notificacions per activar el recordatori';
 
   @override
+  String get permisoNotificacionesBloqueado => 'Permís bloquejat';
+
+  @override
+  String get permisoNotificacionesBloqueadoDesc =>
+      'Has rebutjat el permís de notificacions. Per activar els recordatoris, obre\'l manualment des dels ajustos de l\'aplicació.';
+
+  @override
+  String get abrirAjustes => 'Obrir ajustos';
+
+  @override
   String get editar => 'Editar';
 
   @override

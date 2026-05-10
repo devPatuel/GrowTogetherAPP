@@ -626,6 +626,15 @@
   "permisoNotificacionesDenegado": "Necesitas conceder permiso de notificaciones para activar el recordatorio",
   "@permisoNotificacionesDenegado": { "description": "Snackbar cuando el usuario rechaza el permiso" },
 
+  "permisoNotificacionesBloqueado": "Permiso bloqueado",
+  "@permisoNotificacionesBloqueado": { "description": "Titulo dialogo cuando las notificaciones estan denegadas permanentemente" },
+
+  "permisoNotificacionesBloqueadoDesc": "Has rechazado el permiso de notificaciones. Para activar los recordatorios, ábrelo manualmente desde los ajustes de la app.",
+  "@permisoNotificacionesBloqueadoDesc": { "description": "Descripcion del dialogo de permiso bloqueado" },
+
+  "abrirAjustes": "Abrir ajustes",
+  "@abrirAjustes": { "description": "Boton para abrir los ajustes del sistema" },
+
   "editar": "Editar",
   "@editar": { "description": "Boton editar generico" },
 

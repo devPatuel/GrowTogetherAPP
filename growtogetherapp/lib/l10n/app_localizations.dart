@@ -1273,6 +1273,15 @@ abstract class AppLocalizations {
   /// Snackbar cuando el usuario rechaza el permiso
   String get permisoNotificacionesDenegado;
 
+  /// Titulo dialogo cuando las notificaciones estan denegadas permanentemente
+  String get permisoNotificacionesBloqueado;
+
+  /// Descripcion del dialogo de permiso bloqueado
+  String get permisoNotificacionesBloqueadoDesc;
+
+  /// Boton para abrir los ajustes del sistema
+  String get abrirAjustes;
+
   /// Boton editar generico
   String get editar;
 

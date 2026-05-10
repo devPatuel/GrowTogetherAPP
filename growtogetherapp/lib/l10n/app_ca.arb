@@ -251,6 +251,9 @@
   "recordatorioGuardado": "Recordatori desat",
   "recordatorioEliminado": "Recordatori eliminat",
   "permisoNotificacionesDenegado": "Has de concedir el permís de notificacions per activar el recordatori",
+  "permisoNotificacionesBloqueado": "Permís bloquejat",
+  "permisoNotificacionesBloqueadoDesc": "Has rebutjat el permís de notificacions. Per activar els recordatoris, obre'l manualment des dels ajustos de l'aplicació.",
+  "abrirAjustes": "Obrir ajustos",
   "editar": "Editar",
   "eliminar": "Eliminar"
 }
