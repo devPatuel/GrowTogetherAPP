@@ -36,7 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final errorEmail = Validators.email(email, obligatorio: l10n.validatorEmailObligatorio, invalido: l10n.validatorEmailInvalido);
     if (errorEmail != null) { setState(() => _errorLocal = errorEmail); return; }
 
-    final errorPassword = Validators.password(password, obligatoria: l10n.validatorContrasenaObligatoria, minimo: l10n.validatorContrasenaMinimo, mayuscula: l10n.validatorContrasenaMayuscula, minuscula: l10n.validatorContrasenaMinuscula, numero: l10n.validatorContrasenaNumero);
+    final errorPassword = Validators.password(password, obligatoria: l10n.validatorContrasenaObligatoria, requisitos: l10n.validatorContrasenaRequisitos);
     if (errorPassword != null) { setState(() => _errorLocal = errorPassword); return; }
 
     final errorConfirmar = Validators.confirmPassword(confirmar, password, confirmar: l10n.validatorConfirmarContrasena, noCoinciden: l10n.validatorContrasenasNoCoinciden);

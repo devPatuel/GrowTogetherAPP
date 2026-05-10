@@ -31,10 +31,7 @@ class _DialogoCambiarContrasenaState extends State<DialogoCambiarContrasena> {
     final errorPassword = Validators.password(
       _nuevaController.text,
       obligatoria: l10n.validatorContrasenaObligatoria,
-      minimo: l10n.validatorContrasenaMinimo,
-      mayuscula: l10n.validatorContrasenaMayuscula,
-      minuscula: l10n.validatorContrasenaMinuscula,
-      numero: l10n.validatorContrasenaNumero,
+      requisitos: l10n.validatorContrasenaRequisitos,
     );
     if (errorPassword != null) {
       setState(() => _error = errorPassword);

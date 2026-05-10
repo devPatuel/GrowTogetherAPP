@@ -288,16 +288,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validatorContrasenaObligatoria => 'Password is required';
 
   @override
-  String get validatorContrasenaMinimo => 'At least 8 characters';
-
-  @override
-  String get validatorContrasenaMayuscula => 'Must contain an uppercase letter';
-
-  @override
-  String get validatorContrasenaMinuscula => 'Must contain a lowercase letter';
-
-  @override
-  String get validatorContrasenaNumero => 'Must contain a number';
+  String get validatorContrasenaRequisitos =>
+      'Password must contain at least 8 characters, an uppercase letter, a lowercase letter, a number and a special character';
 
   @override
   String validatorCampoObligatorio(String campo) {

@@ -280,17 +280,8 @@
   "validatorContrasenaObligatoria": "La contrase\u00f1a es obligatoria",
   "@validatorContrasenaObligatoria": { "description": "Error de validacion: contrasena vacia" },
 
-  "validatorContrasenaMinimo": "M\u00ednimo 8 caracteres",
-  "@validatorContrasenaMinimo": { "description": "Error de validacion: contrasena corta" },
-
-  "validatorContrasenaMayuscula": "Debe contener una may\u00fascula",
-  "@validatorContrasenaMayuscula": { "description": "Error de validacion: falta mayuscula" },
-
-  "validatorContrasenaMinuscula": "Debe contener una min\u00fascula",
-  "@validatorContrasenaMinuscula": { "description": "Error de validacion: falta minuscula" },
-
-  "validatorContrasenaNumero": "Debe contener un n\u00famero",
-  "@validatorContrasenaNumero": { "description": "Error de validacion: falta numero" },
+  "validatorContrasenaRequisitos": "La contrase\u00f1a debe contener al menos 8 caracteres, una may\u00fascula, una min\u00fascula, un n\u00famero y un car\u00e1cter especial",
+  "@validatorContrasenaRequisitos": { "description": "Error de validacion: requisitos completos de la contrasena" },
 
   "validatorCampoObligatorio": "{campo} es obligatorio",
   "@validatorCampoObligatorio": {

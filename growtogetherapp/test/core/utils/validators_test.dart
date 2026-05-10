@@ -11,20 +11,19 @@ void main() {
     );
   });
 
-  test('Validators.password aplica todas las reglas en orden', () {
+  test('Validators.password devuelve un unico mensaje de requisitos cuando falla', () {
     String? p(String v) => Validators.password(
           v,
           obligatoria: 'OB',
-          minimo: 'MIN',
-          mayuscula: 'MAY',
-          minuscula: 'MNU',
-          numero: 'NUM',
+          requisitos: 'REQ',
         );
 
     expect(p(''), 'OB');
-    expect(p('aA1'), 'MIN');
-    expect(p('abcdefg1'), 'MAY');
-    expect(p('Abcdefgh'), 'NUM');
-    expect(p('Prueba12'), isNull);
+    expect(p('aA1!'), 'REQ');
+    expect(p('abcdefg1!'), 'REQ');
+    expect(p('Abcdefgh!'), 'REQ');
+    expect(p('PRUEBA12!'), 'REQ');
+    expect(p('Prueba12'), 'REQ');
+    expect(p('Prueba12!'), isNull);
   });
 }

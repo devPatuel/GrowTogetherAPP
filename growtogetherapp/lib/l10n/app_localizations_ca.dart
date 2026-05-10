@@ -289,16 +289,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get validatorContrasenaObligatoria => 'La contrasenya és obligatòria';
 
   @override
-  String get validatorContrasenaMinimo => 'Mínim 8 caràcters';
-
-  @override
-  String get validatorContrasenaMayuscula => 'Ha de contenir una majúscula';
-
-  @override
-  String get validatorContrasenaMinuscula => 'Ha de contenir una minúscula';
-
-  @override
-  String get validatorContrasenaNumero => 'Ha de contenir un número';
+  String get validatorContrasenaRequisitos =>
+      'La contrasenya ha de contenir almenys 8 caràcters, una majúscula, una minúscula, un número i un caràcter especial';
 
   @override
   String validatorCampoObligatorio(String campo) {

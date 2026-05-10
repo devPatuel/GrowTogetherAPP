@@ -646,29 +646,11 @@ abstract class AppLocalizations {
   /// **'La contraseña es obligatoria'**
   String get validatorContrasenaObligatoria;
 
-  /// Error de validacion: contrasena corta
+  /// Error de validacion: requisitos completos de la contrasena
   ///
   /// In es, this message translates to:
-  /// **'Mínimo 8 caracteres'**
-  String get validatorContrasenaMinimo;
-
-  /// Error de validacion: falta mayuscula
-  ///
-  /// In es, this message translates to:
-  /// **'Debe contener una mayúscula'**
-  String get validatorContrasenaMayuscula;
-
-  /// Error de validacion: falta minuscula
-  ///
-  /// In es, this message translates to:
-  /// **'Debe contener una minúscula'**
-  String get validatorContrasenaMinuscula;
-
-  /// Error de validacion: falta numero
-  ///
-  /// In es, this message translates to:
-  /// **'Debe contener un número'**
-  String get validatorContrasenaNumero;
+  /// **'La contraseña debe contener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial'**
+  String get validatorContrasenaRequisitos;
 
   /// Error de validacion: campo obligatorio generico
   ///
