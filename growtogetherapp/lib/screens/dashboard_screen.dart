@@ -10,6 +10,7 @@ import '../core/utils/snack_helper.dart';
 import '../core/feedback/feedback_service.dart';
 import '../providers/habitos_provider.dart';
 import 'detalle_habito_screen.dart';
+import 'widgets/confetti_overlay.dart';
 import 'widgets/habito_check.dart';
 import 'widgets/progress_painters.dart';
 
@@ -28,6 +29,8 @@ class DashboardScreenState extends State<DashboardScreen>
 
   late AnimationController _staggerController;
   late ScrollController _carruselController;
+  final GlobalKey<ConfettiOverlayState> _confettiKey =
+      GlobalKey<ConfettiOverlayState>();
 
   @override
   void initState() {
@@ -141,17 +144,29 @@ class DashboardScreenState extends State<DashboardScreen>
 
   Future<void> _toggleHabito(Habito habito) async {
     final l10n = AppLocalizations.of(context)!;
+    final provider = context.read<HabitosProvider>();
     final estabaCompletado = habito.completadoHoy;
+    // Capturamos el progreso ANTES de aplicar el toggle optimista
+    // para luego detectar la transicion <1.0 -> 1.0 (dia entero hecho)
+    final progresoPrevio = provider.progreso;
+    final eraHoy = provider.esHoy;
+
     // Feedback haptico inmediato al pulsar (antes de esperar al backend)
     // para que la respuesta tactil acompane al cambio optimista de la UI.
     FeedbackService.marcarHabito();
-    final ok = await context.read<HabitosProvider>().toggleHabito(habito);
+    final ok = await provider.toggleHabito(habito);
     if (!mounted) return;
     if (ok) {
       if (estabaCompletado) {
         context.showSnack(l10n.habitoDesmarcado, duration: const Duration(seconds: 1));
       } else {
         context.showSnackSuccess(l10n.habitoCompletado, duration: const Duration(seconds: 1));
+        // Confeti + haptic fuerte SOLO al cerrar el dia entero hoy
+        // (no al desmarcar y no en dias pasados/futuros)
+        if (eraHoy && progresoPrevio < 1.0 && provider.progreso >= 1.0) {
+          FeedbackService.hito();
+          _confettiKey.currentState?.celebrar();
+        }
       }
     } else {
       context.showSnackError('Error al actualizar');
@@ -177,23 +192,29 @@ class DashboardScreenState extends State<DashboardScreen>
       ]));
     }
 
-    return RefreshIndicator(
-      onRefresh: cargarDatos,
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        children: [
-          _buildSaludo(l10n),
-          const SizedBox(height: 20),
-          _buildCarruselDias(l10n),
-          const SizedBox(height: 24),
-          _buildProgresoCard(l10n),
-          const SizedBox(height: 24),
-          _buildTituloHabitos(l10n),
-          const SizedBox(height: 12),
-          if (estado.habitos.isEmpty) _buildSinHabitos(l10n)
-          else ...List.generate(estado.habitos.length, (i) => _buildAnimatedCard(estado.habitos[i], l10n, i)),
-        ],
-      ),
+    return Stack(
+      children: [
+        RefreshIndicator(
+          onRefresh: cargarDatos,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+            children: [
+              _buildSaludo(l10n),
+              const SizedBox(height: 20),
+              _buildCarruselDias(l10n),
+              const SizedBox(height: 24),
+              _buildProgresoCard(l10n),
+              const SizedBox(height: 24),
+              _buildTituloHabitos(l10n),
+              const SizedBox(height: 12),
+              if (estado.habitos.isEmpty) _buildSinHabitos(l10n)
+              else ...List.generate(estado.habitos.length, (i) => _buildAnimatedCard(estado.habitos[i], l10n, i)),
+            ],
+          ),
+        ),
+        // Overlay de confeti, no captura toques (IgnorePointer interno)
+        ConfettiOverlay(key: _confettiKey),
+      ],
     );
   }
 
