@@ -125,6 +125,13 @@ lib/
 - **Consejo del día**: el dashboard muestra el consejo asignado a la fecha de hoy
   desde la API (`GET /usuarios/consejo/hoy`). Lo gestiona el panel admin, no
   está hardcoded.
+- **Recordatorios locales**: cada hábito puede tener un recordatorio que se programa
+  como notificación local con `flutter_local_notifications`. La configuración vive en
+  el backend; al login la app reprograma todas las alarmas según el hábito asociado
+  (diario o días específicos).
+- **Tolerancia a red**: banner persistente cuando se pierde la conexión y caché
+  del dashboard (hábitos del día + consejo) en `SharedPreferences`. Las acciones
+  siguen requiriendo conexión, las lecturas se sirven del caché si la API falla.
 
 ---
 
@@ -147,7 +154,7 @@ El tema e idioma se sincronizan con el servidor y se restauran en cada inicio de
 flutter test
 ```
 
-Cobertura actual: 24 tests unitarios sobre `AuthProvider`, `HabitosProvider` y `PerfilProvider`.
+Cobertura actual: 42 tests unitarios sobre los providers (Auth, Habitos, Perfil, Statistics, Amistad, Desafios) y la pantalla de login.
 
 ---
 
@@ -164,4 +171,8 @@ Salida en `doc/api/`. Por defecto está incluida en `.gitignore` (quita la líne
 
 ## Decisiones de arquitectura
 
-Las decisiones técnicas del proyecto (Flutter vs React Native, Provider vs Bloc, Navigator vs GoRouter, etc.) están documentadas en los Architecture Decision Records (ADRs), que se publicarán junto al proyecto en la entrega final.
+Las decisiones técnicas (Flutter vs React Native, Provider vs Bloc,
+Navigator vs GoRouter, política offline, recordatorios locales…) están
+documentadas en [`docs/DECISIONS.md`](docs/DECISIONS.md). Las del
+paquete de datos compartido viven en `GrowTogetherDATA/docs/DECISIONS.md`
+y las del backend en `GrowTogetherAPI/docs/DECISIONS.md`.
