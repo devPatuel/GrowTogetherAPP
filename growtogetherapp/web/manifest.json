@@ -1,11 +1,11 @@
 {
-    "name": "growtogetherapp",
-    "short_name": "growtogetherapp",
+    "name": "GrowTogether",
+    "short_name": "GrowTogether",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FFFFFF",
     "theme_color": "#2E7D32",
-    "description": "A new Flutter project.",
+    "description": "GrowTogether - rastrea hábitos y crece junto a tus amigos.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
