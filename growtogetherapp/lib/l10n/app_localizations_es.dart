@@ -638,7 +638,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mensajeRecordatorio => 'Mensaje';
 
   @override
-  String get mensajeRecordatorioObligatorio => 'El mensaje no puede estar vacío';
+  String get mensajeRecordatorioObligatorio =>
+      'El mensaje no puede estar vacío';
 
   @override
   String get recordatorioMensajePorDefecto => 'No olvides:';

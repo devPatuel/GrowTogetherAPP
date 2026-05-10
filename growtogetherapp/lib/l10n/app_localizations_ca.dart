@@ -617,7 +617,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get recordatorio => 'Recordatori';
 
   @override
-  String get sinRecordatorio => 'Encara no hi ha recordatori per a aquest hàbit';
+  String get sinRecordatorio =>
+      'Encara no hi ha recordatori per a aquest hàbit';
 
   @override
   String get anadirRecordatorio => 'Afegir recordatori';
