@@ -30,8 +30,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     context.read<PerfilProvider>().cargar();
   }
 
-  void _irALogin({String? mensaje}) {
-    context.read<PerfilProvider>().cerrarSesion();
+  Future<void> _irALogin({String? mensaje}) async {
+    await context.read<PerfilProvider>().cerrarSesion();
     if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
@@ -226,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final ok = await perfil.editarEmail(nuevoEmail);
     if (ok && mounted) {
-      _irALogin(mensaje: l10n.sesionCerradaPorCambio);
+      await _irALogin(mensaje: l10n.sesionCerradaPorCambio);
     }
   }
 
@@ -263,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final ok = await context.read<PerfilProvider>().cambiarContrasena(resultado['actual']!, resultado['nueva']!);
     if (ok && mounted) {
-      _irALogin(mensaje: l10n.sesionCerradaPorCambio);
+      await _irALogin(mensaje: l10n.sesionCerradaPorCambio);
     } else if (!ok && mounted) {
       context.showSnackError(context.read<PerfilProvider>().error ?? l10n.errorGenerico);
     }
