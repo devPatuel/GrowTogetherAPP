@@ -32,6 +32,13 @@ jobs:
           channel: stable
           cache: true
 
+      # En local usamos pubspec_overrides.yaml para apuntar a la ruta de DATA.
+      # En CI, ese archivo apunta a una ruta inexistente, hay que borrarlo
+      # para que pub get use la dependencia git declarada en pubspec.yaml.
+      - name: Borrar pubspec_overrides.yaml
+        working-directory: growtogetherapp
+        run: rm -f pubspec_overrides.yaml
+
       - name: Instalar dependencias
         working-directory: growtogetherapp
         run: flutter pub get
