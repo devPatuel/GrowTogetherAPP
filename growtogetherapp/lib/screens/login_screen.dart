@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:growtogether_data/growtogether_data.dart';
 import 'package:provider/provider.dart';
+import '../core/utils/snack_helper.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../services/local_notifications_service.dart';
@@ -59,14 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (email.isEmpty || password.isEmpty) {
       auth.limpiarError();
       setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.rellenaTodosLosCampos),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+      context.showSnackError(l10n.rellenaTodosLosCampos);
       return;
     }
 

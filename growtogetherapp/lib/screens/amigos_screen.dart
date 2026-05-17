@@ -87,7 +87,7 @@ class _AmigosTab extends StatelessWidget {
     final ok = await provider.eliminarAmigo(amigo.id);
     if (!context.mounted) return;
     if (!ok) {
-      context.showSnackError(provider.error ?? l10n.eliminarAmigo);
+      context.showSnackError(provider.error ?? l10n.errorGenerico);
       provider.limpiarError();
     }
   }
@@ -128,7 +128,7 @@ class _AmigosTab extends StatelessWidget {
               return UsuarioTile(
                 nombre: a.nombre,
                 fotoBase64: a.foto,
-                subtitulo: 'ID ${a.id}',
+                subtitulo: l10n.idUsuario(a.id),
                 trailing: IconButton(
                   icon: const Icon(Icons.person_remove_outlined),
                   tooltip: l10n.eliminarAmigo,

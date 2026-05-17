@@ -67,7 +67,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
     if (ok) {
       context.showSnackSuccess(l10n.solicitudEnviada);
     } else {
-      context.showSnackError(provider.error ?? l10n.solicitudEnviada);
+      context.showSnackError(provider.error ?? l10n.errorGenerico);
       provider.limpiarError();
     }
   }
@@ -117,7 +117,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
         return UsuarioTile(
           nombre: u.nombre,
           fotoBase64: u.foto,
-          subtitulo: 'ID ${u.id}',
+          subtitulo: l10n.idUsuario(u.id),
           trailing: enviando
               ? const SizedBox(
                   width: 20,

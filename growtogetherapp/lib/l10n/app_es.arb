@@ -244,6 +244,12 @@
   "elegirIdioma": "Elegir idioma",
   "@elegirIdioma": { "description": "Titulo bottom sheet idioma" },
 
+  "feedbackHaptico": "Vibración y animaciones",
+  "@feedbackHaptico": { "description": "Titulo del toggle de feedback haptico en perfil" },
+
+  "feedbackHapticoDescripcion": "Activa la respuesta háptica y los efectos visuales",
+  "@feedbackHapticoDescripcion": { "description": "Subtitulo del toggle de feedback haptico en perfil" },
+
   "castellano": "Castellano",
   "@castellano": { "description": "Nombre del idioma castellano" },
 
@@ -462,6 +468,171 @@
   "mas": "M\u00e1s",
   "@mas": { "description": "Leyenda heatmap extremo alto" },
 
+  "tendenciaSemanal": "Tendencia semanal",
+  "@tendenciaSemanal": { "description": "Titulo grafico tendencia semanal en detalle general" },
+
+  "hace16Semanas": "hace 16 sem.",
+  "@hace16Semanas": { "description": "Eje izquierdo del grafico semanal" },
+
+  "estaSemana": "esta sem.",
+  "@estaSemana": { "description": "Eje derecho del grafico semanal" },
+
+  "porDiaSemana": "Por d\u00eda de la semana",
+  "@porDiaSemana": { "description": "Titulo grafico por dia de la semana en detalle general" },
+
+  "promedioHabitosDia": "Promedio de h\u00e1bitos completados cada d\u00eda",
+  "@promedioHabitosDia": { "description": "Pie del grafico de promedio por dia de la semana" },
+
+  "desafiosActivos": "Activos",
+  "@desafiosActivos": { "description": "Titulo de la seccion de desafios activos" },
+
+  "desafiosFinalizados": "Finalizados",
+  "@desafiosFinalizados": { "description": "Titulo de la seccion de desafios finalizados" },
+
+  "sinDesafiosTitulo": "A\u00fan no tienes desaf\u00edos",
+  "@sinDesafiosTitulo": { "description": "Estado vacio cuando no hay desafios" },
+
+  "sinDesafiosSubtitulo": "Pulsa + para crear un desaf\u00edo e invitar a tus amigos",
+  "@sinDesafiosSubtitulo": { "description": "Subtitulo del estado vacio de desafios" },
+
+  "nuevoDesafio": "Nuevo desaf\u00edo",
+  "@nuevoDesafio": { "description": "Titulo AppBar crear desafio" },
+
+  "nombreDelDesafio": "Nombre del desaf\u00edo",
+  "@nombreDelDesafio": { "description": "Label input nombre del desafio" },
+
+  "descripcion": "Descripci\u00f3n",
+  "@descripcion": { "description": "Label input descripcion generica" },
+
+  "fechaFin": "Fecha fin",
+  "@fechaFin": { "description": "Label seccion fecha fin del desafio" },
+
+  "participantes": "Participantes",
+  "@participantes": { "description": "Label seccion participantes del desafio" },
+
+  "crearDesafio": "Crear desaf\u00edo",
+  "@crearDesafio": { "description": "Boton crear desafio" },
+
+  "selectorFechaFin": "Selecciona una fecha",
+  "@selectorFechaFin": { "description": "Placeholder selector fecha vacio" },
+
+  "diasDeDuracion": "{dias} d\u00edas de duraci\u00f3n",
+  "@diasDeDuracion": {
+    "description": "Texto que muestra duracion del desafio en dias",
+    "placeholders": { "dias": { "type": "int" } }
+  },
+
+  "errorSeleccionaFechaFin": "Selecciona una fecha fin",
+  "@errorSeleccionaFechaFin": { "description": "Validacion: no se ha elegido fecha fin" },
+
+  "errorSeleccionaAmigo": "Selecciona al menos un amigo",
+  "@errorSeleccionaAmigo": { "description": "Validacion: no se ha seleccionado participante" },
+
+  "desafioCreado": "Desaf\u00edo creado",
+  "@desafioCreado": { "description": "Snackbar de exito al crear desafio" },
+
+  "errorCrearDesafio": "Error al crear el desaf\u00edo",
+  "@errorCrearDesafio": { "description": "Snackbar de error generico al crear desafio" },
+
+  "tooltipAbandonar": "Abandonar",
+  "@tooltipAbandonar": { "description": "Tooltip boton abandonar desafio" },
+
+  "podio": "Podio",
+  "@podio": { "description": "Titulo seccion podio del desafio" },
+
+  "evolucion": "Evoluci\u00f3n",
+  "@evolucion": { "description": "Titulo seccion evolucion del desafio" },
+
+  "ranking": "Ranking",
+  "@ranking": { "description": "Titulo seccion ranking del desafio" },
+
+  "editarDesafio": "Editar desaf\u00edo",
+  "@editarDesafio": { "description": "Titulo dialogo editar desafio" },
+
+  "desafioActualizado": "Desaf\u00edo actualizado",
+  "@desafioActualizado": { "description": "Snack exito editar desafio" },
+
+  "errorActualizarDesafio": "No se pudo actualizar",
+  "@errorActualizarDesafio": { "description": "Snack error editar desafio" },
+
+  "eliminarDesafio": "Eliminar desaf\u00edo",
+  "@eliminarDesafio": { "description": "Titulo dialogo eliminar desafio" },
+
+  "confirmarEliminarDesafio": "\u00bfSeguro que quieres eliminar este desaf\u00edo? Esta acci\u00f3n no se puede deshacer.",
+  "@confirmarEliminarDesafio": { "description": "Texto de confirmacion eliminar desafio" },
+
+  "desafioEliminado": "Desaf\u00edo eliminado",
+  "@desafioEliminado": { "description": "Snack exito eliminar desafio" },
+
+  "errorEliminarDesafio": "No se pudo eliminar",
+  "@errorEliminarDesafio": { "description": "Snack error eliminar desafio" },
+
+  "abandonarDesafio": "Abandonar desaf\u00edo",
+  "@abandonarDesafio": { "description": "Titulo dialogo abandonar desafio" },
+
+  "confirmarAbandonarDesafio": "\u00bfSeguro que quieres abandonar este desaf\u00edo? Tu hist\u00f3rico se conservar\u00e1 pero ya no podr\u00e1s puntuar.",
+  "@confirmarAbandonarDesafio": { "description": "Texto de confirmacion abandonar desafio" },
+
+  "desafioAbandonado": "Has abandonado el desaf\u00edo",
+  "@desafioAbandonado": { "description": "Snack exito abandonar desafio" },
+
+  "errorAbandonarDesafio": "No se pudo abandonar",
+  "@errorAbandonarDesafio": { "description": "Snack error abandonar desafio" },
+
+  "etiquetaNegativo": "NEGATIVO",
+  "@etiquetaNegativo": { "description": "Badge en cabecera de desafio negativo" },
+
+  "porCreador": "Por {nombre}",
+  "@porCreador": {
+    "description": "Texto autoria del creador del desafio",
+    "placeholders": { "nombre": { "type": "String" } }
+  },
+
+  "desafioFinalizado": "Finalizado",
+  "@desafioFinalizado": { "description": "Chip de estado desafio finalizado" },
+
+  "diasRestantes": "Quedan {dias} d\u00edas",
+  "@diasRestantes": {
+    "description": "Chip dias que quedan en el desafio",
+    "placeholders": { "dias": { "type": "int" } }
+  },
+
+  "participantesContador": "{count} participantes",
+  "@participantesContador": {
+    "description": "Chip con numero de participantes",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "diaDesmarcado": "D\u00eda desmarcado",
+  "@diaDesmarcado": { "description": "Snack al desmarcar dia en desafio" },
+
+  "puntosSumadosSigueAsi": "\u00a1+{puntos}! Sigue as\u00ed",
+  "@puntosSumadosSigueAsi": {
+    "description": "Snack motivacional al marcar dia en desafio",
+    "placeholders": { "puntos": { "type": "int" } }
+  },
+
+  "hechoHoyRacha": "Hecho hoy \u00b7 racha {dias}",
+  "@hechoHoyRacha": {
+    "description": "Label del boton cuando ya esta marcado hoy",
+    "placeholders": { "dias": { "type": "int" } }
+  },
+
+  "marcarHoyConPuntos": "Marcar hoy  +{puntos}  (x{mult})",
+  "@marcarHoyConPuntos": {
+    "description": "Label del boton para marcar hoy con puntos y multiplicador",
+    "placeholders": {
+      "puntos": { "type": "int" },
+      "mult": { "type": "String" }
+    }
+  },
+
+  "idUsuario": "ID {id}",
+  "@idUsuario": {
+    "description": "Subtitulo en tarjeta de amigo mostrando su ID numerico",
+    "placeholders": { "id": { "type": "int" } }
+  },
+
   "sinDatosEstadisticas": "Cuando crees h\u00e1bitos, aqu\u00ed ver\u00e1s tus estad\u00edsticas",
   "@sinDatosEstadisticas": { "description": "Estado vacio de estadisticas" },
 
@@ -639,5 +810,22 @@
   "@editar": { "description": "Boton editar generico" },
 
   "eliminar": "Eliminar",
-  "@eliminar": { "description": "Boton eliminar generico" }
+  "@eliminar": { "description": "Boton eliminar generico" },
+
+  "seleccionarAmigos": "Seleccionar amigos",
+  "@seleccionarAmigos": { "description": "Titulo del modal de seleccion de amigos para invitar a un desafio" },
+
+  "seleccionadosContador": "{count} seleccionados",
+  "@seleccionadosContador": {
+    "description": "Contador de amigos seleccionados en el modal multi-select",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "confirmar": "Confirmar",
+  "@confirmar": { "description": "Boton confirmar generico" },
+
+  "sinAmigosParaInvitar": "Aún no tienes amigos para invitar",
+  "@sinAmigosParaInvitar": { "description": "Empty state del modal de seleccion de amigos cuando el usuario no tiene amigos" }
 }

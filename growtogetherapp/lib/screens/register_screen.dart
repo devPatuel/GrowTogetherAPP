@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../core/utils/snack_helper.dart';
 import '../core/utils/validators.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
@@ -46,12 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     final ok = await auth.register(nombre, email, password);
     if (ok && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(l10n.cuentaCreada),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ));
+      context.showSnackSuccess(l10n.cuentaCreada);
       Navigator.pop(context);
     }
   }

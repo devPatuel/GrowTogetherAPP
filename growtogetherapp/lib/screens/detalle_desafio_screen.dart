@@ -4,6 +4,7 @@ import '../core/utils/challenge_colors.dart';
 import '../core/utils/habit_icons.dart';
 import '../core/utils/snack_helper.dart';
 import 'package:growtogether_data/growtogether_data.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/desafios_provider.dart';
 import '../providers/detalle_desafio_provider.dart';
 import 'widgets/multiline_chart.dart';
@@ -44,6 +45,7 @@ class _DetalleDesafioBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final provider = context.watch<DetalleDesafioProvider>();
     final desafio = provider.desafio;
     final yo = provider.yo;
@@ -60,19 +62,19 @@ class _DetalleDesafioBody extends StatelessWidget {
         actions: [
           if (provider.soyCreador)
             IconButton(
-              tooltip: 'Editar',
+              tooltip: l10n.editar,
               icon: const Icon(Icons.edit_outlined),
               onPressed: () => _mostrarDialogoEditar(context, provider),
             ),
           if (provider.soyCreador)
             IconButton(
-              tooltip: 'Eliminar',
+              tooltip: l10n.eliminar,
               icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
               onPressed: () => _confirmarEliminar(context, provider),
             )
           else if (yo != null && yo.activo)
             IconButton(
-              tooltip: 'Abandonar',
+              tooltip: l10n.tooltipAbandonar,
               icon: const Icon(Icons.exit_to_app),
               onPressed: () => _confirmarAbandonar(context, provider),
             ),
@@ -103,7 +105,7 @@ class _DetalleDesafioBody extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'Podio',
+                    l10n.podio,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -121,7 +123,7 @@ class _DetalleDesafioBody extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'Evolución',
+                    l10n.evolucion,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -139,7 +141,7 @@ class _DetalleDesafioBody extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'Ranking',
+                    l10n.ranking,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -164,24 +166,25 @@ class _DetalleDesafioBody extends StatelessWidget {
 
   Future<void> _mostrarDialogoEditar(
       BuildContext context, DetalleDesafioProvider provider) async {
+    final l10n = AppLocalizations.of(context)!;
     final desafio = provider.desafio;
     final nombreCtrl = TextEditingController(text: desafio.nombre);
     final descCtrl = TextEditingController(text: desafio.descripcion);
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Editar desafío'),
+        title: Text(l10n.editarDesafio),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nombreCtrl,
-              decoration: const InputDecoration(labelText: 'Nombre'),
+              decoration: InputDecoration(labelText: l10n.nombre),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: descCtrl,
-              decoration: const InputDecoration(labelText: 'Descripción'),
+              decoration: InputDecoration(labelText: l10n.descripcion),
               maxLines: 3,
             ),
           ],
@@ -189,10 +192,10 @@ class _DetalleDesafioBody extends StatelessWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancelar')),
+              child: Text(l10n.cancelar)),
           FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Guardar')),
+              child: Text(l10n.guardar)),
         ],
       ),
     );
@@ -203,9 +206,9 @@ class _DetalleDesafioBody extends StatelessWidget {
       );
       if (context.mounted) {
         if (res) {
-          context.showSnackSuccess('Desafío actualizado');
+          context.showSnackSuccess(l10n.desafioActualizado);
         } else {
-          context.showSnackError('No se pudo actualizar');
+          context.showSnackError(l10n.errorActualizarDesafio);
         }
       }
     }
@@ -213,20 +216,21 @@ class _DetalleDesafioBody extends StatelessWidget {
 
   Future<void> _confirmarEliminar(
       BuildContext context, DetalleDesafioProvider provider) async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Eliminar desafío'),
-        content: const Text('¿Seguro que quieres eliminar este desafío? Esta acción no se puede deshacer.'),
+        title: Text(l10n.eliminarDesafio),
+        content: Text(l10n.confirmarEliminarDesafio),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancelar')),
+              child: Text(l10n.cancelar)),
           FilledButton(
             style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.error),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Eliminar'),
+            child: Text(l10n.eliminar),
           ),
         ],
       ),
@@ -237,10 +241,10 @@ class _DetalleDesafioBody extends StatelessWidget {
         if (res) {
           // Refrescar lista antes de pop
           context.read<DesafiosProvider>().cargar();
-          context.showSnackSuccess('Desafío eliminado');
+          context.showSnackSuccess(l10n.desafioEliminado);
           Navigator.pop(context, true);
         } else {
-          context.showSnackError('No se pudo eliminar');
+          context.showSnackError(l10n.errorEliminarDesafio);
         }
       }
     }
@@ -248,18 +252,19 @@ class _DetalleDesafioBody extends StatelessWidget {
 
   Future<void> _confirmarAbandonar(
       BuildContext context, DetalleDesafioProvider provider) async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Abandonar desafío'),
-        content: const Text('¿Seguro que quieres abandonar este desafío? Tu histórico se conservará pero ya no podrás puntuar.'),
+        title: Text(l10n.abandonarDesafio),
+        content: Text(l10n.confirmarAbandonarDesafio),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancelar')),
+              child: Text(l10n.cancelar)),
           FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Abandonar')),
+              child: Text(l10n.tooltipAbandonar)),
         ],
       ),
     );
@@ -268,10 +273,10 @@ class _DetalleDesafioBody extends StatelessWidget {
       if (context.mounted) {
         if (res) {
           context.read<DesafiosProvider>().cargar();
-          context.showSnackSuccess('Has abandonado el desafío');
+          context.showSnackSuccess(l10n.desafioAbandonado);
           Navigator.pop(context, true);
         } else {
-          context.showSnackError('No se pudo abandonar');
+          context.showSnackError(l10n.errorAbandonarDesafio);
         }
       }
     }
@@ -284,6 +289,7 @@ class _Cabecera extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final iconoDesafio = HabitIcons.getIcon(desafio.icono);
     return Container(
@@ -337,9 +343,9 @@ class _Cabecera extends StatelessWidget {
                               color: colorScheme.error,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Text(
-                              'NEGATIVO',
-                              style: TextStyle(
+                            child: Text(
+                              l10n.etiquetaNegativo,
+                              style: const TextStyle(
                                   fontSize: 10,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
@@ -350,7 +356,7 @@ class _Cabecera extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Por ${desafio.creadorNombre}',
+                      l10n.porCreador(desafio.creadorNombre),
                       style: TextStyle(
                           fontSize: 13,
                           color: colorScheme.onSurfaceVariant),
@@ -376,17 +382,18 @@ class _Cabecera extends StatelessWidget {
                 icon: desafio.frecuencia == 'DIARIO'
                     ? Icons.calendar_today
                     : Icons.event_repeat,
-                texto: desafio.frecuencia == 'DIARIO' ? 'Diario' : 'Personalizado',
+                texto: desafio.frecuencia == 'DIARIO' ? l10n.diario : l10n.personalizado,
               ),
               _Chip(
                 icon: Icons.schedule,
                 texto: desafio.finalizado
-                    ? 'Finalizado'
-                    : 'Quedan ${desafio.diasRestantes} días',
+                    ? l10n.desafioFinalizado
+                    : l10n.diasRestantes(desafio.diasRestantes),
               ),
               _Chip(
                 icon: Icons.group,
-                texto: '${desafio.participantes.where((p) => !p.abandonado).length} participantes',
+                texto: l10n.participantesContador(
+                    desafio.participantes.where((p) => !p.abandonado).length),
               ),
             ],
           ),
@@ -436,6 +443,7 @@ class _BotonMarcarHecho extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final hecho = yo.completadoHoy;
     final puntosSiguientes = yo.puntosSiguientes;
@@ -457,9 +465,9 @@ class _BotonMarcarHecho extends StatelessWidget {
                 if (context.mounted) {
                   if (ok) {
                     context.showSnackSuccess(
-                        hecho ? 'Día desmarcado' : '¡+$puntosSiguientes! Sigue así');
+                        hecho ? l10n.diaDesmarcado : l10n.puntosSumadosSigueAsi(puntosSiguientes));
                   } else {
-                    context.showSnackError('No se pudo actualizar');
+                    context.showSnackError(l10n.errorActualizarDesafio);
                   }
                 }
               },
@@ -471,8 +479,8 @@ class _BotonMarcarHecho extends StatelessWidget {
             : Icon(hecho ? Icons.check_circle : Icons.add_task),
         label: Text(
           hecho
-              ? 'Hecho hoy · racha ${yo.rachaActual}'
-              : 'Marcar hoy  +$puntosSiguientes  (x${multiplicador.toStringAsFixed(1)})',
+              ? l10n.hechoHoyRacha(yo.rachaActual)
+              : l10n.marcarHoyConPuntos(puntosSiguientes, multiplicador.toStringAsFixed(1)),
           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
       ),

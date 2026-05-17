@@ -10,19 +10,22 @@ Inspirada en *Atomic Habits* de James Clear: construye hábitos consistentes, vi
 
 | Capa | Tecnología |
 |------|-----------|
-| Framework | Flutter 3.x + Dart |
-| State management | Provider 6.x (ChangeNotifier) |
-| HTTP | Dio 5.x + interceptor JWT |
-| Capa de datos | Paquete local `growtogether_data` (compartido con el panel admin) |
-| Almacenamiento seguro | flutter_secure_storage 9.x |
-| Imágenes | image_picker |
+| Framework | Flutter 3.27+ (Dart 3.10+) |
+| State management | Provider 6.x (`ChangeNotifier` + `MultiProvider`) |
+| Capa de datos | Paquete `growtogether_data` v0.5.0 (referenciado por git, compartido con el panel admin) |
+| HTTP | Dio 5.x con interceptor JWT *(vía `growtogether_data`)* |
+| Almacenamiento seguro | `flutter_secure_storage` 9.x *(vía `growtogether_data`)* |
+| Conectividad | `connectivity_plus` 6.x (banner sin red) |
+| Notificaciones locales | `flutter_local_notifications` 17.x + `permission_handler` 11.x |
+| Imágenes | `image_picker` 1.x (cámara / galería) |
+| Efectos visuales | `confetti` 0.7.x (celebración día completo) |
 | i18n | Flutter ARB (es / en / ca) |
 
 ---
 
 ## Requisitos previos
 
-- Flutter SDK 3.19+ ([instalación](https://docs.flutter.dev/get-started/install))
+- Flutter SDK 3.27+ con Dart 3.10+ ([instalación](https://docs.flutter.dev/get-started/install))
 - Android Studio o VS Code con extensión Flutter
 - Dispositivo Android (API 23+) o emulador
 - **GrowTogetherAPI** corriendo en puerto 8081 (ver su README)
@@ -96,20 +99,21 @@ flutter run -d chrome
 lib/
 ├── main.dart                    # MultiProvider + MaterialApp + bootstrap de repos
 ├── core/
-│   ├── constants/scoring.dart   # Puntos por hábito completado
+│   ├── feedback/                # FeedbackController + FeedbackService (vibración + animaciones)
 │   ├── l10n/                    # Controlador de idioma (ValueNotifier)
 │   ├── theme/                   # 4 temas + controlador (ValueNotifier)
-│   └── utils/                   # Validadores, iconos de hábitos, colores de desafíos, snack helper
-├── providers/                   # ChangeNotifiers (Auth, Habitos, DetalleHabito, Perfil, Statistics, Amistad, Desafios)
+│   └── utils/                   # Validadores, iconos de hábitos, colores de desafíos, snack helper, dashboard cache
+├── providers/                   # ChangeNotifiers (Auth, Habitos, DetalleHabito, Perfil, Statistics, Amistad, Desafios, Notificaciones, Connectivity, DetalleDesafio)
+├── services/                    # Servicios de capa OS (LocalNotificationsService sobre flutter_local_notifications)
 ├── screens/                     # Pantallas
-│   └── widgets/                 # Widgets reutilizables (HeatmapCalendar, ProgressPainters, etc.)
+│   └── widgets/                 # Widgets reutilizables (HeatmapCalendar, ProgressPainters, MultilineChart, etc.)
 └── l10n/                        # ARB generados por flutter gen-l10n
 ```
 
 > Los modelos, el cliente HTTP (Dio + interceptor JWT), el almacenamiento seguro
-> y los repositorios viven en el paquete local `growtogether_data` (referenciado
-> por path desde `pubspec.yaml`). Es el mismo paquete que consume el panel admin
-> web, así garantizamos un único contrato con la API.
+> y los repositorios viven en el paquete `growtogether_data` (referenciado por
+> git ref desde GitHub, ver `pubspec.yaml`). Es el mismo paquete que consume el
+> panel admin web, así garantizamos un único contrato con la API.
 
 ---
 
@@ -154,7 +158,7 @@ El tema e idioma se sincronizan con el servidor y se restauran en cada inicio de
 flutter test
 ```
 
-Cobertura actual: 42 tests unitarios sobre los providers (Auth, Habitos, Perfil, Statistics, Amistad, Desafios) y la pantalla de login.
+Cobertura actual: 42 tests entre unitarios y de widget. Cubren los 10 providers (Auth, Habitos, DetalleHabito, Perfil, Statistics, Amistad, Desafios, DetalleDesafio, Notificaciones), los validadores de formularios (`Validators`) y las pantallas de login y registro.
 
 ---
 

@@ -58,6 +58,7 @@ class PerfilProvider extends ChangeNotifier {
       final id = await _storage.getUserId();
       if (id == null) return false;
       await _repo.editarPerfil(id, email: email);
+      await cargar();
       return true;
     } on ApiException catch (e) {
       _error = e.message;

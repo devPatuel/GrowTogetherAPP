@@ -80,13 +80,14 @@ class _CrearDesafioScreenState extends State<CrearDesafioScreen> {
   }
 
   Future<void> _guardar() async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
     if (_fechaFin == null) {
-      context.showSnackError('Selecciona una fecha fin');
+      context.showSnackError(l10n.errorSeleccionaFechaFin);
       return;
     }
     if (_participantesIds.isEmpty) {
-      context.showSnackError('Selecciona al menos un amigo');
+      context.showSnackError(l10n.errorSeleccionaAmigo);
       return;
     }
 
@@ -113,11 +114,11 @@ class _CrearDesafioScreenState extends State<CrearDesafioScreen> {
 
     if (!mounted) return;
     if (ok) {
-      context.showSnackSuccess('Desafío creado');
+      context.showSnackSuccess(l10n.desafioCreado);
       Navigator.pop(context, true);
     } else {
       setState(() => _guardando = false);
-      context.showSnackError(provider.error ?? 'Error al crear el desafío');
+      context.showSnackError(provider.error ?? l10n.errorCrearDesafio);
     }
   }
 
@@ -132,7 +133,7 @@ class _CrearDesafioScreenState extends State<CrearDesafioScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nuevo desafío'),
+        title: Text(l10n.nuevoDesafio),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -159,10 +160,10 @@ class _CrearDesafioScreenState extends State<CrearDesafioScreen> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _nombreCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre del desafío',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.edit_outlined),
+                decoration: InputDecoration(
+                  labelText: l10n.nombreDelDesafio,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.edit_outlined),
                 ),
                 validator: (v) =>
                     (v == null || v.trim().isEmpty) ? l10n.nombreObligatorio : null,
@@ -171,10 +172,10 @@ class _CrearDesafioScreenState extends State<CrearDesafioScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Descripción',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.description_outlined),
+                decoration: InputDecoration(
+                  labelText: l10n.descripcion,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.description_outlined),
                 ),
                 validator: (v) =>
                     (v == null || v.trim().isEmpty) ? l10n.descripcionObligatoria : null,
@@ -229,9 +230,9 @@ class _CrearDesafioScreenState extends State<CrearDesafioScreen> {
                 ),
                 const SizedBox(height: 24),
               ],
-              const Text(
-                'Fecha fin',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              Text(
+                l10n.fechaFin,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
               _SelectorFecha(
@@ -239,9 +240,9 @@ class _CrearDesafioScreenState extends State<CrearDesafioScreen> {
                 onTap: _seleccionarFecha,
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Participantes',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              Text(
+                l10n.participantes,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
               _SelectorParticipantes(
@@ -261,7 +262,7 @@ class _CrearDesafioScreenState extends State<CrearDesafioScreen> {
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white))
                       : const Icon(Icons.emoji_events),
-                  label: Text(_guardando ? '' : 'Crear desafío'),
+                  label: Text(_guardando ? '' : l10n.crearDesafio),
                   style: FilledButton.styleFrom(backgroundColor: colorScheme.primary),
                 ),
               ),
@@ -281,9 +282,10 @@ class _SelectorFecha extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final etiqueta = fecha == null
-        ? 'Selecciona una fecha'
+        ? l10n.selectorFechaFin
         : '${fecha!.day.toString().padLeft(2, '0')}/${fecha!.month.toString().padLeft(2, '0')}/${fecha!.year}';
     final dias = fecha == null
         ? null
@@ -309,7 +311,7 @@ class _SelectorFecha extends StatelessWidget {
                   Text(etiqueta, style: const TextStyle(fontSize: 16)),
                   if (dias != null && dias > 0)
                     Text(
-                      '$dias días de duración',
+                      l10n.diasDeDuracion(dias),
                       style: TextStyle(
                           fontSize: 12, color: colorScheme.onSurfaceVariant),
                     ),
@@ -332,6 +334,7 @@ class _SelectorParticipantes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
@@ -348,15 +351,15 @@ class _SelectorParticipantes extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: seleccionados.isEmpty
-                  ? const Text(
-                      'Selecciona amigos',
-                      style: TextStyle(fontSize: 16),
+                  ? Text(
+                      l10n.seleccionarAmigos,
+                      style: const TextStyle(fontSize: 16),
                     )
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${seleccionados.length} seleccionados',
+                          l10n.seleccionadosContador(seleccionados.length),
                           style: const TextStyle(fontSize: 16),
                         ),
                         const SizedBox(height: 4),

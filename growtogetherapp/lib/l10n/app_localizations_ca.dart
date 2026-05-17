@@ -257,6 +257,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String get elegirIdioma => 'Triar idioma';
 
   @override
+  String get feedbackHaptico => 'Vibració i animacions';
+
+  @override
+  String get feedbackHapticoDescripcion =>
+      'Activa la resposta hàptica i els efectes visuals';
+
+  @override
   String get castellano => 'Castellano';
 
   @override
@@ -493,6 +500,163 @@ class AppLocalizationsCa extends AppLocalizations {
   String get mas => 'Més';
 
   @override
+  String get tendenciaSemanal => 'Tendència setmanal';
+
+  @override
+  String get hace16Semanas => 'fa 16 set.';
+
+  @override
+  String get estaSemana => 'aquesta set.';
+
+  @override
+  String get porDiaSemana => 'Per dia de la setmana';
+
+  @override
+  String get promedioHabitosDia => 'Mitjana d\'hàbits completats cada dia';
+
+  @override
+  String get desafiosActivos => 'Actius';
+
+  @override
+  String get desafiosFinalizados => 'Finalitzats';
+
+  @override
+  String get sinDesafiosTitulo => 'Encara no tens reptes';
+
+  @override
+  String get sinDesafiosSubtitulo =>
+      'Prem + per crear un repte i convidar els teus amics';
+
+  @override
+  String get nuevoDesafio => 'Nou repte';
+
+  @override
+  String get nombreDelDesafio => 'Nom del repte';
+
+  @override
+  String get descripcion => 'Descripció';
+
+  @override
+  String get fechaFin => 'Data fi';
+
+  @override
+  String get participantes => 'Participants';
+
+  @override
+  String get crearDesafio => 'Crear repte';
+
+  @override
+  String get selectorFechaFin => 'Tria una data';
+
+  @override
+  String diasDeDuracion(int dias) {
+    return '$dias dies de durada';
+  }
+
+  @override
+  String get errorSeleccionaFechaFin => 'Tria una data fi';
+
+  @override
+  String get errorSeleccionaAmigo => 'Tria almenys un amic';
+
+  @override
+  String get desafioCreado => 'Repte creat';
+
+  @override
+  String get errorCrearDesafio => 'Error en crear el repte';
+
+  @override
+  String get tooltipAbandonar => 'Abandonar';
+
+  @override
+  String get podio => 'Podi';
+
+  @override
+  String get evolucion => 'Evolució';
+
+  @override
+  String get ranking => 'Rànquing';
+
+  @override
+  String get editarDesafio => 'Editar repte';
+
+  @override
+  String get desafioActualizado => 'Repte actualitzat';
+
+  @override
+  String get errorActualizarDesafio => 'No s\'ha pogut actualitzar';
+
+  @override
+  String get eliminarDesafio => 'Eliminar repte';
+
+  @override
+  String get confirmarEliminarDesafio =>
+      'Segur que vols eliminar aquest repte? Aquesta acció no es pot desfer.';
+
+  @override
+  String get desafioEliminado => 'Repte eliminat';
+
+  @override
+  String get errorEliminarDesafio => 'No s\'ha pogut eliminar';
+
+  @override
+  String get abandonarDesafio => 'Abandonar repte';
+
+  @override
+  String get confirmarAbandonarDesafio =>
+      'Segur que vols abandonar aquest repte? El teu historial es conservarà però ja no podràs puntuar.';
+
+  @override
+  String get desafioAbandonado => 'Has abandonat el repte';
+
+  @override
+  String get errorAbandonarDesafio => 'No s\'ha pogut abandonar';
+
+  @override
+  String get etiquetaNegativo => 'NEGATIU';
+
+  @override
+  String porCreador(String nombre) {
+    return 'Per $nombre';
+  }
+
+  @override
+  String get desafioFinalizado => 'Finalitzat';
+
+  @override
+  String diasRestantes(int dias) {
+    return 'Queden $dias dies';
+  }
+
+  @override
+  String participantesContador(int count) {
+    return '$count participants';
+  }
+
+  @override
+  String get diaDesmarcado => 'Dia desmarcat';
+
+  @override
+  String puntosSumadosSigueAsi(int puntos) {
+    return '+$puntos! Continua així';
+  }
+
+  @override
+  String hechoHoyRacha(int dias) {
+    return 'Fet avui · ratxa $dias';
+  }
+
+  @override
+  String marcarHoyConPuntos(int puntos, String mult) {
+    return 'Marcar avui  +$puntos  (x$mult)';
+  }
+
+  @override
+  String idUsuario(int id) {
+    return 'ID $id';
+  }
+
+  @override
   String get sinDatosEstadisticas =>
       'Quan crees hàbits, aquí veuràs les estadístiques';
 
@@ -670,4 +834,18 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get eliminar => 'Eliminar';
+
+  @override
+  String get seleccionarAmigos => 'Seleccionar amics';
+
+  @override
+  String seleccionadosContador(int count) {
+    return '$count seleccionats';
+  }
+
+  @override
+  String get confirmar => 'Confirmar';
+
+  @override
+  String get sinAmigosParaInvitar => 'Encara no tens amics per convidar';
 }

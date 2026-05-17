@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:growtogether_data/growtogether_data.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/desafios_provider.dart';
 import 'detalle_desafio_screen.dart';
 import 'widgets/desafio_card.dart';
@@ -29,6 +30,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final provider = context.watch<DesafiosProvider>();
     if (provider.cargando && provider.desafios.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -45,7 +47,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
           if (activos.isEmpty && finalizados.isEmpty)
             _EstadoVacio(),
           if (activos.isNotEmpty) ...[
-            const _TituloSeccion(texto: 'Activos'),
+            _TituloSeccion(texto: l10n.desafiosActivos),
             ...activos.map((d) => DesafioCard(
                   desafio: d,
                   usuarioActualId: _usuarioId ?? 0,
@@ -54,7 +56,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
           ],
           if (finalizados.isNotEmpty) ...[
             const SizedBox(height: 16),
-            const _TituloSeccion(texto: 'Finalizados'),
+            _TituloSeccion(texto: l10n.desafiosFinalizados),
             ...finalizados.map((d) => DesafioCard(
                   desafio: d,
                   usuarioActualId: _usuarioId ?? 0,
@@ -100,6 +102,7 @@ class _TituloSeccion extends StatelessWidget {
 class _EstadoVacio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
@@ -112,14 +115,14 @@ class _EstadoVacio extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Aún no tienes desafíos',
+            l10n.sinDesafiosTitulo,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Pulsa + para crear un desafío e invitar a tus amigos',
+            l10n.sinDesafiosSubtitulo,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,

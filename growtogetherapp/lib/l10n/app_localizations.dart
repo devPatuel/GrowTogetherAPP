@@ -586,6 +586,18 @@ abstract class AppLocalizations {
   /// **'Elegir idioma'**
   String get elegirIdioma;
 
+  /// Titulo del toggle de feedback haptico en perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Vibración y animaciones'**
+  String get feedbackHaptico;
+
+  /// Subtitulo del toggle de feedback haptico en perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Activa la respuesta háptica y los efectos visuales'**
+  String get feedbackHapticoDescripcion;
+
   /// Nombre del idioma castellano
   ///
   /// In es, this message translates to:
@@ -1024,6 +1036,282 @@ abstract class AppLocalizations {
   /// **'Más'**
   String get mas;
 
+  /// Titulo grafico tendencia semanal en detalle general
+  ///
+  /// In es, this message translates to:
+  /// **'Tendencia semanal'**
+  String get tendenciaSemanal;
+
+  /// Eje izquierdo del grafico semanal
+  ///
+  /// In es, this message translates to:
+  /// **'hace 16 sem.'**
+  String get hace16Semanas;
+
+  /// Eje derecho del grafico semanal
+  ///
+  /// In es, this message translates to:
+  /// **'esta sem.'**
+  String get estaSemana;
+
+  /// Titulo grafico por dia de la semana en detalle general
+  ///
+  /// In es, this message translates to:
+  /// **'Por día de la semana'**
+  String get porDiaSemana;
+
+  /// Pie del grafico de promedio por dia de la semana
+  ///
+  /// In es, this message translates to:
+  /// **'Promedio de hábitos completados cada día'**
+  String get promedioHabitosDia;
+
+  /// Titulo de la seccion de desafios activos
+  ///
+  /// In es, this message translates to:
+  /// **'Activos'**
+  String get desafiosActivos;
+
+  /// Titulo de la seccion de desafios finalizados
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizados'**
+  String get desafiosFinalizados;
+
+  /// Estado vacio cuando no hay desafios
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no tienes desafíos'**
+  String get sinDesafiosTitulo;
+
+  /// Subtitulo del estado vacio de desafios
+  ///
+  /// In es, this message translates to:
+  /// **'Pulsa + para crear un desafío e invitar a tus amigos'**
+  String get sinDesafiosSubtitulo;
+
+  /// Titulo AppBar crear desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo desafío'**
+  String get nuevoDesafio;
+
+  /// Label input nombre del desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del desafío'**
+  String get nombreDelDesafio;
+
+  /// Label input descripcion generica
+  ///
+  /// In es, this message translates to:
+  /// **'Descripción'**
+  String get descripcion;
+
+  /// Label seccion fecha fin del desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha fin'**
+  String get fechaFin;
+
+  /// Label seccion participantes del desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Participantes'**
+  String get participantes;
+
+  /// Boton crear desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Crear desafío'**
+  String get crearDesafio;
+
+  /// Placeholder selector fecha vacio
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona una fecha'**
+  String get selectorFechaFin;
+
+  /// Texto que muestra duracion del desafio en dias
+  ///
+  /// In es, this message translates to:
+  /// **'{dias} días de duración'**
+  String diasDeDuracion(int dias);
+
+  /// Validacion: no se ha elegido fecha fin
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona una fecha fin'**
+  String get errorSeleccionaFechaFin;
+
+  /// Validacion: no se ha seleccionado participante
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona al menos un amigo'**
+  String get errorSeleccionaAmigo;
+
+  /// Snackbar de exito al crear desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Desafío creado'**
+  String get desafioCreado;
+
+  /// Snackbar de error generico al crear desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Error al crear el desafío'**
+  String get errorCrearDesafio;
+
+  /// Tooltip boton abandonar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Abandonar'**
+  String get tooltipAbandonar;
+
+  /// Titulo seccion podio del desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Podio'**
+  String get podio;
+
+  /// Titulo seccion evolucion del desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Evolución'**
+  String get evolucion;
+
+  /// Titulo seccion ranking del desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Ranking'**
+  String get ranking;
+
+  /// Titulo dialogo editar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Editar desafío'**
+  String get editarDesafio;
+
+  /// Snack exito editar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Desafío actualizado'**
+  String get desafioActualizado;
+
+  /// Snack error editar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo actualizar'**
+  String get errorActualizarDesafio;
+
+  /// Titulo dialogo eliminar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar desafío'**
+  String get eliminarDesafio;
+
+  /// Texto de confirmacion eliminar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'¿Seguro que quieres eliminar este desafío? Esta acción no se puede deshacer.'**
+  String get confirmarEliminarDesafio;
+
+  /// Snack exito eliminar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Desafío eliminado'**
+  String get desafioEliminado;
+
+  /// Snack error eliminar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo eliminar'**
+  String get errorEliminarDesafio;
+
+  /// Titulo dialogo abandonar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Abandonar desafío'**
+  String get abandonarDesafio;
+
+  /// Texto de confirmacion abandonar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'¿Seguro que quieres abandonar este desafío? Tu histórico se conservará pero ya no podrás puntuar.'**
+  String get confirmarAbandonarDesafio;
+
+  /// Snack exito abandonar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Has abandonado el desafío'**
+  String get desafioAbandonado;
+
+  /// Snack error abandonar desafio
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo abandonar'**
+  String get errorAbandonarDesafio;
+
+  /// Badge en cabecera de desafio negativo
+  ///
+  /// In es, this message translates to:
+  /// **'NEGATIVO'**
+  String get etiquetaNegativo;
+
+  /// Texto autoria del creador del desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Por {nombre}'**
+  String porCreador(String nombre);
+
+  /// Chip de estado desafio finalizado
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizado'**
+  String get desafioFinalizado;
+
+  /// Chip dias que quedan en el desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Quedan {dias} días'**
+  String diasRestantes(int dias);
+
+  /// Chip con numero de participantes
+  ///
+  /// In es, this message translates to:
+  /// **'{count} participantes'**
+  String participantesContador(int count);
+
+  /// Snack al desmarcar dia en desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Día desmarcado'**
+  String get diaDesmarcado;
+
+  /// Snack motivacional al marcar dia en desafio
+  ///
+  /// In es, this message translates to:
+  /// **'¡+{puntos}! Sigue así'**
+  String puntosSumadosSigueAsi(int puntos);
+
+  /// Label del boton cuando ya esta marcado hoy
+  ///
+  /// In es, this message translates to:
+  /// **'Hecho hoy · racha {dias}'**
+  String hechoHoyRacha(int dias);
+
+  /// Label del boton para marcar hoy con puntos y multiplicador
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar hoy  +{puntos}  (x{mult})'**
+  String marcarHoyConPuntos(int puntos, String mult);
+
+  /// Subtitulo en tarjeta de amigo mostrando su ID numerico
+  ///
+  /// In es, this message translates to:
+  /// **'ID {id}'**
+  String idUsuario(int id);
+
   /// Estado vacio de estadisticas
   ///
   /// In es, this message translates to:
@@ -1341,6 +1629,30 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Eliminar'**
   String get eliminar;
+
+  /// Titulo del modal de seleccion de amigos para invitar a un desafio
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar amigos'**
+  String get seleccionarAmigos;
+
+  /// Contador de amigos seleccionados en el modal multi-select
+  ///
+  /// In es, this message translates to:
+  /// **'{count} seleccionados'**
+  String seleccionadosContador(int count);
+
+  /// Boton confirmar generico
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar'**
+  String get confirmar;
+
+  /// Empty state del modal de seleccion de amigos cuando el usuario no tiene amigos
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no tienes amigos para invitar'**
+  String get sinAmigosParaInvitar;
 }
 
 class _AppLocalizationsDelegate

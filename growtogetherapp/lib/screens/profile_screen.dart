@@ -199,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       invalido: l10n.validatorEmailInvalido,
     );
     if (errorEmail != null) {
-      if (mounted) context.showSnack(errorEmail);
+      if (mounted) context.showSnackError(errorEmail);
       return;
     }
 
@@ -577,17 +577,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
 
           // Toggle de feedback haptico + animaciones expresivas
-          // TODO: i18n (clave feedbackHaptico) cuando se mergee la rama de l10n
           Card(
             margin: const EdgeInsets.only(bottom: 8),
             child: ValueListenableBuilder<bool>(
               valueListenable: FeedbackController.instance,
               builder: (context, activo, _) => SwitchListTile(
                 secondary: Icon(Icons.vibration, color: colorScheme.primary),
-                title: const Text('Vibracion y animaciones',
-                    style: TextStyle(fontSize: 15)),
-                subtitle: const Text('Activa la respuesta haptica y los efectos visuales',
-                    style: TextStyle(fontSize: 13, color: Colors.grey)),
+                title: Text(l10n.feedbackHaptico,
+                    style: const TextStyle(fontSize: 15)),
+                subtitle: Text(l10n.feedbackHapticoDescripcion,
+                    style: const TextStyle(fontSize: 13, color: Colors.grey)),
                 value: activo,
                 onChanged: FeedbackController.instance.cambiar,
               ),

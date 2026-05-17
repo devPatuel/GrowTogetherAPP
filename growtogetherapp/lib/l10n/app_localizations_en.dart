@@ -256,6 +256,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get elegirIdioma => 'Choose language';
 
   @override
+  String get feedbackHaptico => 'Vibration and animations';
+
+  @override
+  String get feedbackHapticoDescripcion =>
+      'Enables haptic feedback and visual effects';
+
+  @override
   String get castellano => 'Castellano';
 
   @override
@@ -491,6 +498,163 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mas => 'More';
 
   @override
+  String get tendenciaSemanal => 'Weekly trend';
+
+  @override
+  String get hace16Semanas => '16 weeks ago';
+
+  @override
+  String get estaSemana => 'this week';
+
+  @override
+  String get porDiaSemana => 'By day of the week';
+
+  @override
+  String get promedioHabitosDia => 'Average habits completed per day';
+
+  @override
+  String get desafiosActivos => 'Active';
+
+  @override
+  String get desafiosFinalizados => 'Finished';
+
+  @override
+  String get sinDesafiosTitulo => 'You don\'t have challenges yet';
+
+  @override
+  String get sinDesafiosSubtitulo =>
+      'Tap + to create a challenge and invite your friends';
+
+  @override
+  String get nuevoDesafio => 'New challenge';
+
+  @override
+  String get nombreDelDesafio => 'Challenge name';
+
+  @override
+  String get descripcion => 'Description';
+
+  @override
+  String get fechaFin => 'End date';
+
+  @override
+  String get participantes => 'Participants';
+
+  @override
+  String get crearDesafio => 'Create challenge';
+
+  @override
+  String get selectorFechaFin => 'Pick a date';
+
+  @override
+  String diasDeDuracion(int dias) {
+    return '$dias days long';
+  }
+
+  @override
+  String get errorSeleccionaFechaFin => 'Pick an end date';
+
+  @override
+  String get errorSeleccionaAmigo => 'Pick at least one friend';
+
+  @override
+  String get desafioCreado => 'Challenge created';
+
+  @override
+  String get errorCrearDesafio => 'Error creating the challenge';
+
+  @override
+  String get tooltipAbandonar => 'Leave';
+
+  @override
+  String get podio => 'Podium';
+
+  @override
+  String get evolucion => 'Evolution';
+
+  @override
+  String get ranking => 'Ranking';
+
+  @override
+  String get editarDesafio => 'Edit challenge';
+
+  @override
+  String get desafioActualizado => 'Challenge updated';
+
+  @override
+  String get errorActualizarDesafio => 'Could not update';
+
+  @override
+  String get eliminarDesafio => 'Delete challenge';
+
+  @override
+  String get confirmarEliminarDesafio =>
+      'Are you sure you want to delete this challenge? This action cannot be undone.';
+
+  @override
+  String get desafioEliminado => 'Challenge deleted';
+
+  @override
+  String get errorEliminarDesafio => 'Could not delete';
+
+  @override
+  String get abandonarDesafio => 'Leave challenge';
+
+  @override
+  String get confirmarAbandonarDesafio =>
+      'Are you sure you want to leave this challenge? Your history will be kept but you won\'t be able to score anymore.';
+
+  @override
+  String get desafioAbandonado => 'You left the challenge';
+
+  @override
+  String get errorAbandonarDesafio => 'Could not leave';
+
+  @override
+  String get etiquetaNegativo => 'NEGATIVE';
+
+  @override
+  String porCreador(String nombre) {
+    return 'By $nombre';
+  }
+
+  @override
+  String get desafioFinalizado => 'Finished';
+
+  @override
+  String diasRestantes(int dias) {
+    return '$dias days left';
+  }
+
+  @override
+  String participantesContador(int count) {
+    return '$count participants';
+  }
+
+  @override
+  String get diaDesmarcado => 'Day unchecked';
+
+  @override
+  String puntosSumadosSigueAsi(int puntos) {
+    return '+$puntos! Keep it up';
+  }
+
+  @override
+  String hechoHoyRacha(int dias) {
+    return 'Done today · streak $dias';
+  }
+
+  @override
+  String marcarHoyConPuntos(int puntos, String mult) {
+    return 'Mark today  +$puntos  (x$mult)';
+  }
+
+  @override
+  String idUsuario(int id) {
+    return 'ID $id';
+  }
+
+  @override
   String get sinDatosEstadisticas =>
       'When you create habits, you\'ll see your stats here';
 
@@ -667,4 +831,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eliminar => 'Delete';
+
+  @override
+  String get seleccionarAmigos => 'Select friends';
+
+  @override
+  String seleccionadosContador(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get confirmar => 'Confirm';
+
+  @override
+  String get sinAmigosParaInvitar => 'You don\'t have friends to invite yet';
 }

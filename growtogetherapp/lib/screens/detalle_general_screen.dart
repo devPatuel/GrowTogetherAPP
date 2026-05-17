@@ -422,6 +422,7 @@ class _ChartsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final semanales = _porSemana();
     final diarios = _promediosPorDia();
@@ -436,7 +437,7 @@ class _ChartsSection extends StatelessWidget {
       children: [
         // Tendencia semanal
         _ChartCard(
-          titulo: 'Tendencia semanal',
+          titulo: l10n.tendenciaSemanal,
           icono: Icons.bar_chart_rounded,
           color: colorScheme.primary,
           child: SizedBox(
@@ -478,11 +479,11 @@ class _ChartsSection extends StatelessWidget {
           footer: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('hace 16 sem.',
+              Text(l10n.hace16Semanas,
                   style: TextStyle(
                       fontSize: 10,
                       color: colorScheme.onSurfaceVariant)),
-              Text('esta sem.',
+              Text(l10n.estaSemana,
                   style: TextStyle(
                       fontSize: 10,
                       color: colorScheme.primary,
@@ -494,7 +495,7 @@ class _ChartsSection extends StatelessWidget {
 
         // Por dia de la semana
         _ChartCard(
-          titulo: 'Por día de la semana',
+          titulo: l10n.porDiaSemana,
           icono: Icons.calendar_view_week_rounded,
           color: colorScheme.secondary,
           child: SizedBox(
@@ -505,7 +506,7 @@ class _ChartsSection extends StatelessWidget {
                 final dia = i + 1; // 1=Lun...7=Dom
                 final avg = diarios[dia] ?? 0.0;
                 final ratio = avg / maxDiario;
-                const labels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+                final labels = [l10n.lun, l10n.mar, l10n.mie, l10n.jue, l10n.vie, l10n.sab, l10n.dom];
                 final esFinDeSemana = dia >= 6;
 
                 return Expanded(
@@ -550,7 +551,7 @@ class _ChartsSection extends StatelessWidget {
             ),
           ),
           footer: Text(
-            'Promedio de hábitos completados cada día',
+            l10n.promedioHabitosDia,
             style: TextStyle(
                 fontSize: 10, color: colorScheme.onSurfaceVariant),
           ),

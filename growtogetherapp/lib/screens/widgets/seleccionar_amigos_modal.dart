@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:growtogether_data/growtogether_data.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/amistad_provider.dart';
 import 'usuario_tile.dart';
 
@@ -42,6 +43,7 @@ class _SeleccionarAmigosModalState extends State<SeleccionarAmigosModal> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final provider = context.watch<AmistadProvider>();
     final amigos = provider.amigos;
@@ -71,14 +73,14 @@ class _SeleccionarAmigosModalState extends State<SeleccionarAmigosModal> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Seleccionar amigos',
+                        l10n.seleccionarAmigos,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                       ),
                     ),
                     Text(
-                      '${_seleccionados.length} seleccionados',
+                      l10n.seleccionadosContador(_seleccionados.length),
                       style: TextStyle(color: colorScheme.onSurfaceVariant),
                     ),
                   ],
@@ -113,14 +115,14 @@ class _SeleccionarAmigosModalState extends State<SeleccionarAmigosModal> {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.pop(context),
-                          child: const Text('Cancelar'),
+                          child: Text(l10n.cancelar),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: FilledButton(
                           onPressed: () => Navigator.pop(context, _seleccionados),
-                          child: const Text('Confirmar'),
+                          child: Text(l10n.confirmar),
                         ),
                       ),
                     ],
@@ -173,6 +175,7 @@ class _SinAmigos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.all(40),
@@ -182,7 +185,7 @@ class _SinAmigos extends StatelessWidget {
           Icon(Icons.people_outline, size: 64, color: colorScheme.outline),
           const SizedBox(height: 12),
           Text(
-            'Aún no tienes amigos para invitar',
+            l10n.sinAmigosParaInvitar,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
