@@ -1,16 +1,41 @@
-# GrowTogether — App móvil
+# GrowTogether APP
 
-App de seguimiento de hábitos con componente social. Proyecto final de DAM 2026 — Jordi Patuel Pons.
+> App móvil de seguimiento de hábitos con componente social: rachas, estadísticas, desafíos con amigos y recordatorios.
 
-Inspirada en *Atomic Habits* de James Clear: construye hábitos consistentes, visualiza tu progreso y compite con amigos en desafíos.
+![Flutter](https://img.shields.io/badge/Flutter-3.38%2B-02569B?logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-3.10%2B-0175C2?logo=dart&logoColor=white)
+![Provider](https://img.shields.io/badge/State-Provider%206.x-4CAF50)
+![i18n](https://img.shields.io/badge/i18n-es%20%7C%20en%20%7C%20ca-FF9800)
+![Plataformas](https://img.shields.io/badge/Plataformas-Android%20%7C%20Web-3DDC84?logo=android&logoColor=white)
 
 ---
 
-## Stack
+## Sobre el proyecto
+
+**GrowTogether** es una aplicación de seguimiento de hábitos con componente social, inspirada en *Atomic Habits* de James Clear: construye hábitos consistentes, visualiza tu progreso y compite con amigos en desafíos.
+
+Es el **Trabajo Final de Grado de DAM** (Desarrollo de Aplicaciones Multiplataforma, 2025/2026) de **Jordi Patuel Pons**.
+
+### Papel de este repositorio
+
+Este repo contiene la **app móvil** (Flutter) que usan los usuarios finales: hábitos con rachas, estadísticas con heatmaps, desafíos entre amigos, recordatorios locales, perfil personalizable y soporte de 3 idiomas. Consume la API REST a través del paquete compartido `growtogether_data`.
+
+## Ecosistema GrowTogether
+
+| Repositorio | Descripción |
+|---|---|
+| [GrowTogetherAPI](https://github.com/devPatuel/GrowTogetherAPI) | Backend REST (Java 17 + Spring Boot) |
+| **[GrowTogetherAPP](https://github.com/devPatuel/GrowTogetherAPP)** ← estás aquí | App móvil de hábitos (Flutter) |
+| [GrowTogetherADMIN](https://github.com/devPatuel/GrowTogetherADMIN) | Panel de administración web (Flutter Web) |
+| [GrowTogetherDATA](https://github.com/devPatuel/GrowTogetherDATA) | Paquete Dart compartido: modelos, cliente HTTP y repositorios |
+
+---
+
+## Stack técnico
 
 | Capa | Tecnología |
 |------|-----------|
-| Framework | Flutter 3.27+ (Dart 3.10+) |
+| Framework | Flutter 3.38+ (Dart 3.10+) |
 | State management | Provider 6.x (`ChangeNotifier` + `MultiProvider`) |
 | Capa de datos | Paquete `growtogether_data` v0.5.0 (referenciado por git, compartido con el panel admin) |
 | HTTP | Dio 5.x con interceptor JWT *(vía `growtogether_data`)* |
@@ -23,12 +48,16 @@ Inspirada en *Atomic Habits* de James Clear: construye hábitos consistentes, vi
 
 ---
 
-## Requisitos previos
+## Cómo ejecutarlo en local
 
-- Flutter SDK 3.27+ con Dart 3.10+ ([instalación](https://docs.flutter.dev/get-started/install))
+> El código vive en el subdirectorio `growtogetherapp/` del repo; ejecuta los comandos de Flutter desde ahí.
+
+### Requisitos previos
+
+- Flutter SDK 3.38+ con Dart 3.10+ ([instalación](https://docs.flutter.dev/get-started/install))
 - Android Studio o VS Code con extensión Flutter
 - Dispositivo Android (API 23+) o emulador
-- **GrowTogetherAPI** corriendo en puerto 8081 (ver su README)
+- **[GrowTogetherAPI](https://github.com/devPatuel/GrowTogetherAPI)** corriendo en el puerto 8081 (ver su README)
 
 Verifica la instalación:
 
@@ -36,13 +65,11 @@ Verifica la instalación:
 flutter doctor
 ```
 
----
-
-## Instalación
+### Instalación
 
 ```bash
 # 1. Clona el repositorio
-git clone <url-del-repo>
+git clone https://github.com/devPatuel/GrowTogetherAPP.git
 cd GrowTogetherAPP/growtogetherapp
 
 # 2. Instala dependencias
@@ -52,9 +79,7 @@ flutter pub get
 flutter gen-l10n
 ```
 
----
-
-## Configuración
+### Configuración
 
 La URL base de la API se inyecta en compile time vía `--dart-define=API_URL=...`.
 El `main.dart` la lee con `ApiConfig.fromEnv(fallback: 'http://localhost:8081/api/v1')`,
@@ -62,14 +87,12 @@ así que sin flag se usa el fallback de localhost.
 
 | Escenario | Comando |
 |---|---|
-| Emulador Android (default) | `flutter run --dart-define=API_URL=http://10.0.2.2:8081/api/v1` |
+| Emulador Android | `flutter run --dart-define=API_URL=http://10.0.2.2:8081/api/v1` |
 | Dispositivo físico (USB + adb reverse) | `adb reverse tcp:8081 tcp:8081 && flutter run` |
 | Dispositivo en LAN | `flutter run --dart-define=API_URL=http://192.168.X.X:8081/api/v1` |
 | Chrome (web) | `flutter run -d chrome --dart-define=API_URL=http://localhost:8081/api/v1` |
 
----
-
-## Ejecución
+### Ejecución
 
 ```bash
 # Listar dispositivos disponibles
@@ -111,8 +134,8 @@ lib/
 ```
 
 > Los modelos, el cliente HTTP (Dio + interceptor JWT), el almacenamiento seguro
-> y los repositorios viven en el paquete `growtogether_data` (referenciado por
-> git ref desde GitHub, ver `pubspec.yaml`). Es el mismo paquete que consume el
+> y los repositorios viven en el paquete [`growtogether_data`](https://github.com/devPatuel/GrowTogetherDATA)
+> (referenciado por git ref desde GitHub, ver `pubspec.yaml`). Es el mismo paquete que consume el
 > panel admin web, así garantizamos un único contrato con la API.
 
 ---
@@ -158,11 +181,11 @@ El tema e idioma se sincronizan con el servidor y se restauran en cada inicio de
 flutter test
 ```
 
-Cobertura actual: 42 tests entre unitarios y de widget. Cubren los 10 providers (Auth, Habitos, DetalleHabito, Perfil, Statistics, Amistad, Desafios, DetalleDesafio, Notificaciones), los validadores de formularios (`Validators`) y las pantallas de login y registro.
+Cobertura actual: 42 tests entre unitarios y de widget. Cubren los 10 providers (Auth, Habitos, DetalleHabito, Perfil, Statistics, Amistad, Desafios, DetalleDesafio, Notificaciones, Connectivity), los validadores de formularios (`Validators`) y las pantallas de login y registro.
 
 ---
 
-## Generar documentación API
+## Generar documentación (`dart doc`)
 
 ```bash
 dart doc .
@@ -178,5 +201,13 @@ Salida en `doc/api/`. Por defecto está incluida en `.gitignore` (quita la líne
 Las decisiones técnicas (Flutter vs React Native, Provider vs Bloc,
 Navigator vs GoRouter, política offline, recordatorios locales…) están
 documentadas en [`docs/DECISIONS.md`](docs/DECISIONS.md). Las del
-paquete de datos compartido viven en `GrowTogetherDATA/docs/DECISIONS.md`
-y las del backend en `GrowTogetherAPI/docs/DECISIONS.md`.
+paquete de datos compartido viven en
+[`GrowTogetherDATA/docs/DECISIONS.md`](https://github.com/devPatuel/GrowTogetherDATA/blob/main/docs/DECISIONS.md)
+y las del backend en
+[`GrowTogetherAPI/docs/DECISIONS.md`](https://github.com/devPatuel/GrowTogetherAPI/blob/main/docs/DECISIONS.md).
+
+---
+
+## Licencia
+
+Proyecto académico — Trabajo Final de Grado de DAM · GrowTogether · Jordi Patuel Pons.
